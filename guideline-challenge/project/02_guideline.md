@@ -1,128 +1,296 @@
-# Annotation guideline: Hướng dẫn gán bounding box biển báo giao thông — GTSDB
+# Annotation guideline: Hướng dẫn gán nhãn phân tầng và phát hiện hộp bao biển báo giao thông — GTSDB
 
-**Version:** v1
+**Version:** v2
+
+---
+
+### Thông tin dự án & Phân công trách nhiệm (Team 09)
+
+- **Đơn vị thực hiện:** Team 09 (Thử thách Guideline Design Challenge — Day 09)
+- **Đối tác Peer Review / Blind Test:** Team 01 (Nhóm peer test bài của Team 09 và Team 09 test bài của Team 01)
+- **Problem Family:** Traffic sign taxonomy (Phân tầng biển báo đường bộ phục vụ xe tự hành)
+- **Nguồn dữ liệu:** Bộ dữ liệu chuẩn `gtsdb` (German Traffic Sign Detection Benchmark — 28 ảnh độ phân giải cao $1360 \times 800$), có mở rộng liên kết bối cảnh `lisa` và `bdd100k` theo hợp đồng bài toán.
+- **Bảng phân vai và đầu mối liên hệ kỹ thuật:**
+  - **Spec Owner:** Phạm Hữu Hải (`01_problem_statement.md`, `00_team.md`) — Phụ trách hợp đồng downstream contract và ràng buộc an toàn ADAS.
+  - **Guideline Owner:** Nguyễn Tú Anh (`02_guideline.md`) — Tác giả và chịu trách nhiệm nội dung quy chuẩn gán nhãn v2.
+  - **CVAT & Data Owner:** Vương Tuấn Dương (`03_cvat_labels.json`, `03_ontology_and_cvat_setup.md`, `sample_pack.csv`, `09_cvat_export_or_task_reference.txt`) — Cấu hình schema CVAT và quản trị dataset.
+  - **Gold & Edge-case Owner:** Ngô Duy Ngọc (`04_edge_cases/edge_case_cards.md`, `04_edge_cases/gold_decisions.csv`) — Quản lý thư viện ca biên và tập quyết định chuẩn vàng.
+  - **QA & Blind Handoff Owner:** Phạm Xuân Duy (`05_qa_plan.md`, `06_calibration_report.csv`, `07_blind_handoff/`, `08_revision_log.md`) — Kiểm soát chất lượng, đo lường bất đồng calibration và điều phối bàn giao blind test.
+
+---
 
 ## 1. Objective + scope
 
-Tạo dữ liệu phục vụ mô hình phát hiện vị trí biển báo đường bộ trên ảnh tĩnh GTSDB. Mỗi mặt biển được biểu diễn bằng một bounding box nhãn `traffic_sign`. Không phân nhóm biển, đọc nội dung. Bounding box chỉ phục vụ định vị, chưa đủ để quyết định hành động lái xe.
+### 1.1 Mục tiêu kỹ thuật (Downstream Contract)
+Dữ liệu gán nhãn từ guideline này phục vụ trực tiếp cho mô hình đa nhiệm **2-stage / Multitask Object Detection & Attribute Classification** (như YOLOv8/Faster R-CNN tích hợp Multi-attribute Classification Head). 
 
-**Trong scope:**
-- Mặt trước nhận diện được của biển báo đường bộ: cấm, cảnh báo, hiệu lệnh, ưu tiên, chỉ dẫn; tất cả dùng một nhãn.
-- Biển cố định và biển tạm phục vụ tổ chức giao thông; gồm biển ở đường nhánh hoặc phía đối diện nếu thấy mặt trước.
-- Biển phụ là tấm riêng, xác định được chức năng bổ sung thông tin giao thông và đạt điều kiện kích thước.
-- Biển nhỏ, mờ, nghiêng, bị che hoặc cắt mép theo mục 6–7.
-- Nguồn hiện tại: 28 ảnh GTSDB trong repo; không dùng video LISA hay ảnh BDD trong bản này.
+Đối tượng tiêu thụ dữ liệu hạ nguồn (Downstream Consumer) là **hệ thống điều khiển và lập kế hoạch hành trình ADAS L2+/L3 (Decision & Planning)**. Bounding box không chỉ đơn thuần xác định vị trí không gian (localization) mà các thuộc tính phân tầng (`sign_group`, `relevance`, `occlusion`, `legibility`) là đầu vào quyết định các hành vi tự lái sống còn: phát hiện biển dừng/cấm để dừng xe, nhận diện biển cảnh báo để giảm tốc độ, và phân tách biển quay lưng/đường phụ để triệt tiêu hiện tượng phanh gấp vô cớ (**phantom braking**).
 
-**Ngoài scope:** mặt sau biển; cột/giá đỡ; quảng cáo, số nhà, tên cửa hàng, bảng công trường không có chức năng báo hiệu giao thông; hình biển in trên quảng cáo/thân xe; đèn giao thông, cọc tiêu, rào chắn, vạch đường, xe và người.
+### 1.2 Phạm vi gán nhãn (In-scope)
+Bắt buộc vẽ bounding box và gán đầy đủ thuộc tính cho:
+1. **Tất cả các biển báo giao thông chuẩn** thuộc hệ thống công ước Vienna (biển chuẩn Châu Âu trong GTSDB) hoặc hệ thống biển chuẩn Mỹ (trong tập đối sánh mở rộng): biển cấm, biển dừng, biển cảnh báo nguy hiểm, biển hiệu lệnh, biển chỉ dẫn, biển ưu tiên.
+2. **Biển báo phụ (supplementary plate):** Các tấm biển phụ dạng hình chữ nhật gắn độc lập bên dưới biển chính, bổ sung thông tin cự ly, thời gian, hoặc loại phương tiện áp dụng.
+3. **Hình thức lắp đặt:** Biển gắn trên cọc kim loại ven đường, treo trên giá long môn (overhead gantry), gắn trên dải phân cách hoặc rào chắn công trường.
+4. **Trạng thái quan sát:** Biển nguyên vẹn hoặc bị che khuất một phần ($< 80\%$), biển nghiêng do góc chụp camera, biển bị lóa/mờ nhẹ nhưng con người vẫn nhận diện được viền và hình khối.
+5. **Kích thước tối thiểu:** Kích thước cạnh dài nhất $L = \max(w, h) \ge 12 \text{ px}$ (tính theo tọa độ pixel thực tế của ảnh gốc $1360 \times 800$).
+
+### 1.3 Ngoại vi phạm vi (Out-of-scope / IGNORE)
+Tuyệt đối **KHÔNG** tạo bounding box (`IGNORE`) đối với:
+1. **Đối tượng quá nhỏ:** Biển báo có $L = \max(w, h) < 12 \text{ px}$ trên ảnh gốc, không đủ điểm ảnh để xác định viền ngoài đáng tin cậy.
+2. **Cơ cấu nâng đỡ và hạ tầng phụ:** Cột cọc, giá long môn, khung treo biển, dây cáp, bóng đổ của biển hoặc quầng sáng lóa (halo/flare).
+3. **Mặt sau của biển quay 180° trơn nhẵn:** Mặt sau hoàn toàn của biển báo (mặt phẳng kim loại/xám không có viền phản quang, không có nội dung).
+4. **Biển hiệu phi giao thông:** Bảng quảng cáo thương mại, số nhà, biển tên trạm xăng dầu, pano áp phích ven đường.
+5. **Hình in giả lập:** Biển báo dán/in trên thân xe tải, xe buýt, áo phản quang của người đi bộ hoặc rào chắn tạm không có chức năng báo hiệu giao thông.
+6. **Thành phần hạ tầng giao thông khác:** Đèn tín hiệu giao thông (traffic light), vạch kẻ đường, cọc tiêu mềm, gờ giảm tốc.
+
+---
 
 ## 2. Annotation unit
 
-- Gán độc lập từng ảnh bằng **Shape / Rectangle**, không dùng Track.
-- Mỗi mặt biển vật lý là một instance, một box `traffic_sign`.
-- Nhiều mặt biển cùng cột hoặc sát nhau: mỗi mặt một box.
-- Nhiều ký hiệu/dòng chữ trên cùng tấm biển: vẫn một instance.
-- Các phần nhìn thấy của cùng biển bị che: vẫn một instance, không tách box.
-- Cùng biển xuất hiện trong nhiều ảnh: gán lại từng ảnh, không liên kết ID.
+- **Quy cách hình học:** Sử dụng công cụ **Shape / Rectangle** (hình chữ nhật có các cạnh song song với trục ảnh $x, y$). Tuyệt đối **không dùng Track** (do tập ảnh GTSDB gồm các ảnh tĩnh độc lập).
+- **Nguyên tắc phân rã Instance:**
+  - Mỗi mặt biển vật lý độc lập là **đúng 1 instance** `traffic_sign`.
+  - **Cụm biển lắp chung một cột:** Nếu một cột có 2 hoặc 3 biển báo xếp chồng lên nhau (ví dụ: Biển cấm vượt ở trên, Biển phụ cự ly ở dưới), annotator phải vẽ **từng box riêng biệt** cho từng mặt biển. Nghiêm cấm vẽ 1 box to bao trùm toàn bộ cột hoặc gộp nhiều biển thành một.
+  - **Biển có nhiều thông tin trên cùng một tấm mặt:** Nếu một tấm biển kim loại duy nhất chứa nhiều biểu tượng hoặc chữ viết, chỉ vẽ **1 bounding box duy nhất** bao trọn toàn bộ tấm biển đó.
+  - **Biển bị vật cản cắt ngang (occlusion split):** Nếu một mặt biển bị cành cây, dây điện hoặc cột đèn chắn ngang chia mặt biển thành 2 phần nhìn thấy tách rời, annotator vẽ **1 bounding box duy nhất** bao phủ toàn bộ vùng biên ngoài của mặt biển (box chấp nhận chứa vật cản ở phần giữa). Không tách thành 2 box nhỏ.
+  - **Không liên kết định danh (No tracking):** Mỗi ảnh được gán độc lập; cùng một biển xuất hiện ở các ảnh khác nhau vẫn được gán như các instance mới, không liên kết ID giữa các ảnh.
+
+---
 
 ## 3. Geometry rule
 
-- Rectangle song song trục ảnh, ôm sát viền ngoài của **phần mặt biển nhìn thấy**, gồm viền biển; không lấy cột, giá đỡ, bóng đổ hoặc quầng sáng.
-- Biển nghiêng vẫn dùng rectangle. Không suy rộng box tới phần bị che hoặc ngoài ảnh.
-- Nếu phần nhìn thấy bị tách rời, dùng một box bao các phần chắc chắn cùng mặt biển; box có thể chứa vật che ở giữa.
-- Biển cắt mép: box dừng ở biên ảnh.
-- Đo ở ảnh gốc: `w = xmax - xmin`, `h = ymax - ymin`, `L = max(w,h)`.
-- Gán khi **L >= 12 px**; bỏ qua khi L < 12 px. Không đo theo kích thước hiển thị sau zoom. Chưa xác định được viền để đo thì chuyển review.
-- Dung sai QA đề xuất: lệch mỗi cạnh không quá **2 px khi L >= 30 px**, **1 px khi 12 <= L < 30 px**, so với box tham chiếu đã rà soát. Dùng L của box tham chiếu chọn ngưỡng.
-- IoU có thể báo cáo bổ sung; không đồng thời áp ngưỡng IoU 0.85 trong v1. Kiểm chứng dung sai qua calibration, đặc biệt với biển nhỏ.
+### 3.1 Quy tắc dựng hộp bao (Bounding Box Fitting)
+- Box phải được kéo ôm sát mép ngoài cùng của **phần mặt hiển thị nhìn thấy (visible face)** của biển báo, bao gồm cả viền phản quang ngoài cùng của mặt biển.
+- **Điểm biên:** Bounding box được xác định bởi 2 cặp tọa độ trên ảnh gốc: góc trên bên trái $(x_{min}, y_{min})$ và góc dưới bên phải $(x_{max}, y_{max})$.
+- **Không vẽ tràn ra ngoài:** Box không được bao trùm phần cọc sắt gắn biển, không lấy bóng đổ trên mặt đường và không lấy phần quầng sáng xung quanh khi chụp ngược sáng.
+- **Biển cắt mép khung hình (truncation):** Nếu biển báo nằm ở rìa bức ảnh và bị cắt cụt một phần, cạnh của bounding box phải dừng chính xác tại biên ảnh ($x=0$, $x=1360$, $y=0$, hoặc $y=800$). Tuyệt đối không suy đoán vẽ tràn ra ngoài vùng ảnh.
 
-## 4. Taxonomy
+### 3.2 Công thức kích thước & Ngưỡng lọc
+- Đo đạc trực tiếp trên tọa độ ảnh gốc (không đo theo kích thước hiển thị trên màn hình zoom):
+  $$\text{Chiều rộng: } w = x_{max} - x_{min}$$
+  $$\text{Chiều cao: } h = y_{max} - y_{min}$$
+  $$\text{Kích thước đặc trưng: } L = \max(w, h)$$
+- **Quy tắc ngưỡng:**
+  - Nếu $L \ge 12 \text{ px}$ và có đủ bằng chứng nhận diện viền mặt biển: **Bắt buộc vẽ box (`LABEL`)**.
+  - Nếu $L < 12 \text{ px}$: **Bỏ qua (`IGNORE`)**.
+  - Nếu nghi ngờ đối tượng là biển báo nhưng không thể định vị được viền ngoài chính xác do nhiễu hạt: chuyển sang quy trình Escalation (Mục 7).
 
-| Tên | Loại | Geometry | Ý nghĩa |
+### 3.3 Ngưỡng dung sai hình học (QA Geometry Tolerance)
+Được chuẩn hóa theo ràng buộc kỹ thuật tại `01_problem_statement.md`:
+- **Chỉ số chồng lấn (Intersection over Union - IoU):** Box gán nhãn so với box chuẩn vàng (Gold Reference) phải đạt **$\text{IoU} \ge 0.85$**.
+- **Sai số dịch chuyển biên (Edge Shift Deviation):**
+  - Đối với biển lớn và trung bình ($L \ge 30 \text{ px}$): Độ lệch tuyệt đối của mỗi cạnh $\le 3 \text{ px}$ ($|\Delta x_{min}| \le 3$, $|\Delta x_{max}| \le 3$, $|\Delta y_{min}| \le 3$, $|\Delta y_{max}| \le 3$).
+  - Đối với biển nhỏ ($12 \le L < 30 \text{ px}$): Độ lệch tuyệt đối của mỗi cạnh $\le 1.5 \text{ px}$.
+
+---
+
+## 4. Taxonomy & Schema định nghĩa
+
+Hệ thống nhãn và thuộc tính tuân thủ tuyệt đối theo `03_cvat_labels.json` và `03_ontology_and_cvat_setup.md`.
+
+### 4.1 Danh mục thực thể (Classes & Tags)
+1. **Object Class:** `traffic_sign` (Geometry: `rectangle`) — Áp dụng cho mọi instance biển báo hợp lệ trong phạm vi.
+2. **Image Tag:** `image_escalate` (Geometry: `tag`) — Nhãn gán mức độ toàn ảnh khi bức ảnh bị lỗi tệp tin, nhòe chuyển động toàn cảnh hoặc chứa ca bất định nghiêm trọng cần hoãn thẩm định.
+
+### 4.2 Chi tiết thuộc tính của `traffic_sign` (Attributes)
+
+| Tên Attribute | Kiểu nhập | Các giá trị cho phép | Giá trị mặc định | Định nghĩa & Tiêu chuẩn nhận diện trực quan |
+|---|---|---|---|---|
+| `sign_group` | select | `__undefined__`<br>`prohibitory`<br>`warning`<br>`mandatory`<br>`other_info`<br>`unknown` | `__undefined__` | **Nhóm chức năng của biển báo:**<br>• `prohibitory`: Biển cấm/dừng. Hình tròn viền đỏ nền trắng/xanh; hình bát giác đỏ (STOP); tam giác ngược viền đỏ (Yield/Nhường đường). Ví dụ: Cấm quay đầu, Cấm đi ngược chiều, Giới hạn tốc độ.<br>• `warning`: Biển nguy hiểm/cảnh báo. Hình tam giác đều viền đỏ đỉnh hướng lên nền vàng/trắng (Vienna); hoặc hình thoi vàng viền đen (chuẩn Mỹ). Ví dụ: Khúc cua nguy hiểm, Công trường, Giao nhau với đường ưu tiên.<br>• `mandatory`: Biển hiệu lệnh. Hình tròn nền xanh lam với mũi tên/biểu tượng màu trắng chỉ hướng đi bắt buộc, làn xe buýt, tốc độ tối thiểu.<br>• `other_info`: Biển chỉ dẫn & biển phụ. Biển thông tin làn đường, biển tên đường, biển hình thoi vàng viền trắng (Priority Road), và tất cả các biển phụ hình chữ nhật gắn dưới biển chính.<br>• `unknown`: Mặt trước của biển bị suy giảm chất lượng nặng, bạc màu hoặc lóa sáng đến mức không thể xếp vào 4 nhóm trên dù vẫn thấy rõ viền biển. |
+| `relevance` | select | `__undefined__`<br>`facing_ego`<br>`facing_away`<br>`lateral` | `__undefined__` | **Hướng hiệu lực tác động tới xe tự hành (Ego vehicle):**<br>• `facing_ego`: Biển hướng thẳng hoặc chếch góc vào tầm nhìn xe mình, có hiệu lực chi phối trực tiếp tới hành vi lái xe trên làn đường Ego đang di chuyển.<br>• `facing_away`: Biển quay lưng (mặt trước xoay góc $> 90^\circ$ so với hướng di chuyển của xe mình, ví dụ biển của làn đường ngược chiều hoặc nhìn thấy góc xiên cạnh sau).<br>• `lateral`: Biển hướng vuông góc sang làn đường nhánh, đường giao cắt hoặc đường song song cách biệt; không điều khiển luồng giao thông của làn Ego đang chạy. |
+| `occlusion` | select | `none`<br>`partial`<br>`heavy` | `none` | **Mức độ che khuất bề mặt hiển thị của biển:**<br>• `none`: Mặt biển hiển thị hoàn chỉnh hoặc bị che $< 10\%$ diện tích.<br>• `partial`: Bị che khuất từ $10\%$ đến $50\%$ (ví dụ cành cây, cột đèn, phương tiện khác che một góc nhưng vẫn nhận dạng rõ hình học/nội dung).<br>• `heavy`: Bị che khuất từ $> 50\%$ đến $80\%$ diện tích (mặt biển bị che phần lớn nhưng vẫn còn bằng chứng tin cậy để nhận diện). *Ghi chú: Nếu bị che $> 80\%$, xem xét IGNORE hoặc Escalate.* |
+| `legibility` | select | `legible`<br>`unreadable` | `legible` | **Khả năng đọc hiểu nội dung/ký hiệu:**<br>• `legible`: Khi zoom ảnh gốc, mắt người bình thường có thể đọc rõ chữ số, mũi tên hoặc biểu tượng bên trong biển.<br>• `unreadable`: Biển bị mờ do độ phân giải thấp, nhòe chuyển động (motion blur), hoặc chói sáng khiến không thể đọc được nội dung chi tiết bên trong, dù vẫn nhận dạng được hình khối biển báo. |
+| `escalate_review` | checkbox | `false`<br>`true` | `false` | **Đánh dấu ca khó cần hội chẩn:**<br>• `false`: Quyết định gán nhãn đã chắc chắn.<br>• `true`: Đánh dấu khi annotator gặp ca biên phân vân (viền mờ, không rõ nhóm chức năng, góc xoay ranh giới giữa `facing_ego` và `lateral`) cần Reviewer/Team Lead xử lý. |
+
+> [!CRITICAL]
+> **Quy định bắt buộc về giá trị mặc định:**
+> Hai thuộc tính `sign_group` và `relevance` được cấu hình mặc định là `__undefined__`. Đây là cơ chế chống lỗi chủ đích (anti-bias design) được thỏa thuận giữa Spec Owner và CVAT Owner. Khi xuất file annotation, bất kỳ box nào còn sót giá trị `__undefined__` sẽ bị hệ thống QA gắn cờ lỗi nặng (Major Error) và từ chối nghiệm thu.
+
+---
+
+## 5. Inclusion / exclusion matrix
+
+Ma trận tra cứu nhanh hành động cho người gán nhãn:
+
+| Ngữ cảnh quan sát | Kích thước & Điều kiện | Quyết định (Decision) | Thao tác trên CVAT |
 |---|---|---|---|
-| traffic_sign | Object class | Rectangle | Mặt biển thuộc scope, đủ bằng chứng đặt box |
-| image_escalate | Tag toàn ảnh | Không có geometry | Có ít nhất một trường hợp chưa quyết định được hoặc ảnh không đủ chất lượng |
+| Biển chuẩn, rõ nét, viền xác định | $L \ge 12 \text{ px}$ | **LABEL** | Vẽ rectangle `traffic_sign`, chọn `sign_group`, `relevance`, `occlusion = none`, `legibility = legible`. |
+| Biển bị mờ/xa nhưng nhận diện được nhóm | $L \ge 12 \text{ px}$ | **LABEL** | Vẽ rectangle, chọn đúng nhóm biển, chọn `legibility = unreadable`. |
+| Cột có nhiều biển báo xếp dọc | Mỗi biển $L \ge 12 \text{ px}$ | **LABEL riêng** | Vẽ từng rectangle cho từng mặt biển riêng biệt. |
+| Biển phụ hình chữ nhật gắn dưới biển chính | $L \ge 12 \text{ px}$ | **LABEL** | Vẽ rectangle riêng, gán `sign_group = other_info`. |
+| Biển cấm ở đường gom/nhánh rẽ | $L \ge 12 \text{ px}$ | **LABEL** | Vẽ rectangle, chọn `sign_group = prohibitory`, chọn `relevance = lateral`. |
+| Biển cấm ở làn ngược chiều (ngoảnh mặt đi) | Thấy viền trước/nghiêng | **LABEL** | Vẽ rectangle, chọn `relevance = facing_away`. |
+| Mặt sau biển quay trơn nhẵn $180^\circ$ | Không thấy viền trước | **IGNORE** | Không vẽ box. |
+| Biển quá xa hoặc quá nhỏ | $L < 12 \text{ px}$ | **IGNORE** | Không vẽ box. |
+| Biển quảng cáo, trạm xăng, số nhà | Mọi kích thước | **IGNORE** | Không vẽ box. |
+| Đèn giao thông, cọc tiêu, vạch kẻ đường | Mọi kích thước | **IGNORE** | Không vẽ box. |
+| Biển bị che $> 80\%$ không còn hình thù | Mọi kích thước | **IGNORE** | Không vẽ box. |
+| Nghi ngờ là biển nhưng viền quá nhòe | $L \ge 12 \text{ px}$ | **ESCALATE** | Vẽ rectangle, chọn `sign_group = unknown`, tick `escalate_review = true`. |
+| Toàn bộ frame ảnh bị hỏng/đen/chói lóa | Toàn ảnh | **TAG ESCALATE** | Chọn công cụ Tag trên thanh công cụ CVAT $\rightarrow$ gán nhãn `image_escalate`. |
 
-Không có thuộc tính `sign_group`, `relevance`, `legibility`, `occlusion`; không có class `unknown`. Tag review là dấu hiệu quy trình, không phải nhóm biển thứ hai.
+---
 
-Người phụ trách file 03 phải cấu hình đúng class và tag trước khi tạo task; không tự thêm nhãn khi calibration.
+## 6. Visibility, occlusion & edge conditions
 
-## 5. Inclusion / exclusion
+### 6.1 Biển nhỏ và ở cự ly xa (Small / Far objects)
+- Phóng to ảnh (zoom) để kiểm tra cấu trúc pixel gốc. Không sử dụng các công cụ nội suy tăng nét AI làm sai lệch điểm ảnh.
+- Dùng công cụ thước đo hoặc tọa độ box để kiểm tra: Nếu $L = \max(w, h) < 12 \text{ px}$, kiên quyết bỏ qua (`IGNORE`).
+- Nếu $12 \le L < 20 \text{ px}$, đặc biệt chú ý quan sát màu sắc viền (đỏ/xanh) để không bỏ sót các biển cấm (`prohibitory`) hoặc biển cảnh báo (`warning`).
 
-| Trường hợp | Quyết định |
-|---|---|
-| Nhận diện được mặt biển, viền rõ, L >= 12 px | LABEL |
-| Không đọc được nội dung nhưng chắc chắn là biển và đặt được box | LABEL |
-| Nhiều mặt biển chung cột | LABEL từng mặt riêng |
-| Biển phụ là tấm riêng thuộc scope | LABEL nếu đạt kích thước |
-| Biển đường nhánh, thấy mặt trước | LABEL, không suy đoán hiệu lực với xe |
-| Mặt sau, quảng cáo, cột và đối tượng ngoài scope | IGNORE |
-| Chắc chắn L < 12 px | IGNORE |
-| Có thể là biển nhưng không đủ bằng chứng hoặc không xác định được viền | ESCALATE |
+### 6.2 Hiện tượng mờ, chói sáng (Blur / Flare / Glare)
+- Chụp ban ngày ngược sáng hoặc chụp ban đêm dưới ánh đèn pha thường tạo ra quầng sáng (halo) quanh biển báo phản quang.
+- **Quy tắc:** Bounding box chỉ bao quanh phần vật lý của mặt biển, tuyệt đối không mở rộng box để bao trùm quầng sáng loang ra xung quanh.
+- Nếu lóa sáng làm mất toàn bộ họa tiết bên trong nhưng hình dáng hình học (tròn/tam giác) vẫn rõ: Gán `legibility = unreadable` và chọn `sign_group` tương ứng theo hình khối.
 
-## 6. Visibility / occlusion
+### 6.3 Che khuất một phần (Partial Occlusion)
+- Khi biển báo bị cành cây, cọc tiêu, hoặc xe tải che khuất:
+  - Nếu phần nhìn thấy đủ để suy luận đường viền vật lý của biển: Vẽ 1 box bao phủ toàn bộ diện tích phần nhìn thấy cộng với phần bị che khuất suy diễn hợp lý (để giữ nguyên hình khối chuẩn của biển).
+  - Đánh giá tỷ lệ diện tích bị che: $< 10\% \rightarrow$ `occlusion = none`; $10\% - 50\% \rightarrow$ `occlusion = partial`; $> 50\% - 80\% \rightarrow$ `occlusion = heavy`.
+  - Nếu bị che quá $80\%$, không còn đủ thông tin để downstream model học nhận dạng: chuyển sang `IGNORE` (nếu chắc chắn không thể dùng) hoặc `escalate_review = true` (nếu cần trưởng nhóm phán quyết).
 
-- **Nhỏ/xa:** dùng ngưỡng mục 3; zoom để xem pixel gốc, không dùng công cụ sinh thêm chi tiết để quyết định.
-- **Mờ/lóa:** nhận diện được biển và viền thì vẽ phần nhìn thấy, không lấy quầng sáng; không xác định được thì review.
-- **Bị che:** vẽ khi nhận diện được mặt biển và giới hạn phần nhìn thấy; không đoán toàn bộ hình dạng. Không dùng ngưỡng che 50%/80% khi chưa có cách ước lượng đáng tin cậy.
-- **Cắt mép:** vẽ phần trong ảnh nếu nhận diện được và L >= 12 px.
-- **Nghiêng:** không bỏ chỉ vì nghiêng hoặc không đọc được chữ. Chắc chắn mặt sau thì bỏ; chưa phân định được thì review.
-- **Phản chiếu:** không gán ảnh phản chiếu của biển trong kính/gương; nếu không phân biệt được, review.
+### 6.4 Góc nghiêng phối cảnh (Perspective Distortion)
+- Biển báo nằm ở góc cua hoặc ven vỉa hè thường bị nghiêng so với mặt phẳng camera.
+- Vẫn dùng bounding box 2D hình chữ nhật song song trục tọa độ để đóng khung phần bao ngoài cùng của mặt biển nghiêng.
+- Đánh giá hướng: Nếu góc nghiêng mở về phía xe Ego $< 60^\circ \rightarrow$ `relevance = facing_ego`; nếu nghiêng quay đi $> 90^\circ \rightarrow$ `relevance = facing_away`; nếu quay sang đường giao cắt vuông góc $\rightarrow$ `relevance = lateral`.
 
-## 7. Ambiguity / escalation
+### 6.5 Ảnh phản chiếu (Reflection)
+- Biển báo phản chiếu trên nắp ca-pô xe mình, trên mặt đường ướt sũng nước mưa hoặc trên kính tòa nhà ven đường: **Tuyệt đối không gán nhãn (`IGNORE`)**. Chỉ gán nhãn thực thể vật lý thực thụ trên đường.
 
-**Biểu diễn trong CVAT:**
-1. **LABEL:** tạo box `traffic_sign`.
-2. **IGNORE:** không tạo box. Khi chấm, đối chiếu việc không có box ở vùng đã xác định trong gold; export không chứa đối tượng IGNORE riêng.
-3. **ESCALATE:** nghi có biển nhưng chưa quyết định được hoặc không đặt được viền thì không vẽ box đoán; gán tag `image_escalate` cho ảnh. Vẫn gán các biển khác đã rõ. Một tag đủ cho ảnh có nhiều ca chưa rõ.
-4. **Ảnh hỏng/mờ toàn cảnh:** gán `image_escalate`, không đoán box. Kiểm tra tag có trong export.
+---
 
-Annotator ghi sample_id, vị trí gần đúng và lý do vào nhật ký QA chung, kèm ảnh chụp vùng cần xem. QA owner tiếp nhận, chuyển nhóm trưởng nếu còn bất đồng. Trước freeze, thống nhất quyết định, sửa guideline khi cần, thực hiện LABEL/IGNORE rồi xóa tag nếu mọi ca trong ảnh đã giải quyết. Không chốt gold cho ca còn bất đồng.
+## 7. Ambiguity, escalation & Downstream Critical Risks
 
-Trong blind window, peer gán tag và ghi câu hỏi vào clarification log, không nhờ owner giải thích miệng.
+### 7.1 Ma trận lỗi chí mạng (Safety-Critical Failure Modes)
+Căn cứ hợp đồng downstream contract tại `01_problem_statement.md`, hai nhóm lỗi sau đây được phân loại là **Lỗi chí mạng (Critical Failure)** trong quy trình QA và chấm điểm Gold Decision:
 
-Lỗi bỏ sót biển có vai trò an toàn có thể được định nghĩa critical trong QA/gold trước freeze. Không mặc định mọi lỗi box là critical; bbox không xác định nội dung hay hành động lái xe.
+```
++----------------------------------------------------------------------------------------------------+
+|                                    SAFETY-CRITICAL RISK MATRIX                                     |
++----------------------------------------------------------------------------------------------------+
+| 1. FALSE NEGATIVE Ở BIỂN AN TOÀN (Critical Risk 1)                                                 |
+|    - Hành vi sai phạm: Bỏ sót không gán (miss), gán nhãn IGNORE, hoặc phân loại sai sign_group cho    |
+|      biển cấm (prohibitory: STOP, Cấm đi ngược chiều, Giới hạn tốc độ) hoặc biển cảnh báo nguy hiểm |
+|      (warning) đang hướng thẳng về xe mình (facing_ego).                                           |
+|    - Hậu quả downstream: Xe tự hành lao qua giao lộ nguy hiểm mà không giảm tốc/dừng xe, dẫn đến  |
+|      nguy cơ va chạm và tai nạn trực diện nghiêm trọng.                                            |
++----------------------------------------------------------------------------------------------------+
+| 2. FALSE POSITIVE HƯỚNG HIỆU LỰC (Critical Risk 2)                                                 |
+|    - Hành vi sai phạm: Gán nhầm relevance = facing_ego cho biển cấm/giới hạn tốc độ đang quay lưng  |
+|      (facing_away) hoặc biển thuộc làn đường nhánh, đường gom song song (lateral).                  |
+|    - Hậu quả downstream: Hệ thống ADAS hiểu nhầm biển cấm của làn đường khác áp dụng cho mình,     |
+|      kích hoạt phanh gấp đột ngột (phantom braking) giữa đường tốc độ cao, gây tai nạn dồn toa     |
+|      từ các xe chạy phía sau.                                                                      |
++----------------------------------------------------------------------------------------------------+
+```
+
+### 7.2 Biểu diễn các quyết định trong CVAT Export
+1. **LABEL:** Tạo box `traffic_sign` kèm chọn đủ 5 thuộc tính.
+2. **IGNORE:** Không tạo box trên đối tượng. Khi chấm thi và QA, sự vắng mặt của box tại vị trí đối tượng ngoài scope là bằng chứng của quyết định IGNORE đúng.
+3. **UNKNOWN / ESCALATE:** Tạo box `traffic_sign`, chọn `sign_group = unknown` (hoặc `other_info` nếu nghiêng về biển chỉ dẫn), và bắt buộc tick checkbox `escalate_review = true`.
+4. **TAG ESCALATE:** Chọn nhãn `image_escalate` kiểu `tag` cho toàn ảnh.
+
+### 7.3 Quy trình phân giải và leo thang (Escalation Protocol)
+- **Trong nội bộ nhóm (Calibration & Gold Creation):**
+  1. Khi annotator gặp ca mâu thuẫn hoặc không thể xác định viền ngoài/thuộc tính sau 2 phút xem xét: Annotator tạo box, tick `escalate_review = true` (hoặc gắn tag `image_escalate`).
+  2. Ghi chép ngay thông tin vào biên bản review nội bộ: `sample_id`, tọa độ box ước lượng, và mô tả vướng mắc.
+  3. **Escalation Path:** Ca vướng mắc được chuyển trực tiếp cho QA Owner (Phạm Xuân Duy) và Gold Owner (Ngô Duy Ngọc). Nếu hai bên chưa đồng thuận, Spec Owner (Phạm Hữu Hải) sẽ là người đưa ra phán quyết cuối cùng dựa trên Downstream Contract.
+  4. Sau khi chốt quyết định, tình huống biên sẽ được văn bản hóa thành 1 thẻ tại `04_edge_cases/edge_case_cards.md` và cập nhật vào guideline.
+- **Trong phiên Blind Test với đối tác (Team 01):**
+  1. Nhóm đối tác Team 01 khi thực hiện blind test trong 15 phút sẽ tuyệt đối **không nhận được giải thích bằng miệng** từ Team 09.
+  2. Mọi thắc mắc của Team 01 được ghi nhận nguyên văn vào `07_blind_handoff/clarification_log.csv` (`time,asker,question,answered_how,guideline_change`).
+  3. Nếu Team 01 không hiểu rule và phải đặt câu hỏi, đó là bằng chứng trực tiếp cho thấy guideline còn lỗ hổng (Guideline Gap) cần khắc phục ở phiên bản tiếp theo.
+
+---
 
 ## 8. Temporal rule
 
-Không áp dụng — task ảnh tĩnh. Không dùng track, nội suy hoặc ảnh kế tiếp để suy ra phần không nhìn thấy.
+- **Tập dữ liệu tĩnh GTSDB:** Hiện tại, thử thách Day 09 thực thi trên tập 28 ảnh tĩnh `gtsdb`. Mỗi bức ảnh là một bối cảnh độc lập.
+- **Quy tắc:** Tuyệt đối không dùng tính năng Tracking của CVAT; không ngoại suy hoặc đoán nhận vị trí biển báo dựa trên chuỗi thời gian.
+- **Mở rộng (khi làm việc với LISA Video):** Nếu mở rộng sang video clip liên tiếp 30 frames của LISA, mỗi cột biển là một `Track`, các thuộc tính hình thái như `occlusion` có thể chuyển thành `mutable` qua từng frame; khi xe chạy vượt qua biển và biển ra khỏi khung hình, annotator bắt buộc bấm phím **O** (Outside) để đóng track, tránh lỗi box kéo dài vô tận.
 
-## 9. Examples
+---
 
-**Các ảnh dưới đây là đề xuất, chưa khóa split.** Sample pack hiện trống. Dành GTS01, GTS03, GTS07 cho example hoặc calibration; không dùng chúng làm blind sau khi đã đưa vào guideline.
+## 9. Concrete examples (Minh chứng dữ liệu thực tế)
 
-| sample_id | Thấy gì | Expected output | Rule |
-|---|---|---|---|
-| GTS01 | Hai cụm biển xếp dọc, mỗi cụm ba mặt biển | Sáu box riêng tại hai cụm; không gom cả cột. Một box tham chiếu bên phải: (723,431)–(752,457) | Mục 2–3 |
-| GTS03 | Biển tam giác và biển tròn bên phải; có đèn giao thông phía trên đường | Hai box riêng tại cụm bên phải: tham chiếu (1113,436)–(1152,473), (1117,473)–(1146,502). Không gán đèn giao thông. Đây không phải toàn bộ biển của ảnh | Mục 2, 5 |
-| GTS07 | Công trường dưới cầu, có chi tiết nhỏ giống biển; GT nguồn không có dòng nhãn | Không coi GT trống là ảnh âm tính. Xem ứng viên ở ảnh gốc: đủ bằng chứng và L >= 12 thì LABEL, dưới ngưỡng thì IGNORE, chưa rõ thì image_escalate | Mục 3, 6–7 |
+Các ví dụ sau đây được trích xuất trực tiếp từ các file ảnh trong kho dữ liệu `data/gtsdb/` của nhóm:
 
-Ảnh để đối chiếu:
-- [GTS01](../data/gtsdb/GTS01.png)
-- [GTS03](../data/gtsdb/GTS03.png)
-- [GTS07](../data/gtsdb/GTS07.png)
+### Ví dụ 1: Cụm biển xếp dọc nhiều tầng trên cùng một cột bên lề phải
+- **Tệp dữ liệu:** [GTS01.png](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/data/gtsdb/GTS01.png)
+- **Hiện trường quan sát:** Đoạn đường quốc lộ ngoại ô, phía lề phải có cụm biển báo gồm 1 biển cấm tròn viền đỏ ở trên và 1 biển phụ hình chữ nhật màu trắng ở dưới gắn chung một cột thép. Xa hơn bên trái có một cụm biển tương tự của chiều đối diện.
+- **Expected Annotation:**
+  - **Box 1 (Biển chính bên phải):** Tọa độ tham chiếu `(723, 431) - (752, 457)`.
+    - `Class`: `traffic_sign`
+    - `sign_group`: `prohibitory` (Biển cấm)
+    - `relevance`: `facing_ego` (Hướng thẳng vào xe mình)
+    - `occlusion`: `none`
+    - `legibility`: `legible`
+    - `escalate_review`: `false`
+  - **Box 2 (Biển phụ ngay dưới Box 1):** Tọa độ tham chiếu `(724, 459) - (751, 474)`.
+    - `Class`: `traffic_sign`
+    - `sign_group`: `other_info` (Biển phụ cung cấp cự ly áp dụng)
+    - `relevance`: `facing_ego`
+    - `occlusion`: `none`
+    - `legibility`: `legible`
+    - `escalate_review`: `false`
+- **Quy tắc minh chứng:** Tuyệt đối tách riêng 2 box, không vẽ một box to ôm cả biển cấm lẫn biển phụ. Không bao trùm cọc sắt bên dưới.
 
-Cần bổ sung hình có box đúng/sai và ca che khuất sau khi nhóm rà soát, trước blind handoff. Đính kèm hình vào CVAT Guide/gói bàn giao; đường dẫn repo không tự hoạt động trong CVAT.
+### Ví dụ 2: Cụm biển cảnh báo nguy hiểm kết hợp đèn tín hiệu giao thông
+- **Tệp dữ liệu:** [GTS03.png](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/data/gtsdb/GTS03.png)
+- **Hiện trường quan sát:** Phía bên phải đường có một cụm biển gồm: Biển tam giác viền đỏ cảnh báo công trường/nguy hiểm ở trên, và Biển tròn hiệu lệnh/cấm ở bên dưới. Trên cao giữa làn đường có giàn đèn tín hiệu giao thông.
+- **Expected Annotation:**
+  - **Box 1 (Biển tam giác trên):** Tọa độ tham chiếu `(1113, 436) - (1152, 473)`.
+    - `Class`: `traffic_sign`
+    - `sign_group`: `warning` (Biển cảnh báo nguy hiểm)
+    - `relevance`: `facing_ego`
+    - `occlusion`: `none`
+    - `legibility`: `legible`
+  - **Box 2 (Biển tròn dưới):** Tọa độ tham chiếu `(1117, 473) - (1146, 502)`.
+    - `Class`: `traffic_sign`
+    - `sign_group`: `prohibitory` (hoặc `mandatory` tùy biểu tượng)
+    - `relevance`: `facing_ego`
+    - `occlusion`: `none`
+    - `legibility`: `legible`
+  - **Đèn tín hiệu giao thông:** `IGNORE` (Không vẽ bất kỳ box nào lên giàn đèn tín hiệu).
+- **Quy tắc minh chứng:** Tách biệt ranh giới giữa biển báo đường bộ và đèn tín hiệu hạ tầng; vẽ đúng từng biển trong cụm.
 
-GT gốc chỉ là tham chiếu. Scope nhóm có thể gồm biển phụ hoặc biển ngoài tập lớp nguồn, nên phải kiểm tra trực quan trước khi chốt gold. Không đưa ảnh hoặc đáp án blind vào guideline.
+### Ví dụ 3: Biển báo nhỏ, xa tại khu vực công trường dưới gầm cầu
+- **Tệp dữ liệu:** [GTS07.png](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/data/gtsdb/GTS07.png)
+- **Hiện trường quan sát:** Khu vực cầu vượt và công trường thi công; có các chi tiết biển báo nhỏ cắm cạnh rào chắn bê tông ở khoảng cách xa. Ground truth gốc của bộ dữ liệu nguồn có thể để trống.
+- **Quy trình xử lý:**
+  - Phóng to kiểm tra từng đối tượng nghi ngờ ở độ phân giải gốc $1360 \times 800$.
+  - Nếu đo đạc thấy $L = \max(w, h) \ge 12 \text{ px}$ và có hình khối biển báo xác định: Bắt buộc vẽ box, chọn `legibility = unreadable` nếu không đọc được biểu tượng.
+  - Nếu $L < 12 \text{ px}$: Bỏ qua (`IGNORE`), không vẽ box.
+  - Nếu đối tượng bị nhòe nặng không thể xác định được mép biên hộp bao: Đánh dấu `escalate_review = true` hoặc gắn tag `image_escalate`.
+- **Quy tắc minh chứng:** Không mặc định tệp ground truth gốc của GTSDB là chân lý; mọi đối tượng thỏa mãn $L \ge 12 \text{ px}$ và thuộc scope đều phải được gán nhãn để bảo đảm downstream model không bị thiếu dữ liệu học.
 
-## 10. Common mistakes
+### Ví dụ 4: Biển bị che khuất một phần bởi cành cây ven đường (Occlusion Handling)
+- **Tệp dữ liệu minh chứng:** [GTS02.png](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/data/gtsdb/GTS02.png) hoặc [GTS06.png](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/data/gtsdb/GTS06.png)
+- **Hiện trường quan sát:** Biển báo giới hạn tốc độ tròn viền đỏ bị tán cây che mất khoảng $20\%$ góc bên phải của mặt biển.
+- **Expected Annotation:**
+  - Vẽ một bounding box chữ nhật bao trọn hình tròn nguyên bản của biển (box bao trùm cả phần tán cây che phía trên góc phải).
+  - Gán thuộc tính: `sign_group = prohibitory`, `relevance = facing_ego`, `occlusion = partial`, `legibility = legible`.
+- **Quy tắc minh chứng:** Không cắt cúp mép box lẹm vào trong chỉ để tránh tán cây; giữ nguyên hình học bao quanh mặt biển vật lý.
 
-| Lỗi | Cách tránh |
-|---|---|
-| Gộp nhiều biển cùng cột | Đếm và vẽ từng mặt riêng |
-| Lấy cả cột hoặc quầng sáng | Bám viền mặt biển nhìn thấy |
-| Vẽ bù phần bị che/ngoài ảnh | Không suy đoán phần khuất |
-| Bỏ biển do không đọc được nội dung | Vẫn vẽ nếu nhận diện và đặt được viền |
-| Chỉ gán biển được cho là liên quan xe mình | Gán mọi mặt trước thuộc scope |
-| Đo 12 px theo màn hình zoom | Đo bằng tọa độ ảnh gốc |
-| Coi GT trống là không có biển | Rà soát ảnh theo mục 5–7 |
-| Tự thêm nhóm biển | Chỉ dùng traffic_sign và tag review đã cấu hình |
-| Để ca mơ hồ trống mà không báo | Thêm image_escalate và ghi lý do |
+---
 
-### Việc cần đồng bộ trước khi sử dụng
+## 10. Common mistakes & Annotator Checklist
 
-- File 01: chuyển về bài bbox-only, không giữ yêu cầu phân nhóm/hướng hiệu lực.
-- File 03: cấu hình class và tag đúng mục 4; thử export.
-- Sample pack: chốt ảnh example, calibration và blind không trùng nhau.
-- Bổ sung hình minh họa, cho thành viên khác làm thử.
-- Sau calibration cập nhật v2; sau blind test cập nhật v3; ghi từng lần tăng version vào file 08.
+### 10.1 Bảng phân tích các lỗi phổ biến và biện pháp khắc phục
+
+| Mã lỗi | Tên lỗi thường gặp | Nguyên nhân gốc rễ | Hậu quả kỹ thuật | Biện pháp ngăn chặn bắt buộc |
+|---|---|---|---|---|
+| **E-01** | Gộp nhiều biển cùng cột vào 1 box | Annotator thao tác vội, lười tách box | Downstream model học sai kích thước biển, không phân loại được từng thuộc tính | Mỗi mặt biển vẽ 1 box riêng. Đếm số mặt biển trước khi vẽ. |
+| **E-02** | Bỏ quên thuộc tính ở giá trị `__undefined__` | Do hệ thống đặt default là `__undefined__` để chống thiên kiến | Annotation xuất ra bị thiếu dữ liệu, vi phạm hợp đồng schema | Chuyển chế độ sang **Attribute Annotation** trên CVAT để kiểm tra từng box trước khi bấm Save. |
+| **E-03** | Nhầm lẫn `facing_ego` với `lateral` hoặc `facing_away` | Không phân tích góc hiệu lực tới làn xe mình | **Lỗi chí mạng 2:** Gây ra phantom braking nguy hiểm khi xe phanh oan vì biển đường khác | Luôn tự hỏi: "Biển này có bắt buộc xe Ego phải tuân thủ ngay trên làn này không?". Nếu không $\rightarrow$ chọn `lateral` hoặc `facing_away`. |
+| **E-04** | Bỏ sót biển cấm / cảnh báo nhỏ ($12 \le L < 20 \text{ px}$) | Mắt thường nhìn lướt không thấy | **Lỗi chí mạng 1:** Xe tự hành vượt biển cấm/STOP, nguy cơ tai nạn trực diện | Quét kỹ lề đường và giá long môn ở chế độ zoom $100\%$. Đo kích thước trước khi quyết định bỏ qua. |
+| **E-05** | Bao trùm cả cột cọc và bóng đổ vào box | Kéo chuột từ chân cọc lên đỉnh biển | IoU giảm mạnh ($< 0.85$), model detect box bị lệch tâm | Chỉ đặt góc trên và góc dưới bám sát mép ngoài của mặt hiển thị tròn/tam giác/chữ nhật của biển. |
+| **E-06** | Đo kích thước $12 \text{ px}$ theo màn hình zoom | Nhầm lẫn kích thước hiển thị với pixel ảnh gốc | Gán nhầm các biển siêu nhỏ dưới $12 \text{ px}$ hoặc bỏ sót biển hợp lệ | Xem tọa độ góc $(x_1, y_1), (x_2, y_2)$ hiển thị trên CVAT và tính $L = \max(|x_2-x_1|, |y_2-y_1|)$. |
+| **E-07** | Tự ý bỏ qua ca khó mà không báo cáo | Ngại hỏi, đoán mò hoặc bỏ qua | Gây bất đồng ngầm giữa các annotator, kéo tụt điểm GTS | Bắt buộc tick `escalate_review = true` và ghi vào sổ nhật ký QA của nhóm. |
+
+### 10.2 Checklist 5 bước của Annotator trước khi bấm Save (Ctrl+S)
+
+1. [ ] **Quét diện tích ảnh:** Đã rà soát toàn bộ lề phải, lề trái, dải phân cách và giá long môn trên cao chưa?
+2. [ ] **Kiểm tra ngưỡng hình học:** Các biển đã vẽ có thỏa mãn $L \ge 12 \text{ px}$ không? Có box nào vô tình dính cọc hoặc quầng sáng không?
+3. [ ] **Độc lập Instance:** Cụm biển xếp chồng đã được tách thành các box riêng biệt chưa?
+4. [ ] **Làm sạch Attribute:** Đã loại bỏ hoàn toàn giá trị `__undefined__` ở cả `sign_group` và `relevance` chưa?
+5. [ ] **Xử lý bất định:** Các ca phân vân đã được tick `escalate_review = true` hoặc gắn tag `image_escalate` chưa?
