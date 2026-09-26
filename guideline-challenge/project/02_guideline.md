@@ -2,6 +2,9 @@
 
 **Version:** v2
 
+> [!TIP]
+> **Bản trực quan hóa tương tác (HTML Visual Guide):** Người gán nhãn hoặc nhóm peer có thể mở file [guideline_visualizer.html](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/project/guideline_visualizer.html) bằng trình duyệt web (Chrome/Edge) để xem minh họa trực quan Good/Bad bbox, sơ đồ góc nhìn hiệu lực chống phanh oan, mẫu ảnh GTSDB và làm bài trắc nghiệm thực hành nhanh.
+
 ---
 
 ### Thông tin dự án & Phân công trách nhiệm (Team 09)

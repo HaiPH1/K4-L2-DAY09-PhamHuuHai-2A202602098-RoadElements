@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVAT Visual Annotation Guide - Team 09</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #182234;
+      --bg-card-hover: #233148;
+      --accent-blue: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-red: #f87171;
+      --accent-amber: #fbbf24;
+      --accent-emerald: #34d399;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-subtle: #334155;
+      --border-glow: rgba(56, 189, 248, 0.3);
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      line-height: 1.6;
+      padding-bottom: 80px;
+    }
+
+    /* Header & Hero */
+    header {
+      background: linear-gradient(135deg, #090d16 0%, #1e1b4b 50%, #0f172a 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 40px 24px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      max-width: 850px;
+    }
+
+    .meta-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .badge-primary { background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.4); color: var(--accent-blue); }
+    .badge-danger { background: rgba(248, 113, 113, 0.1); border-color: rgba(248, 113, 113, 0.4); color: var(--accent-red); }
+    .badge-warning { background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.4); color: var(--accent-amber); }
+    .badge-success { background: rgba(52, 211, 153, 0.1); border-color: rgba(52, 211, 153, 0.4); color: var(--accent-emerald); }
+
+    /* Sticky Navigation */
+    nav.quick-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 0;
+    }
+
+    .nav-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .nav-btn {
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 8px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      color: #fff;
+      background: var(--accent-indigo);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Section layout */
+    section {
+      padding: 40px 0;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-size: 1rem;
+    }
+
+    /* Cards Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Interactive Box Visualizer Canvas */
+    .visual-comparison {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .box-demo-panel {
+      background: #090d16;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .demo-canvas-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      height: 200px;
+      background: #111827;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .status-pill {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pill-pass { background: #065f46; color: #6ee7b7; border: 1px solid #10b981; }
+    .pill-fail { background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+
+    /* SVG Sign Mockups */
+    .sign-icon {
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+    }
+
+    /* Alert callout */
+    .alert {
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border-left: 5px solid;
+    }
+
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.12);
+      border-left-color: var(--accent-red);
+      color: #fee2e2;
+    }
+
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.12);
+      border-left-color: var(--accent-amber);
+      color: #fef3c7;
+    }
+
+    .alert-info {
+      background: rgba(56, 189, 248, 0.12);
+      border-left-color: var(--accent-blue);
+      color: #e0f2fe;
+    }
+
+    .alert-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    /* Perspective Road Visualization */
+    .road-perspective-box {
+      width: 100%;
+      height: 280px;
+      background: linear-gradient(to bottom, #0f172a 0%, #1e293b 60%, #334155 100%);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .road-surface {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 200px solid transparent;
+      border-right: 200px solid transparent;
+      border-bottom: 220px solid #273549;
+    }
+
+    .lane-divider {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 220px;
+      background: repeating-linear-gradient(to top, #fbbf24 0px, #fbbf24 25px, transparent 25px, transparent 50px);
+    }
+
+    .ego-car {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70px;
+      height: 38px;
+      background: #3b82f6;
+      border: 2px solid #60a5fa;
+      border-radius: 8px 8px 4px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+      z-index: 10;
+    }
+
+    /* Target Pins */
+    .sign-pin {
+      position: absolute;
+      cursor: pointer;
+      transition: all 0.2s;
+      z-index: 20;
+    }
+
+    .sign-pin:hover {
+      transform: scale(1.15);
+    }
+
+    .pin-label {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* Real Image Case Tabs */
+    .case-tab-header {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .case-tab-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .case-tab-btn:hover, .case-tab-btn.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #3b82f6;
+    }
+
+    .case-content {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .case-content.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 868px) {
+      .case-content.active {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .case-img-box {
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      min-height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .case-img-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .interactive-bbox-overlay {
+      position: absolute;
+      border: 2px solid #ef4444;
+      background: rgba(239, 68, 68, 0.25);
+      border-radius: 2px;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .interactive-bbox-overlay:hover {
+      background: rgba(239, 68, 68, 0.45);
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+    }
+
+    .bbox-tag {
+      position: absolute;
+      top: -20px;
+      left: 0;
+      background: #ef4444;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    /* Attribute Table */
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    .table-custom th, .table-custom td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .table-custom th {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .table-custom tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .code-val {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #38bdf8;
+      font-size: 0.85rem;
+    }
+
+    /* Calculator widget */
+    .calc-widget {
+      background: #0d1527;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 18px;
+      margin-top: 16px;
+    }
+
+    .calc-inputs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .calc-inputs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .calc-input-group label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .calc-input-group input {
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .calc-input-group input:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .calc-result {
+      background: var(--bg-card);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* CVAT Shortcut Keyboard */
+    .kbd-key {
+      display: inline-block;
+      padding: 3px 8px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      background-color: #334155;
+      border: 1px solid #475569;
+      border-radius: 5px;
+      box-shadow: 0 2px 0 #1e293b;
+      margin: 0 2px;
+    }
+
+    /* Interactive Quiz */
+    .quiz-card {
+      background: #111d33;
+      border: 1px solid #293854;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .quiz-q {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 14px;
+      color: #f1f5f9;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-opt {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.92rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-opt:hover {
+      background: #1e3a8a;
+      border-color: #3b82f6;
+    }
+
+    .quiz-opt.correct {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #6ee7b7;
+    }
+
+    .quiz-opt.wrong {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+
+    .quiz-explain {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.3);
+      font-size: 0.88rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="hero-title">
+        <span>🚦 CVAT Visual Annotation Guide</span>
+        <span class="badge badge-primary">Version v2</span>
+      </div>
+      <p class="hero-subtitle">
+        Sổ tay hình ảnh tương tác giúp người gán nhãn hiểu rõ quy tắc hình học, hệ thống phân tầng thuộc tính (Taxonomy), hướng hiệu lực tránh phanh gấp (Phantom Braking) và các ca biên thực tế trên dữ liệu GTSDB.
+      </p>
+      <div class="meta-badges">
+        <span class="badge badge-primary">Team: 09</span>
+        <span class="badge badge-warning">Peer Review: Team 01</span>
+        <span class="badge badge-success">Task: Hierarchical Traffic Sign Bounding Box</span>
+        <span class="badge badge-danger">Safety-Critical: STOP / Warning / Phantom Braking</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Quick Nav -->
+  <nav class="quick-nav">
+    <div class="container nav-scroll">
+      <a href="#geometry" class="nav-btn">🎯 1. Quy tắc Hộp bao BBox</a>
+      <a href="#taxonomy" class="nav-btn">🏷️ 2. Nhóm biển (sign_group)</a>
+      <a href="#relevance" class="nav-btn">🧭 3. Hướng hiệu lực (relevance)</a>
+      <a href="#occlusion" class="nav-btn">👁️ 4. Che khuất & Đọc rõ</a>
+      <a href="#critical" class="nav-btn">⚡ 5. Lỗi chí mạng ADAS</a>
+      <a href="#cases" class="nav-btn">🖼️ 6. Case Study GTSDB</a>
+      <a href="#cvat-help" class="nav-btn">⌨️ 7. Thao tác CVAT</a>
+      <a href="#quiz" class="nav-btn">🎮 8. Trắc nghiệm thực hành</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- Section 1: Geometry Rules -->
+    <section id="geometry">
+      <h2 class="section-title">🎯 1. Quy tắc dựng Bounding Box chuẩn (Geometry Rules)</h2>
+      <p class="section-desc">
+        Hộp bao (2D Rectangle) phải ôm sát mép ngoài của <strong>phần mặt hiển thị nhìn thấy (visible face)</strong> của biển. Tuyệt đối không kéo dài xuống cọc đỡ, không bao trùm bóng đổ hoặc quầng sáng lóa.
+      </p>
+
+      <div class="grid-2">
+        <!-- Good vs Bad Visual Comparison -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">✅ BOX ĐÚNG (GOOD FIT)</span>
+            <span class="status-pill pill-pass">Đạt chuẩn IoU &ge; 0.85</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="240" height="170" viewBox="0 0 240 170">
+              <!-- Ground & Pole -->
+              <line x1="120" y1="110" x2="120" y2="160" stroke="#64748b" stroke-width="6" />
+              <!-- Traffic Sign: Stop -->
+              <polygon points="120,40 145,50 155,75 145,100 120,110 95,100 85,75 95,50" fill="#dc2626" stroke="#ffffff" stroke-width="2" />
+              <text x="120" y="80" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">STOP</text>
+              <!-- Correct Bounding Box -->
+              <rect x="83" y="38" width="74" height="74" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-dasharray="4,2" />
+              <!-- Corner handles -->
+              <circle cx="83" cy="38" r="3.5" fill="#22c55e" />
+              <circle cx="157" cy="112" r="3.5" fill="#22c55e" />
+              <text x="120" y="26" fill="#22c55e" font-size="11" font-weight="bold" text-anchor="middle">Ôm sát viền phản quang ngoài</text>
+            </svg>
+          </div>
+          <ul style="font-size: 0.9rem; color: var(--text-muted); padding-left: 20px;">
+            <li>Box vừa vặn 4 cạnh ngoài cùng của mặt biển bát giác.</li>
+            <li>Không chứa cọc thép bên dưới. Sai số mỗi cạnh &le; 1.5px - 3px.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">❌ BOX SAI (BAD FIT - CHỨA CỌC)</span>
+            <span class="status-pill pill-fail">Lỗi QA: IoU &lt; 0.85</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="240" height="170" viewBox="0 0 240 170">
+              <!-- Ground & Pole -->
+              <line x1="120" y1="110" x2="120" y2="160" stroke="#64748b" stroke-width="6" />
+              <!-- Traffic Sign: Stop -->
+              <polygon points="120,40 145,50 155,75 145,100 120,110 95,100 85,75 95,50" fill="#dc2626" stroke="#ffffff" stroke-width="2" />
+              <text x="120" y="80" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">STOP</text>
+              <!-- Wrong Bounding Box with pole -->
+              <rect x="75" y="35" width="90" height="120" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="2.5" />
+              <text x="120" y="24" fill="#ef4444" font-size="11" font-weight="bold" text-anchor="middle">LỖI: Kéo box ôm cả cọc sắt!</text>
+            </svg>
+          </div>
+          <ul style="font-size: 0.9rem; color: var(--text-muted); padding-left: 20px;">
+            <li>Kéo box quá rộng xuống chân cọc khiến model học sai tỷ lệ khung hình.</li>
+            <li>Box chứa diện tích nền rỗng quá 30% &rarr; Bị từ chối kiểm duyệt.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Dimension Checker Interactive Widget -->
+      <div class="calc-widget">
+        <h4 style="margin-bottom: 8px; font-size: 1rem; color: var(--accent-blue);">📏 Thước đo kích cỡ kiểm tra ngưỡng L &ge; 12px</h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+          Nhập tọa độ box trên ảnh gốc (hoặc kéo thử) để kiểm tra đối tượng có đủ điều kiện gán nhãn hay phải IGNORE.
+        </p>
+        <div class="calc-inputs">
+          <div class="calc-input-group">
+            <label>xmin</label>
+            <input type="number" id="in_xmin" value="723" oninput="calculateBoxSize()">
+          </div>
+          <div class="calc-input-group">
+            <label>ymin</label>
+            <input type="number" id="in_ymin" value="431" oninput="calculateBoxSize()">
+          </div>
+          <div class="calc-input-group">
+            <label>xmax</label>
+            <input type="number" id="in_xmax" value="752" oninput="calculateBoxSize()">
+          </div>
+          <div class="calc-input-group">
+            <label>ymax</label>
+            <input type="number" id="in_ymax" value="457" oninput="calculateBoxSize()">
+          </div>
+        </div>
+        <div class="calc-result">
+          <div>
+            <span style="color: var(--text-muted); font-size: 0.88rem;">Kích thước: </span>
+            <strong id="res_dims" style="color: #fff;">w = 29 px, h = 26 px &rarr; L = 29 px</strong>
+          </div>
+          <div id="res_status">
+            <span class="status-pill pill-pass">LABEL (L &ge; 12px | Dung sai &le; 1.5px)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Taxonomy -->
+    <section id="taxonomy">
+      <h2 class="section-title">🏷️ 2. Phân loại nhóm chức năng (`sign_group`)</h2>
+      <p class="section-desc">
+        Hệ thống quy chuẩn theo chức năng an toàn. Thuộc tính mặc định là <code class="code-val">__undefined__</code> để chống lỗi bấm nhanh bỏ qua; annotator bắt buộc phải chọn 1 trong các giá trị sau:
+      </p>
+
+      <div class="grid-4">
+        <!-- Prohibitory -->
+        <div class="card" style="border-top: 4px solid var(--accent-red);">
+          <div class="card-header">
+            <span class="card-title" style="color: var(--accent-red);">🔴 prohibitory</span>
+          </div>
+          <div style="text-align: center; margin-bottom: 12px;">
+            <svg width="80" height="80" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="#ffffff" stroke="#dc2626" stroke-width="12"/>
+              <text x="50" y="58" font-size="28" font-weight="900" fill="#000000" text-anchor="middle">50</text>
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            <strong>Biển Cấm / Dừng:</strong> Hình tròn viền đỏ nền trắng, biển STOP bát giác, biển nhường đường tam giác ngược. Ví dụ: Giới hạn tốc độ, Cấm vượt, Cấm rẽ.
+          </p>
+        </div>
+
+        <!-- Warning -->
+        <div class="card" style="border-top: 4px solid var(--accent-amber);">
+          <div class="card-header">
+            <span class="card-title" style="color: var(--accent-amber);">⚠️ warning</span>
+          </div>
+          <div style="text-align: center; margin-bottom: 12px;">
+            <svg width="80" height="80" viewBox="0 0 100 100">
+              <polygon points="50,12 90,82 10,82" fill="#ffffff" stroke="#dc2626" stroke-width="10"/>
+              <text x="50" y="72" font-size="34" font-weight="900" fill="#000000" text-anchor="middle">!</text>
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            <strong>Biển Cảnh Báo:</strong> Hình tam giác đều viền đỏ đỉnh hướng lên (hoặc hình thoi vàng kiểu Mỹ). Ví dụ: Công trường, Khúc cua gấp, Nguy hiểm phía trước.
+          </p>
+        </div>
+
+        <!-- Mandatory -->
+        <div class="card" style="border-top: 4px solid var(--accent-blue);">
+          <div class="card-header">
+            <span class="card-title" style="color: var(--accent-blue);">🔵 mandatory</span>
+          </div>
+          <div style="text-align: center; margin-bottom: 12px;">
+            <svg width="80" height="80" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="#2563eb" stroke="#ffffff" stroke-width="4"/>
+              <path d="M50,22 L50,75 M32,42 L50,22 L68,42" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            <strong>Biển Hiệu Lệnh:</strong> Hình tròn nền xanh lam có biểu tượng trắng. Bắt buộc đi thẳng, rẽ phải, làn dành riêng cho xe buýt/xe đạp, vòng xuyến.
+          </p>
+        </div>
+
+        <!-- Other Info -->
+        <div class="card" style="border-top: 4px solid var(--accent-purple);">
+          <div class="card-header">
+            <span class="card-title" style="color: var(--accent-purple);">ℹ️ other_info</span>
+          </div>
+          <div style="text-align: center; margin-bottom: 12px;">
+            <svg width="80" height="80" viewBox="0 0 100 100">
+              <rect x="15" y="30" width="70" height="40" fill="#ffffff" stroke="#334155" stroke-width="4" rx="4"/>
+              <text x="50" y="55" font-size="14" font-weight="bold" fill="#000000" text-anchor="middle">300 m</text>
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            <strong>Chỉ dẫn & Biển phụ:</strong> Biển hướng đường, biển hình thoi vàng ưu tiên, và <em>tất cả các biển phụ hình chữ nhật</em> gắn dưới biển chính.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Relevance & Phantom Braking -->
+    <section id="relevance">
+      <h2 class="section-title">🧭 3. Hướng hiệu lực (`relevance`) & Hiểm họa Phantom Braking</h2>
+      <p class="section-desc">
+        Hệ thống ADAS cần biết biển báo có áp dụng cho làn đường của xe mình hay không để tránh tình trạng xe phanh gấp bất ngờ giữa đường cao tốc.
+      </p>
+
+      <div class="grid-2">
+        <!-- Interactive Road Diagram -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🗺️ Sơ đồ góc hiệu lực nhìn từ cabin xe</span>
+          </div>
+          <div class="road-perspective-box">
+            <div class="road-surface"></div>
+            <div class="lane-divider"></div>
+            <div class="ego-car">Ego Car</div>
+
+            <!-- Facing Ego Pin -->
+            <div class="sign-pin" style="top: 70px; right: 28%;" onclick="showRelevanceDetail('facing_ego')">
+              <span class="pin-label" style="background:#059669;">facing_ego (Có hiệu lực)</span>
+              <svg width="34" height="34" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="#ffffff" stroke="#dc2626" stroke-width="12"/>
+                <text x="50" y="60" font-size="32" font-weight="900" fill="#000" text-anchor="middle">60</text>
+              </svg>
+            </div>
+
+            <!-- Facing Away Pin -->
+            <div class="sign-pin" style="top: 60px; left: 18%;" onclick="showRelevanceDetail('facing_away')">
+              <span class="pin-label" style="background:#64748b;">facing_away (Quay lưng)</span>
+              <svg width="34" height="34" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="#475569" stroke="#334155" stroke-width="6"/>
+                <line x1="50" y1="50" x2="50" y2="95" stroke="#94a3b8" stroke-width="8"/>
+              </svg>
+            </div>
+
+            <!-- Lateral Pin -->
+            <div class="sign-pin" style="top: 130px; right: 8%;" onclick="showRelevanceDetail('lateral')">
+              <span class="pin-label" style="background:#d97706;">lateral (Đường nhánh)</span>
+              <svg width="34" height="34" viewBox="0 0 100 100">
+                <rect x="15" y="15" width="70" height="70" fill="#f59e0b" stroke="#fff" stroke-width="6" rx="6"/>
+                <text x="50" y="58" font-size="28" font-weight="bold" fill="#fff" text-anchor="middle">&rarr;</text>
+              </svg>
+            </div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; text-align: center;">
+            <em>💡 Bấm vào từng biển báo trên sơ đồ để xem giải thích chi tiết.</em>
+          </p>
+        </div>
+
+        <!-- Explanation Card -->
+        <div class="card" id="relevance-detail-card">
+          <div class="card-header">
+            <span class="card-title" id="rel_title" style="color: var(--accent-emerald);">🟢 facing_ego (Hướng thẳng vào xe mình)</span>
+          </div>
+          <div id="rel_desc">
+            <p style="font-size: 0.92rem; margin-bottom: 12px;">
+              <strong>Đặc điểm nhận dạng:</strong> Mặt trước của biển vuông góc hoặc lệch góc &lt; 60&deg; hướng thẳng vào tầm nhìn của xe Ego trên làn đường đang chạy.
+            </p>
+            <p style="font-size: 0.92rem; margin-bottom: 12px;">
+              <strong>Tác động ADAS:</strong> Hệ thống ra quyết định lập tức đọc giá trị biển báo để điều khiển xe (ví dụ giảm tốc về 60 km/h).
+            </p>
+            <div class="alert alert-info" style="margin-top: 10px;">
+              <div class="alert-icon">ℹ️</div>
+              <div><strong>Lưu ý:</strong> Cụm biển xếp dọc nhiều tầng bên lề phải làn xe mình đều có <code class="code-val">relevance = facing_ego</code>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Critical Risk Callout -->
+      <div class="alert alert-danger">
+        <div class="alert-icon">🚨</div>
+        <div>
+          <h4 style="font-size: 1.05rem; margin-bottom: 4px;">CẢNH BÁO CHÍ MẠNG: Lỗi Phanh Oan (Phantom Braking)</h4>
+          <p style="font-size: 0.9rem;">
+            Nếu một biển giới hạn tốc độ 30 km/h nằm ở <strong>đường nhánh rẽ (lateral)</strong> hoặc biển cấm của làn đường gom song song bị annotator gán nhầm thành <code class="code-val">facing_ego</code>, xe tự hành ADAS sẽ tưởng lầm biển áp dụng cho mình và <strong>phanh gấp đột ngột trên cao tốc</strong>, dẫn đến tai nạn dồn toa từ các xe phía sau!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Occlusion & Legibility -->
+    <section id="occlusion">
+      <h2 class="section-title">👁️ 4. Độ che khuất (`occlusion`) & Khả năng đọc (`legibility`)</h2>
+      <p class="section-desc">Quy chuẩn đánh giá diện tích che khuất bề mặt hiển thị của biển và độ sắc nét nội dung.</p>
+
+      <div class="grid-3">
+        <!-- Occlusion None -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">occlusion: none</span>
+            <span class="status-pill pill-pass">&lt; 10% che khuất</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="#fff" stroke="#dc2626" stroke-width="10"/>
+              <text x="50" y="58" font-size="28" font-weight="900" fill="#000" text-anchor="middle">70</text>
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Mặt biển toàn vẹn, không bị cành cây hay chướng ngại vật chắn ngang.</p>
+        </div>
+
+        <!-- Occlusion Partial -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">occlusion: partial</span>
+            <span class="status-pill pill-pass">10% - 50% che khuất</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="#fff" stroke="#dc2626" stroke-width="10"/>
+              <text x="50" y="58" font-size="28" font-weight="900" fill="#000" text-anchor="middle">70</text>
+              <!-- Tree branch overlay -->
+              <path d="M60,10 Q80,40 100,50 L100,0 Z" fill="#15803d" opacity="0.9"/>
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Bị lá cây/cọc đèn che một góc nhưng vẫn suy luận được trọn vẹn viền hình học tròn.</p>
+        </div>
+
+        <!-- Occlusion Heavy -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">occlusion: heavy</span>
+            <span class="status-pill pill-fail">&gt; 50% - 80% che khuất</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="#fff" stroke="#dc2626" stroke-width="10"/>
+              <text x="50" y="58" font-size="28" font-weight="900" fill="#000" text-anchor="middle">70</text>
+              <!-- Big truck / sign overlay -->
+              <rect x="40" y="0" width="60" height="100" fill="#475569" opacity="0.95"/>
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Che hơn nửa biển nhưng vẫn nhận diện được loại biển. <em>Nếu che &gt; 80% &rarr; IGNORE</em>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Real GTSDB Case Studies -->
+    <section id="cases">
+      <h2 class="section-title">🖼️ 6. Case Study Thực Tế (Dữ liệu GTSDB của nhóm)</h2>
+      <p class="section-desc">Mẫu gán nhãn thực tế trích xuất từ tập ảnh GTSDB $1360 \times 800$ trong repo:</p>
+
+      <div class="case-tab-header">
+        <button class="case-tab-btn active" onclick="switchCaseTab('gts01')">📍 GTS01: Cột 2 Biển Xếp Dọc</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('gts03')">📍 GTS03: Biển Nguy Hiểm & Đèn Giao Thông</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('gts07')">📍 GTS07: Công Trường Nhỏ/Xa</button>
+      </div>
+
+      <!-- Tab Content GTS01 -->
+      <div id="case_gts01" class="case-content active">
+        <div>
+          <div class="case-img-box">
+            <img src="../data/gtsdb/GTS01.png" alt="GTS01" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80';">
+            <!-- Simulated Bounding Boxes -->
+            <div class="interactive-bbox-overlay" style="left: 53%; top: 54%; width: 2.2%; height: 3.3%;" title="Box 1: Biển cấm">
+              <span class="bbox-tag">Box 1</span>
+            </div>
+            <div class="interactive-bbox-overlay" style="left: 53.2%; top: 57.4%; width: 2.1%; height: 2%; border-color: #a855f7; background: rgba(168,85,247,0.3);" title="Box 2: Biển phụ">
+              <span class="bbox-tag" style="background: #a855f7;">Box 2</span>
+            </div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+            Ảnh gốc: <code class="code-val">GTS01.png</code> &middot; Cột biển bên phải (723, 431)
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 8px;">Quy chuẩn gán nhãn GTS01</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+            Cột biển báo có 2 tấm mặt riêng biệt: Biển trên tròn viền đỏ (Cấm), Biển dưới hình chữ nhật (Biển phụ bổ sung khoảng cách).
+          </p>
+          <table class="table-custom">
+            <thead>
+              <tr><th>Thuộc tính</th><th>Box 1 (Biển trên)</th><th>Box 2 (Biển dưới)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Tọa độ</strong></td><td>(723, 431)-(752, 457)</td><td>(724, 459)-(751, 474)</td></tr>
+              <tr><td><strong>sign_group</strong></td><td><code class="code-val">prohibitory</code></td><td><code class="code-val">other_info</code></td></tr>
+              <tr><td><strong>relevance</strong></td><td><code class="code-val">facing_ego</code></td><td><code class="code-val">facing_ego</code></td></tr>
+              <tr><td><strong>occlusion</strong></td><td><code class="code-val">none</code></td><td><code class="code-val">none</code></td></tr>
+              <tr><td><strong>legibility</strong></td><td><code class="code-val">legible</code></td><td><code class="code-val">legible</code></td></tr>
+            </tbody>
+          </table>
+          <div class="alert alert-warning" style="margin-top: 14px;">
+            <div class="alert-icon">⚠️</div>
+            <div style="font-size: 0.85rem;">
+              <strong>Quy tắc bất di bất dịch:</strong> Tuyệt đối vẽ 2 box riêng biệt; không vẽ 1 box to gộp cả 2 biển lại với nhau!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content GTS03 -->
+      <div id="case_gts03" class="case-content">
+        <div>
+          <div class="case-img-box">
+            <img src="../data/gtsdb/GTS03.png" alt="GTS03" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80';">
+            <div class="interactive-bbox-overlay" style="left: 81.8%; top: 54.5%; width: 2.9%; height: 4.6%;" title="Box 1: Biển cảnh báo tam giác">
+              <span class="bbox-tag">Box 1</span>
+            </div>
+            <div class="interactive-bbox-overlay" style="left: 82.1%; top: 59.1%; width: 2.1%; height: 3.6%;" title="Box 2: Biển tròn bên dưới">
+              <span class="bbox-tag">Box 2</span>
+            </div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+            Ảnh gốc: <code class="code-val">GTS03.png</code> &middot; Cụm biển bên phải lề đường
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 8px;">Quy chuẩn gán nhãn GTS03</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+            Ảnh chứa biển tam giác cảnh báo nguy hiểm, biển tròn và giàn đèn giao thông trên cao.
+          </p>
+          <table class="table-custom">
+            <thead>
+              <tr><th>Đối tượng</th><th>Quyết định</th><th>Thuộc tính</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Biển tam giác trên</td><td><span class="status-pill pill-pass">LABEL</span></td><td>`warning`, `facing_ego`, `legible`</td></tr>
+              <tr><td>Biển tròn dưới</td><td><span class="status-pill pill-pass">LABEL</span></td><td>`prohibitory`, `facing_ego`, `legible`</td></tr>
+              <tr><td>Đèn giao thông trên cao</td><td><span class="status-pill pill-fail">IGNORE</span></td><td>Ngoài scope biển báo &rarr; Không vẽ box</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab Content GTS07 -->
+      <div id="case_gts07" class="case-content">
+        <div>
+          <div class="case-img-box">
+            <img src="../data/gtsdb/GTS07.png" alt="GTS07" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80';">
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+            Ảnh gốc: <code class="code-val">GTS07.png</code> &middot; Khu vực công trường chân cầu
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 8px;">Quy chuẩn gán nhãn GTS07 (Ca khó / Biên)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+            Ảnh công trường có chi tiết biển báo nhỏ cắm ở dải phân cách xa. Ground truth nguồn có thể để trống.
+          </p>
+          <ul style="font-size: 0.88rem; color: var(--text-muted); padding-left: 20px; line-height: 1.7;">
+            <li>Phóng to kiểm tra pixel gốc: Nếu $L \ge 12\text{ px}$ và có viền rõ &rarr; Bắt buộc vẽ box, chọn <code class="code-val">legibility = unreadable</code>.</li>
+            <li>Nếu $L < 12\text{ px}$ &rarr; <code class="code-val">IGNORE</code> (Không vẽ box).</li>
+            <li>Nếu nghi ngờ là biển nhưng viền quá nhòe hạt không thể đặt mép box &rarr; Tick <code class="code-val">escalate_review = true</code> để QA duyệt.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: CVAT Shortcuts & Workflow -->
+    <section id="cvat-help">
+      <h2 class="section-title">⌨️ 7. Phím tắt & Quy trình gán nhãn CVAT siêu tốc</h2>
+      <p class="section-desc">Thao tác phím tắt giúp tăng tốc độ gán nhãn gấp 3 lần và tránh nhầm lẫn:</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">⚡ Bảng phím tắt CVAT thiết yếu</span>
+          </div>
+          <table class="table-custom">
+            <tbody>
+              <tr><td><span class="kbd-key">N</span></td><td>Lặp lại công cụ vừa dùng (vẽ box tiếp)</td></tr>
+              <tr><td><span class="kbd-key">Del</span></td><td>Xóa box đang chọn</td></tr>
+              <tr><td><span class="kbd-key">Ctrl</span> + <span class="kbd-key">Z</span></td><td>Hoàn tác thao tác vừa vẽ</td></tr>
+              <tr><td><span class="kbd-key">Ctrl</span> + <span class="kbd-key">S</span></td><td><strong>Lưu Task (Bắt buộc bấm thường xuyên!)</strong></td></tr>
+              <tr><td><span class="kbd-key">F</span> / <span class="kbd-key">D</span></td><td>Chuyển ảnh kế tiếp / lùi ảnh trước</td></tr>
+              <tr><td><span class="kbd-key">Tab</span> / <span class="kbd-key">Shift</span>+<span class="kbd-key">Tab</span></td><td>Chuyển nhanh giữa các box trong ảnh</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📋 Checklist 5 bước trước khi bấm Save (Ctrl+S)</span>
+          </div>
+          <div style="font-size: 0.9rem; line-height: 1.8;">
+            <p>1. 🔍 <strong>Quét diện tích:</strong> Đã rà soát đủ lề phải, lề trái, dải phân cách và giá treo trên cao?</p>
+            <p>2. 📏 <strong>Ngưỡng $12\text{ px}$ :</strong> Các box đã vẽ có thỏa mãn $L \ge 12\text{ px}$? Không dính cọc/quầng sáng?</p>
+            <p>3. 🧩 <strong>Độc lập Instance:</strong> Cụm biển xếp chồng đã được tách thành các box riêng chưa?</p>
+            <p>4. 🧹 <strong>Làm sạch Attribute:</strong> Đã đổi hết <code class="code-val">__undefined__</code> thành giá trị cụ thể chưa?</p>
+            <p>5. ❓ <strong>Ca nghi ngờ:</strong> Ca phân vân đã được tick <code class="code-val">escalate_review = true</code> chưa?</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Practice Quiz -->
+    <section id="quiz">
+      <h2 class="section-title">🎮 8. Trắc nghiệm thực hành nhanh (Quick Self-Check)</h2>
+      <p class="section-desc">Kiểm tra độ hiểu bài trước khi bắt đầu gán nhãn trên CVAT:</p>
+
+      <!-- Quiz 1 -->
+      <div class="quiz-card">
+        <div class="quiz-q">1. Một cột bên phải đường có 1 biển cấm tốc độ 60 km/h ở trên và 1 biển phụ chữ nhật "300m" ở dưới. Bạn sẽ vẽ thế nào?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this, false, 'Sai. Gộp 2 biển vào 1 box là lỗi nghiêm trọng làm sai tỷ lệ bbox và không gán được attribute riêng.')">A. Vẽ 1 box to ôm cả 2 biển và cọc sắt ở giữa.</div>
+          <div class="quiz-opt" onclick="checkQuiz(this, true, 'Chính xác! Mỗi mặt biển độc lập là 1 box riêng: biển trên prohibitory, biển dưới other_info.')">B. Vẽ 2 box riêng biệt cho từng mặt biển, không lấy cọc sắt.</div>
+          <div class="quiz-opt" onclick="checkQuiz(this, false, 'Sai. Biển phụ là tấm biển riêng thuộc scope bắt buộc gán nhãn.')">C. Chỉ vẽ biển cấm ở trên, bỏ qua biển phụ ở dưới.</div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 2 -->
+      <div class="quiz-card">
+        <div class="quiz-q">2. Biển báo giới hạn tốc độ 40 km/h cắm ở đường nhánh rẽ phải (làn rẽ sang đường khác). Xe Ego đang chạy thẳng ở làn chính. Gán thuộc tính relevance là gì?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this, false, 'Nguy hiểm! Nếu gán facing_ego xe tự hành sẽ phanh oan (phantom braking) giữa làn chính.')">A. facing_ego</div>
+          <div class="quiz-opt" onclick="checkQuiz(this, true, 'Chính xác! Biển ở đường nhánh/đường gom rẽ nhánh chọn lateral để xe Ego không bị phanh oan.')">B. lateral</div>
+          <div class="quiz-opt" onclick="checkQuiz(this, false, 'facing_away chỉ dùng khi biển quay lưng hoàn toàn sang chiều đối diện.')">C. facing_away</div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 3 -->
+      <div class="quiz-card">
+        <div class="quiz-q">3. Một biển báo ở rất xa, đo được kích thước xmin=400, xmax=408, ymin=200, ymax=209 (w=8px, h=9px, L=9px). Quyết định xử lý là gì?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this, false, 'Sai. Quy định kích thước tối thiểu là L >= 12px trên ảnh gốc.')">A. Vẫn vẽ box vì nhìn thấy màu đỏ.</div>
+          <div class="quiz-opt" onclick="checkQuiz(this, true, 'Chính xác! Kích thước L = 9px < 12px thuộc ngoại vi phạm vi -> IGNORE (không vẽ box).')">B. IGNORE (Không tạo bounding box).</div>
+          <div class="quiz-opt" onclick="checkQuiz(this, false, 'Chỉ escalate khi kích thước đạt >= 12px nhưng viền không xác định.')">C. Gán tag image_escalate.</div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Box dimension calculation
+    function calculateBoxSize() {
+      const xmin = parseInt(document.getElementById('in_xmin').value) || 0;
+      const ymin = parseInt(document.getElementById('in_ymin').value) || 0;
+      const xmax = parseInt(document.getElementById('in_xmax').value) || 0;
+      const ymax = parseInt(document.getElementById('in_ymax').value) || 0;
+
+      const w = Math.abs(xmax - xmin);
+      const h = Math.abs(ymax - ymin);
+      const L = Math.max(w, h);
+
+      document.getElementById('res_dims').innerText = `w = ${w} px, h = ${h} px → L = ${L} px`;
+
+      const statusEl = document.getElementById('res_status');
+      if (L >= 30) {
+        statusEl.innerHTML = `<span class="status-pill pill-pass">LABEL (L ≥ 30px | Dung sai cạnh ≤ 3.0px)</span>`;
+      } else if (L >= 12) {
+        statusEl.innerHTML = `<span class="status-pill pill-pass">LABEL (12 ≤ L < 30px | Dung sai cạnh ≤ 1.5px)</span>`;
+      } else {
+        statusEl.innerHTML = `<span class="status-pill pill-fail">IGNORE (L = ${L}px < 12px: Bỏ qua không gán box)</span>`;
+      }
+    }
+
+    // Interactive Relevance Detail switcher
+    function showRelevanceDetail(type) {
+      const titleEl = document.getElementById('rel_title');
+      const descEl = document.getElementById('rel_desc');
+
+      if (type === 'facing_ego') {
+        titleEl.style.color = '#34d399';
+        titleEl.innerText = '🟢 facing_ego (Hướng thẳng vào xe mình)';
+        descEl.innerHTML = `
+          <p style="font-size: 0.92rem; margin-bottom: 12px;"><strong>Đặc điểm nhận dạng:</strong> Mặt trước của biển vuông góc hoặc lệch góc &lt; 60&deg; hướng thẳng vào tầm nhìn của xe Ego trên làn đường đang chạy.</p>
+          <p style="font-size: 0.92rem; margin-bottom: 12px;"><strong>Tác động ADAS:</strong> Hệ thống ra quyết định lập tức đọc giá trị biển báo để điều khiển xe (ví dụ giảm tốc về 60 km/h).</p>
+          <div class="alert alert-info"><div><strong>Áp dụng:</strong> Mọi biển hiệu lệnh, cấm, cảnh báo ở lề phải hoặc giá long môn làn xe mình.</div></div>
+        `;
+      } else if (type === 'facing_away') {
+        titleEl.style.color = '#94a3b8';
+        titleEl.innerText = '⚪ facing_away (Quay lưng / Ngược chiều)';
+        descEl.innerHTML = `
+          <p style="font-size: 0.92rem; margin-bottom: 12px;"><strong>Đặc điểm nhận dạng:</strong> Mặt trước của biển xoay góc &gt; 90&deg; so với hướng xe mình (ví dụ biển của luồng giao thông chiều ngược lại).</p>
+          <p style="font-size: 0.92rem; margin-bottom: 12px;"><strong>Tác động ADAS:</strong> Bỏ qua không tác động tới điều khiển xe. Ngăn ngừa nhận nhầm biển cấm chiều kia.</p>
+          <div class="alert alert-warning"><div><strong>Chú ý:</strong> Nếu mặt sau trơn nhẵn 180° hoàn toàn không thấy viền/hình &rarr; <em>IGNORE (không vẽ box)</em>.</div></div>
+        `;
+      } else if (type === 'lateral') {
+        titleEl.style.color = '#fbbf24';
+        titleEl.innerText = '🟡 lateral (Hướng sang đường nhánh / đường gom)';
+        descEl.innerHTML = `
+          <p style="font-size: 0.92rem; margin-bottom: 12px;"><strong>Đặc điểm nhận dạng:</strong> Biển hướng mặt vuông góc sang đường giao cắt, đường gom song song hoặc nhánh rẽ.</p>
+          <p style="font-size: 0.92rem; margin-bottom: 12px;"><strong>Tác động ADAS:</strong> Tuyệt đối không phanh xe trên làn chính. Chỉ áp dụng nếu xe kích hoạt xi-nhan rẽ sang nhánh đó.</p>
+          <div class="alert alert-danger"><div><strong>Trọng yếu:</strong> Nhầm lateral thành facing_ego gây lỗi phantom braking nghiêm trọng!</div></div>
+        `;
+      }
+    }
+
+    // Case study tab switcher
+    function switchCaseTab(tabId) {
+      document.querySelectorAll('.case-tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.case-content').forEach(content => content.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById('case_' + tabId).classList.add('active');
+    }
+
+    // Quiz evaluation
+    function checkQuiz(btn, isCorrect, explainText) {
+      const parent = btn.parentElement;
+      const explainBox = parent.nextElementSibling;
+
+      parent.querySelectorAll('.quiz-opt').forEach(opt => {
+        opt.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        explainBox.style.display = 'block';
+        explainBox.style.color = '#6ee7b7';
+        explainBox.innerHTML = '<strong>Đúng!</strong> ' + explainText;
+      } else {
+        btn.classList.add('wrong');
+        explainBox.style.display = 'block';
+        explainBox.style.color = '#fca5a5';
+        explainBox.innerHTML = '<strong>Chưa chính xác!</strong> ' + explainText;
+      }
+    }
+  </script>
+</body>
+</html>
