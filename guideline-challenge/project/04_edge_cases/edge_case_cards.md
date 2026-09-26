@@ -26,6 +26,19 @@ Rationale: Hợp đồng downstream contract yêu cầu phân tách từng mặt
 Common mistake: Gộp chung cả 2 mảng màu vào 1 bounding box to, hoặc chỉ vẽ biển đỏ ở trên mà bỏ quên biển phụ màu trắng ở dưới.
 Diversity: small_far, conflict, edge
 
+CASE ID: EC-02-GANTRY-NIGHT-SIGNS
+Sample: troitoi.png (images/guideline-images/troitoi.png)
+Scene: Đường cao tốc ban đêm có hệ thống chiếu sáng đèn cao áp vàng, giá long môn khung thép vắt ngang các làn đường.
+Observation: Trên giá long môn có 2 biển chỉ dẫn kích thước lớn bằng vật liệu phản quang (biển xanh lá "Jahra 80" và biển xanh dương "Doha / Salmiya 4"). Giàn thép và cột đèn cao áp gắn liền phía trên và hai bên.
+Decision: LABEL (Tách biệt 2 box biển báo, loại trừ hoàn toàn giàn thép và cột đèn)
+Expected: 
+- Box 1: traffic_sign, sign_group=other_info, relevance=facing_ego, occlusion=none, legibility=legible, escalate_review=false. Ôm sát viền phản quang của biển xanh lá.
+- Box 2: traffic_sign, sign_group=other_info, relevance=facing_ego, occlusion=none, legibility=legible, escalate_review=false. Ôm sát viền phản quang của biển xanh dương.
+- Giàn thép giá long môn & bóng đèn cao áp: IGNORE (không vẽ bounding box).
+Rationale: Downstream model nhận diện biển báo đường bộ phục vụ điều hướng xe tự hành. Việc bao trùm cả khung thép giá long môn sẽ làm sai lệch nghiêm trọng tỷ lệ aspect ratio (gây false positive cho object detector) và làm nhiễu đặc trưng visual của biển báo.
+Common mistake: Vẽ 1 bounding box khổng lồ ôm trọn cả giá long môn cùng 2 biển, hoặc bao trùm cả thanh đà thép vào box của từng biển.
+Diversity: conflict, ambient_light, overhead_gantry
+
 ---
 
 CASE ID: TODO
@@ -39,3 +52,4 @@ Common mistake: TODO
 Diversity: TODO — occlusion / small_far / ambiguity / conflict / critical / escalation / …
 
 ---
+

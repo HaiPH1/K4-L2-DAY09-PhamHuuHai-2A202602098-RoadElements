@@ -320,6 +320,27 @@ Dưới đây là bộ ảnh mẫu gán nhãn thực tế đã được đội n
 
 ---
 
+#### 📷 Case 5: Biển chỉ dẫn trên giá long môn ban đêm (Overhead Gantry at Night)
+- **Tệp ảnh minh chứng:** [troitoi.png](../images/guideline-images/troitoi.png)
+- **Bối cảnh hiện trường:** Cao tốc nhiều làn xe ban đêm, ánh sáng vàng từ hệ thống đèn cao áp. Có giá long môn (overhead gantry) bằng khung thép vắt ngang trên các làn xe, treo các biển chỉ dẫn kích thước lớn bằng vật liệu phản quang.
+
+![Minh họa ca đêm giá long môn troitoi.png](../images/guideline-images/troitoi.png)
+
+- **Phân tích từng bounding box đã gán nhãn mẫu:**
+  1. **Box 1 (Biển chỉ dẫn bên trái - Nền xanh lá "Jahra 80"):**
+     - *Quan sát:* Tấm biển hình chữ nhật nền xanh lá cây viền trắng chỉ hướng đi Jahra.
+     - *Quy cách vẽ:* Bounding box hình chữ nhật đóng khung chính xác 4 mép viền ngoài cùng của tấm biển phản quang. **Không bao trùm khung giàn thép hay thanh đà của giá long môn**.
+     - *Thuộc tính:* `sign_group = other_info`, `relevance = facing_ego`, `occlusion = none`, `legibility = legible`.
+  2. **Box 2 (Biển chỉ dẫn bên phải - Nền xanh dương "Doha / Salmiya 4"):**
+     - *Quan sát:* Tấm biển hình chữ nhật nền xanh lam gắn song song bên cạnh tấm biển Box 1 trên cùng giá treo.
+     - *Quy cách vẽ:* **Bắt buộc tách thành box thứ 2 độc lập**, ôm sát 4 cạnh của tấm biển xanh dương.
+     - *Thuộc tính:* `sign_group = other_info`, `relevance = facing_ego`, `occlusion = none`, `legibility = legible`.
+  3. **Khung thép giàn giáo & Đèn cao áp:**
+     - *Quy tắc:* Toàn bộ kết cấu khung giàn thép chịu lực và các bóng đèn chiếu sáng phía trên là hạ tầng phụ trợ &rarr; **IGNORE** (Tuyệt đối không vẽ box bao trùm cả giàn thép!).
+- **💡 Bài học cốt lõi cho Annotator:** Khi gặp giá long môn trên cao tốc, mỗi tấm biển treo là một thực thể độc lập (`traffic_sign`). Không được vẽ một "hộp bao khổng lồ" chứa cả giá long môn. Dưới đèn cao áp ban đêm, nếu chữ và số phản quang đọc được rõ ràng bằng mắt người &rarr; gán `legibility = legible`.
+
+---
+
 ### 9.2 Các ví dụ bổ sung trích xuất từ dữ liệu GTSDB của nhóm
 
 Các ví dụ dưới đây đối chiếu trực tiếp với các tệp ảnh trong kho `data/gtsdb/`:

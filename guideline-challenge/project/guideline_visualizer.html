@@ -1038,6 +1038,7 @@
         <button class="case-tab-btn" onclick="switchCaseTab('sang')">☀️ sang.png: Nắng Chói & Cụm Biển</button>
         <button class="case-tab-btn" onclick="switchCaseTab('toi')">🌙 toi.png: Ngược Sáng / Thiếu Sáng</button>
         <button class="case-tab-btn" onclick="switchCaseTab('hard')">❄️ hard.png: Đô Thị Phức Tạp</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('troitoi')">🌌 troitoi.png: Giá Long Môn Ban Đêm</button>
         <button class="case-tab-btn" onclick="switchCaseTab('gts01')">📍 GTS01: Cột 2 Biển</button>
         <button class="case-tab-btn" onclick="switchCaseTab('gts03')">📍 GTS03: Biển & Đèn</button>
         <button class="case-tab-btn" onclick="switchCaseTab('gts07')">📍 GTS07: Công Trường</button>
@@ -1212,6 +1213,59 @@
             <div class="alert-icon">💡</div>
             <div style="font-size: 0.85rem;">
               <strong>Kỹ năng:</strong> Phân biệt rõ đâu là cành cây khô đè lên mặt biển và đâu là viền ngoài của biển; không vẽ nhầm vào bóng râm hay biển số nhà.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content TROITOI -->
+      <div id="case_troitoi" class="case-content">
+        <div>
+          <div class="case-img-box">
+            <img src="../images/guideline-images/troitoi.png" alt="troitoi.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80';">
+            <!-- Simulated Bounding Boxes on Overhead Gantry -->
+            <div class="interactive-bbox-overlay" style="left: 19.5%; top: 33.2%; width: 25.2%; height: 12.2%;" title="Box 1: Biển chỉ dẫn Jahra 80 (other_info, facing_ego, none, legible)">
+              <span class="bbox-tag">Box 1: Jahra 80</span>
+            </div>
+            <div class="interactive-bbox-overlay" style="left: 48.8%; top: 27.6%; width: 17.8%; height: 17.7%; border-color: #38bdf8; background: rgba(56, 189, 248, 0.25);" title="Box 2: Biển chỉ dẫn Doha / Salmiya 4 (other_info, facing_ego, none, legible)">
+              <span class="bbox-tag" style="background: #0284c7;">Box 2: Doha / Salmiya 4</span>
+            </div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+            Ảnh mẫu: <code class="code-val">images/guideline-images/troitoi.png</code> &middot; 2 Bounding Box riêng biệt trên giá long môn cao tốc ban đêm (Di chuột vào box để xem chi tiết)
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: var(--accent-blue);">🌌 Case 5: Biển Chỉ Dẫn Giá Long Môn Ban Đêm (Overhead Gantry at Night)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+            Đường cao tốc ban đêm có hệ thống đèn đường vàng chiếu sáng. Biển chỉ dẫn hướng đi cỡ lớn treo trên giá long môn khung thép:
+          </p>
+          <table class="table-custom">
+            <thead>
+              <tr><th>Đối tượng</th><th>Quy cách vẽ chuẩn</th><th>Thuộc tính</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Box 1 (Trái):</strong> Biển chỉ dẫn xanh lá ("Jahra 80")</td>
+                <td>Box hình chữ nhật ôm sát 4 cạnh viền phản quang của tấm biển xanh lá. <strong>Không bao trùm khung thép của giá long môn!</strong></td>
+                <td><code class="code-val">other_info</code> &middot; `facing_ego` &middot; `none` &middot; `legible`</td>
+              </tr>
+              <tr>
+                <td><strong>Box 2 (Phải):</strong> Biển chỉ dẫn xanh dương ("Doha / Salmiya 4")</td>
+                <td>Box hình chữ nhật ôm sát mép viền tấm biển xanh dương treo kế bên. <em>Tách thành box riêng biệt với Box 1.</em></td>
+                <td><code class="code-val">other_info</code> &middot; `facing_ego` &middot; `none` &middot; `legible`</td>
+              </tr>
+              <tr>
+                <td><strong>Khung thép & Đèn cao áp:</strong> Dàn kết cấu giá long môn</td>
+                <td><span class="status-pill pill-fail">IGNORE</span> Toàn bộ khung giàn thép và đèn chiếu sáng là hạ tầng phụ &rarr; Tuyệt đối không vẽ box!</td>
+                <td>Ngoài scope</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="alert alert-info" style="margin-top: 14px;">
+            <div class="alert-icon">💡</div>
+            <div style="font-size: 0.85rem;">
+              <strong>Quy tắc ban đêm & Giá long môn:</strong> Dưới ánh đèn đường, nếu chữ và biểu tượng phản quang vẫn đọc rõ nét &rarr; gán `legibility = legible`. Mỗi tấm biển treo trên giá long môn là một box độc lập; tuyệt đối không vẽ một box khổng lồ ôm cả giàn thép!
             </div>
           </div>
         </div>
