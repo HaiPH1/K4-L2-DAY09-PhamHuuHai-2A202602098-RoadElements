@@ -1,0 +1,71 @@
+[
+  {
+    "name": "traffic_sign",
+    "color": "#1E88E5",
+    "type": "rectangle",
+    "attributes": [
+      {
+        "name": "sign_group",
+        "mutable": false,
+        "input_type": "select",
+        "default_value": "__undefined__",
+        "values": [
+          "__undefined__",
+          "prohibitory",
+          "warning",
+          "mandatory",
+          "other_info",
+          "unknown"
+        ]
+      },
+      {
+        "name": "relevance",
+        "mutable": false,
+        "input_type": "select",
+        "default_value": "__undefined__",
+        "values": [
+          "__undefined__",
+          "facing_ego",
+          "facing_away",
+          "lateral"
+        ]
+      },
+      {
+        "name": "occlusion",
+        "mutable": false,
+        "input_type": "select",
+        "default_value": "none",
+        "values": [
+          "none",
+          "partial",
+          "heavy"
+        ]
+      },
+      {
+        "name": "legibility",
+        "mutable": false,
+        "input_type": "select",
+        "default_value": "legible",
+        "values": [
+          "legible",
+          "unreadable"
+        ]
+      },
+      {
+        "name": "escalate_review",
+        "mutable": false,
+        "input_type": "checkbox",
+        "default_value": "false",
+        "values": [
+          "false"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "image_escalate",
+    "color": "#8E24AA",
+    "type": "tag",
+    "attributes": []
+  }
+]

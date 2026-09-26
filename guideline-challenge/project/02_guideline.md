@@ -1,6 +1,6 @@
 # Annotation guideline: Hướng dẫn gán nhãn phân tầng và phát hiện hộp bao biển báo giao thông — GTSDB
 
-**Version:** v2 (Đồng bộ theo Visualizer v2.3)
+**Version:** v3 (Bản chuyển giao hoàn thiện sau Blind Handoff Test với Team 01)
 
 > [!TIP]
 > **Bản trực quan hóa tương tác (HTML Visual Guide):** Người gán nhãn hoặc nhóm peer có thể mở file [guideline_visualizer_v2.3.html](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/project/guideline_visualizer_v2.3.html) bằng trình duyệt web (Chrome/Edge) để xem minh họa trực quan:

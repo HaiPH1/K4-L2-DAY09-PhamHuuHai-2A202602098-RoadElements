@@ -1464,6 +1464,75 @@
           </p>
         </div>
       </div>
+
+      <!-- Spotlight Card: Heavy Occlusion > 50% Rule -->
+      <div class="card" style="margin-top: 24px; border-left: 5px solid var(--accent-emerald); background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%);">
+        <div class="card-header">
+          <span class="card-title" style="color: var(--accent-emerald); font-size: 1.18rem; display: flex; align-items: center; gap: 8px;">
+            🌿 QUY TẮC ĐẶC BIỆT: Bị che khuất &gt; 50% nhưng vẫn xác định được loại biển &rarr; ĐƯỢC PHÉP GÁN RÕ
+          </span>
+          <span class="status-pill pill-pass">Quy tắc chuẩn hóa dự án</span>
+        </div>
+
+        <div style="display: flex; gap: 24px; margin-top: 14px; flex-wrap: wrap; align-items: center;">
+          <!-- SVG Demo -->
+          <div style="flex: 0 0 260px; max-width: 100%; background: #0c1427; border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; align-items: center;">
+            <svg width="230" height="150" viewBox="0 0 230 150">
+              <!-- Background -->
+              <rect x="0" y="0" width="230" height="150" fill="#1e293b" rx="6" />
+              <!-- Pole -->
+              <line x1="115" y1="100" x2="115" y2="145" stroke="#64748b" stroke-width="5" />
+              <!-- Physical Traffic Sign: No Parking Round Blue/Red -->
+              <circle cx="115" cy="60" r="38" fill="#1e40af" stroke="#dc2626" stroke-width="8" />
+              <!-- Red slash -->
+              <line x1="90" y1="35" x2="140" y2="85" stroke="#dc2626" stroke-width="8" />
+              <!-- Heavy Obstacle: Tree foliage & branches covering center and left (>50%) -->
+              <path d="M 60 15 Q 110 35 125 75 Q 135 110 90 120 Q 60 100 55 60 Z" fill="#15803d" opacity="0.95" />
+              <path d="M 85 45 Q 120 60 145 65" stroke="#713f12" stroke-width="6" stroke-linecap="round" />
+              <!-- Amodal Bounding Box covering FULL physical circle -->
+              <rect x="73" y="18" width="84" height="84" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-dasharray="4,2" />
+              <!-- Handles -->
+              <circle cx="73" cy="18" r="3.5" fill="#22c55e" />
+              <circle cx="157" cy="102" r="3.5" fill="#22c55e" />
+              <text x="115" y="12" fill="#22c55e" font-size="10" font-weight="bold" text-anchor="middle">Vẽ 1 box bao trọn mặt biển vật lý</text>
+              <rect x="135" y="65" width="85" height="18" rx="4" fill="rgba(6, 78, 59, 0.9)" stroke="#10b981" stroke-width="1" />
+              <text x="177" y="77" fill="#6ee7b7" font-size="8" font-weight="700" text-anchor="middle">Che &gt; 50% &rarr; GÁN RÕ</text>
+            </svg>
+            <span style="color: #6ee7b7; font-size: 0.82rem; font-weight: 700; margin-top: 8px; text-align: center;">
+              ✅ Amodal BBox: Chấp nhận cành cây ở giữa, ôm trọn hình tròn
+            </span>
+          </div>
+
+          <!-- Detailed Explanation -->
+          <div style="flex: 1 1 360px; min-width: 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;">
+            <p style="margin-bottom: 10px;">
+              <strong style="color: #fff;">Nguyên tắc nghiệp vụ:</strong> Khi một biển báo bị cành cây, cột đèn, biển báo khác hoặc phương tiện che khuất <strong>hơn 50% diện tích bề mặt</strong>, nhưng người gán nhãn bằng mắt thường <strong>vẫn nhận biết chắc chắn đó là biển gì</strong> (dựa vào hình dạng tròn/tam giác, màu sắc đặc trưng viền đỏ nền xanh/trắng, hoặc một phần biểu tượng/mũi tên cốt lõi còn lộ ra ngoài):
+            </p>
+            <ul style="padding-left: 20px; margin-bottom: 10px;">
+              <li>
+                <strong style="color: var(--accent-emerald);">1. Quyết định:</strong> <span class="status-pill pill-pass" style="font-size: 0.72rem;">LABEL</span> &mdash; <strong>ĐƯỢC PHÉP GÁN NHÃN RÕ RÀNG</strong>. Tuyệt đối không bỏ qua (không IGNORE)!
+              </li>
+              <li>
+                <strong style="color: var(--accent-blue);">2. Quy cách dựng BBox:</strong> Sử dụng <em>Amodal Bounding Box</em> &mdash; Vẽ 1 box chữ nhật bao trọn toàn bộ hình khối vật lý nguyên bản của biển (box chấp nhận chứa cành cây/chướng ngại vật ở giữa). <strong>CẤM</strong> cắt lẹm box vào trong chỉ để né tán cây, và <strong>CẤM</strong> tách thành 2 box vụn!
+              </li>
+              <li>
+                <strong style="color: var(--accent-amber);">3. Gán thuộc tính occlusion:</strong> Chọn <code class="code-val">occlusion = heavy</code> (do diện tích bị che khuất &gt; 50%).
+              </li>
+              <li>
+                <strong style="color: var(--accent-indigo);">4. Gán thuộc tính sign_group:</strong> Gán rõ ràng nhóm biển tương ứng (ví dụ: <code class="code-val">prohibitory</code> nếu nhận ra biển cấm đỗ/dừng, <code class="code-val">warning</code> nếu nhận ra tam giác nguy hiểm, <code class="code-val">mandatory</code> nếu nhận ra hiệu lệnh xanh...).
+              </li>
+              <li>
+                <strong style="color: var(--accent-emerald);">5. Gán thuộc tính legibility:</strong> Nếu phần ký hiệu cốt lõi nhìn thấy đủ để xác định chính xác biển báo (như biển cấm đỗ trong <code class="code-val">occu.png</code>) &rarr; <strong>ĐƯỢC PHÉP GÁN <code class="code-val">legibility = legible</code></strong>! Nếu chỉ nhận dạng được hình khối mà mờ tịt nội dung thì chọn <code class="code-val">unreadable</code>.
+              </li>
+            </ul>
+            <div class="alert alert-info" style="margin: 0;">
+              <div>
+                <strong>💡 Lưu ý ngưỡng loại trừ:</strong> CHỈ KHI diện tích bị che khuất <strong>quá nặng (&gt; 80%)</strong> đến mức mắt người hoàn toàn không thể nhận diện được hình khối hay màu sắc của biển báo thì mới chọn <code class="code-val">IGNORE</code> (không vẽ box).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Section 4: Strict Noise Exclusions -->
@@ -1570,87 +1639,289 @@
 
     <!-- Section 5: Taxonomy -->
     <section id="taxonomy">
-      <h2 class="section-title">🏷️ 5. Phân tầng Thuộc tính (Taxonomy & Schema Details)</h2>
+      <h2 class="section-title">🏷️ 5. Phân tầng Thuộc tính (Taxonomy &amp; Schema Details)</h2>
       <p class="section-desc">
-        Hệ thống phân tầng nhãn chuẩn theo <code>03_cvat_labels.json</code>. Lưu ý: khi phân loại
-        <code>sign_group</code> và
-        <code>relevance</code> mặc định là <code class="code-val">__undefined__</code> để chống thiên kiến; bắt buộc
-        annotator phải chủ động chọn:
+        Hệ thống phân tầng nhãn chuẩn theo hợp đồng dữ liệu <code class="code-val">03_cvat_labels.json</code>. Bao gồm
+        nhãn chính <code>traffic_sign</code> (dạng <code>rectangle</code>) với 5 thuộc tính bắt buộc, cùng nhãn phụ
+        <code>image_escalate</code> (dạng <code>tag</code> toàn ảnh):
       </p>
 
-      <div class="grid-4">
-        <!-- Prohibitory -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">prohibitory</span>
-            <span class="status-pill pill-fail">Cấm / Dừng</span>
+      <!-- 5.1 Sign Group -->
+      <div style="margin-bottom: 30px;">
+        <h3 style="font-size: 1.18rem; color: var(--accent-blue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <span>📌 5.1. Nhóm chức năng (<code>sign_group</code>)</span>
+          <span class="status-pill pill-fail" style="font-size: 0.72rem;">Bắt buộc chọn &bull; Chống bỏ quên</span>
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 14px;">
+          Thuộc tính <code>sign_group</code> có giá trị mặc định là <code class="code-val">__undefined__</code>. Annotator
+          <strong>bắt buộc phải chủ động chọn 1 trong 5 nhóm hợp lệ</strong> bên dưới (không để sót giá trị mặc định):
+        </p>
+
+        <div class="grid-4">
+          <!-- Prohibitory -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">prohibitory</span>
+              <span class="status-pill pill-fail">Cấm / Dừng</span>
+            </div>
+            <div class="demo-canvas-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="#fff" stroke="#dc2626" stroke-width="10" />
+                <rect x="25" y="44" width="50" height="12" fill="#dc2626" />
+              </svg>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Tròn viền đỏ (Cấm vượt, Cấm rẽ, Giới hạn tốc độ), bát giác STOP, tam giác ngược Nhường đường (Yield). Bắt buộc
+              nhận diện để kích hoạt hệ thống phanh an toàn.
+            </p>
           </div>
-          <div class="demo-canvas-wrap">
-            <svg width="100" height="100" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="42" fill="#fff" stroke="#dc2626" stroke-width="10" />
-              <rect x="25" y="44" width="50" height="12" fill="#dc2626" />
-            </svg>
+
+          <!-- Warning -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">warning</span>
+              <span class="status-pill pill-pass" style="background:#854d0e; color:#fef08a; border-color:#eab308;">Nguy hiểm</span>
+            </div>
+            <div class="demo-canvas-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <polygon points="50,15 90,82 10,82" fill="#fff" stroke="#dc2626" stroke-width="8" stroke-linejoin="round" />
+                <line x1="50" y1="40" x2="50" y2="62" stroke="#000" stroke-width="7" stroke-linecap="round" />
+                <circle cx="50" cy="74" r="4" fill="#000" />
+              </svg>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Tam giác viền đỏ đỉnh hướng lên (hoặc hình thoi vàng kiểu Mỹ). Báo hiệu khúc cua nguy hiểm, công trường, động
+              vật băng qua đường.
+            </p>
           </div>
-          <p style="font-size: 0.88rem; color: var(--text-muted);">
-            Tròn viền đỏ, bát giác STOP, tam giác ngược Nhường đường (Yield). Bắt buộc nhận diện để phanh hoặc dừng xe.
-          </p>
+
+          <!-- Mandatory -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">mandatory</span>
+              <span class="status-pill pill-info">Hiệu lệnh</span>
+            </div>
+            <div class="demo-canvas-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="#2563eb" stroke="#fff" stroke-width="4" />
+                <path d="M50,22 L50,68 M35,40 L50,22 L65,40" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+              </svg>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Tròn nền xanh lam viền trắng, mũi tên chỉ hướng đi bắt buộc, đường dành riêng cho xe buýt/xe đạp, tốc độ tối
+              thiểu.
+            </p>
+          </div>
+
+          <!-- Other Info -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">other_info</span>
+              <span class="status-pill pill-pass">Chỉ dẫn &amp; Biển phụ</span>
+            </div>
+            <div class="demo-canvas-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <rect x="15" y="25" width="70" height="50" rx="4" fill="#fff" stroke="#334155" stroke-width="4" />
+                <text x="50" y="55" font-size="14" font-weight="700" fill="#000" text-anchor="middle">300 m</text>
+              </svg>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Tất cả các biển chỉ dẫn địa danh, biển phân làn trên giá long môn, biển thoi vàng Priority Road, và <strong>mọi
+              biển phụ hình chữ nhật gắn dưới biển chính</strong>.
+            </p>
+          </div>
         </div>
 
-        <!-- Warning -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">warning</span>
-            <span class="status-pill pill-pass" style="background:#854d0e; color:#fef08a; border-color:#eab308;">Nguy
-              hiểm</span>
+        <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
+          * Lưu ý: Giá trị <code>unknown</code> chỉ dùng khi biển bị phai màu bạc trắng hoàn toàn hoặc hư hỏng nặng không thể phân biệt màu sắc, nhưng vẫn nhận dạng được hình học biển báo.
+        </div>
+      </div>
+
+      <!-- 5.2 Legibility Attribute (CRITICAL - SPEC FROM 03_cvat_labels.json) -->
+      <div style="margin-bottom: 30px; border-top: 1px dashed var(--border-subtle); padding-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <h3 style="font-size: 1.18rem; color: var(--accent-emerald); display: flex; align-items: center; gap: 8px;">
+            <span>👁️ 5.2. Khả năng đọc hiểu nội dung mặt biển (<code>legibility</code>)</span>
+          </h3>
+          <span class="status-pill pill-pass" style="font-size: 0.72rem;">Schema: select &bull; Values: [legible, unreadable]</span>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6;">
+          Thuộc tính <code>legibility</code> trong <code class="code-val">03_cvat_labels.json</code> đánh giá chất lượng thị giác
+          của nội dung chi tiết bên trong biển (chữ số, ký tự, biểu tượng). Đây là tín hiệu trọng yếu giúp hệ thống tự lái ADAS
+          phân biệt giữa <strong>"thông tin đã đọc rõ để thực thi"</strong> và <strong>"biết có biển nhưng không thể đọc chữ số"</strong>:
+        </p>
+
+        <div class="grid-2">
+          <!-- Card Legible -->
+          <div class="card" style="border-left: 4px solid var(--accent-emerald);">
+            <div class="card-header">
+              <span class="card-title" style="color: var(--accent-emerald);">🟢 legible (Đọc rõ ràng)</span>
+              <span class="status-pill pill-pass">Sắc Nét &bull; Tin Cậy</span>
+            </div>
+            <div class="demo-canvas-wrap" style="padding: 16px 0;">
+              <svg width="200" height="125" viewBox="0 0 200 125">
+                <circle cx="100" cy="55" r="40" fill="#ffffff" stroke="#dc2626" stroke-width="9" />
+                <text x="100" y="66" font-size="30" font-weight="900" fill="#000000" text-anchor="middle" font-family="sans-serif">50</text>
+                <rect x="56" y="11" width="88" height="88" fill="none" stroke="#10b981" stroke-width="2.5" stroke-dasharray="4 2" />
+                <circle cx="56" cy="11" r="3.5" fill="#10b981" />
+                <circle cx="144" cy="99" r="3.5" fill="#10b981" />
+                <text x="100" y="116" font-size="10.5" font-weight="700" fill="#34d399" text-anchor="middle">Mắt người đọc rõ số "50" nét căng ✅</text>
+              </svg>
+            </div>
+            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.65;">
+              <p style="margin-bottom: 8px;">
+                <strong style="color: #fff;">Điều kiện thị giác:</strong> Phóng to (zoom 100% pixel gốc), mắt người bình thường có
+                thể đọc chính xác 100% các ký tự số (50, 60, 80; khoảng cách 200m), chữ viết (STOP, ZONE, TAXI) hoặc nhận diện
+                tường minh biểu tượng đồ họa (mũi tên rẽ, người đi bộ, công trường, xe đạp).
+              </p>
+              <p style="margin-bottom: 8px;">
+                <strong style="color: #38bdf8;">Tác động Downstream ADAS:</strong> Đầu vào tin cậy cho Multi-task classification head
+                và hệ thống nhận dạng ký tự (OCR). Xe tự hành tự tin đọc số tốc độ để kích hoạt Tính năng kiểm soát tốc độ thích ứng
+                (ISA / ACC) hoặc dừng đỗ chính xác trước vạch.
+              </p>
+              <p style="color: #6ee7b7; font-weight: 600;">
+                &rarr; Gán nhãn: <code class="code-val">legibility = legible</code> (Đây là giá trị mặc định của CVAT).
+              </p>
+            </div>
           </div>
-          <div class="demo-canvas-wrap">
-            <svg width="100" height="100" viewBox="0 0 100 100">
-              <polygon points="50,15 90,82 10,82" fill="#fff" stroke="#dc2626" stroke-width="8"
-                stroke-linejoin="round" />
-              <line x1="50" y1="40" x2="50" y2="62" stroke="#000" stroke-width="7" stroke-linecap="round" />
-              <circle cx="50" cy="74" r="4" fill="#000" />
-            </svg>
+
+          <!-- Card Unreadable -->
+          <div class="card" style="border-left: 4px solid var(--accent-amber);">
+            <div class="card-header">
+              <span class="card-title" style="color: var(--accent-amber);">🟡 unreadable (Không đọc được nội dung)</span>
+              <span class="status-pill pill-warning">Mờ / Xa / Chói Lóa</span>
+            </div>
+            <div class="demo-canvas-wrap" style="padding: 16px 0;">
+              <svg width="200" height="125" viewBox="0 0 200 125">
+                <defs>
+                  <filter id="svgBlurSign" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3.2" />
+                  </filter>
+                </defs>
+                <circle cx="100" cy="55" r="38" fill="#ffffff" stroke="#dc2626" stroke-width="8" opacity="0.92" />
+                <!-- Blurred inner content -->
+                <g filter="url(#svgBlurSign)">
+                  <ellipse cx="100" cy="55" rx="16" ry="12" fill="#334155" opacity="0.75" />
+                  <text x="100" y="64" font-size="24" font-weight="900" fill="#0f172a" text-anchor="middle">80</text>
+                </g>
+                <rect x="58" y="13" width="84" height="84" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="4 2" />
+                <circle cx="58" cy="13" r="3.5" fill="#fbbf24" />
+                <circle cx="142" cy="97" r="3.5" fill="#fbbf24" />
+                <text x="100" y="116" font-size="10.5" font-weight="700" fill="#fbbf24" text-anchor="middle">Rõ viền tròn đỏ nhưng số mờ tịt ⚠️</text>
+              </svg>
+            </div>
+            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.65;">
+              <p style="margin-bottom: 8px;">
+                <strong style="color: #fff;">Điều kiện thị giác:</strong> Biển báo ở xa ($12 \le L < 30\text{ px}$), bị nhòe chuyển động
+                (motion blur do xe xóc nảy), chói sáng gắt (sun glare / đèn pha đối diện), thiếu sáng chiều tà / đêm tối, hoặc thời tiết sương mù.
+                Annotator <strong>vẫn thấy rõ hình khối viền ngoài (tròn, tam giác, chữ nhật)</strong> và màu sắc cơ bản (vẫn bắt buộc vẽ box
+                <code>LABEL</code>), nhưng <strong>hoàn toàn không thể đọc chính xác chữ số bên trong</strong> (không biết là số 50 hay 60 hay 80).
+              </p>
+              <p style="margin-bottom: 8px;">
+                <strong style="color: #fbbf24;">Tác động Downstream ADAS:</strong> Báo cho mô hình tự hành: <em>"Tại đây có một biển báo cấm/cảnh báo,
+                nhưng không đủ độ tin cậy để đọc ký tự"</em>. Xe tự hành lập tức chuyển sang chế độ lái an toàn cẩn trọng (Cautious Mode)
+                và tra cứu bản đồ số HD Map thay vì đoán mò chữ số gây phanh gấp oan uổng.
+              </p>
+              <p style="color: #fef08a; font-weight: 600;">
+                &rarr; Gán nhãn: <code class="code-val">legibility = unreadable</code> (Bắt buộc đổi thủ công trên CVAT).
+              </p>
+            </div>
           </div>
-          <p style="font-size: 0.88rem; color: var(--text-muted);">
-            Tam giác viền đỏ đỉnh hướng lên (hoặc hình thoi vàng kiểu Mỹ). Báo hiệu khúc cua, công trường, động vật băng
-            qua.
-          </p>
         </div>
 
-        <!-- Mandatory -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">mandatory</span>
-            <span class="status-pill pill-info">Hiệu lệnh</span>
+        <!-- Warning Callout on Default Value -->
+        <div class="alert alert-warning" style="margin-top: 16px;">
+          <div style="font-size: 1.25rem;">⚠️</div>
+          <div style="font-size: 0.88rem; line-height: 1.6;">
+            <strong style="color: #fff;">CẢNH BÁO BẪY MẶC ĐỊNH TRÊN CVAT (Default Value Trap):</strong><br>
+            Trong file <code class="code-val">03_cvat_labels.json</code>, thuộc tính <code>legibility</code> có <code>default_value = "legible"</code>.
+            Do đó, khi gán nhãn các biển báo ở xa ($12 \le L < 30\text{ px}$), biển ngược nắng chói lóa (<code class="code-val">sang.png</code>),
+            hoặc biển trong điều kiện thiếu sáng (<code class="code-val">toi.png</code>), annotator <strong>BẮT BUỘC PHẢI CHỦ ĐỘNG CHUYỂN THUỘC TÍNH SANG <code>unreadable</code></strong>.
+            Tuyệt đối không lười bấm mà để nguyên mặc định <code>legible</code> cho các biển mà mắt người không thể đọc rõ con số bên trong!
           </div>
-          <div class="demo-canvas-wrap">
-            <svg width="100" height="100" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="42" fill="#2563eb" stroke="#fff" stroke-width="4" />
-              <path d="M50,22 L50,68 M35,40 L50,22 L65,40" stroke="#fff" stroke-width="7" stroke-linecap="round"
-                stroke-linejoin="round" fill="none" />
-            </svg>
-          </div>
-          <p style="font-size: 0.88rem; color: var(--text-muted);">
-            Tròn nền xanh lam, mũi tên trắng chỉ hướng đi bắt buộc, làn xe buýt, tốc độ tối thiểu cho phép.
-          </p>
         </div>
 
-        <!-- Other Info -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">other_info</span>
-            <span class="status-pill pill-pass">Chỉ dẫn & Biển phụ</span>
+        <!-- Note on Heavy Occlusion & Legibility -->
+        <div class="alert alert-info" style="margin-top: 10px;">
+          <div style="font-size: 1.25rem;">🌿</div>
+          <div style="font-size: 0.88rem; line-height: 1.6;">
+            <strong>Trường hợp che khuất &gt; 50% (<code>occlusion = heavy</code>):</strong> Nếu mắt người vẫn nhận dạng được chính xác đó là biển gì qua phần biểu tượng/màu sắc cốt lõi còn lộ ra ngoài (như biển cấm đỗ xe trong <code class="code-val">occu.png</code>), annotator <strong>được phép gán rõ nhóm chức năng (ví dụ <code>sign_group = prohibitory</code>) và chọn <code>legibility = legible</code></strong>!
           </div>
-          <div class="demo-canvas-wrap">
-            <svg width="100" height="100" viewBox="0 0 100 100">
-              <rect x="15" y="25" width="70" height="50" rx="4" fill="#fff" stroke="#334155" stroke-width="4" />
-              <text x="50" y="55" font-size="14" font-weight="700" fill="#000" text-anchor="middle">300 m</text>
-            </svg>
-          </div>
-          <p style="font-size: 0.88rem; color: var(--text-muted);">
-            Tất cả các biến khác: Biển phụ hình chữ nhật gắn dưới biển chính, biển tên đường, biển phân làn, biển thoi
-            vàng Priority Road....
-          </p>
+        </div>
+      </div>
+
+      <!-- 5.3 Complete CVAT Schema Reference Table -->
+      <div style="margin-top: 24px; border-top: 1px dashed var(--border-subtle); padding-top: 20px;">
+        <h3 style="font-size: 1.15rem; color: var(--accent-indigo); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <span>📋 5.3. Bảng Quy Chuẩn Schema CVAT Đầy Đủ (Đối Chiếu <code>03_cvat_labels.json</code>)</span>
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+          Toàn bộ cấu hình nhãn và thuộc tính đã được khóa cứng (freeze) trong môi trường CVAT của dự án:
+        </p>
+
+        <div style="overflow-x: auto;">
+          <table class="custom-table" style="margin: 0;">
+            <thead>
+              <tr>
+                <th style="width: 14%;">Nhãn (Label)</th>
+                <th style="width: 18%;">Thuộc tính (Attribute)</th>
+                <th style="width: 12%;">Kiểu nhập (Type)</th>
+                <th style="width: 16%;">Mặc định (Default)</th>
+                <th style="width: 20%;">Tập giá trị (Allowed Values)</th>
+                <th style="width: 20%;">Quy tắc nghiệp vụ ADAS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="5" style="vertical-align: top; font-weight: 700; color: #38bdf8;">
+                  <code>traffic_sign</code><br>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">(Shape: rectangle,<br>Color: #1E88E5)</span>
+                </td>
+                <td><code>sign_group</code></td>
+                <td><span class="status-pill pill-info" style="font-size: 0.72rem;">select</span></td>
+                <td><code class="code-val">__undefined__</code></td>
+                <td><code>prohibitory</code>, <code>warning</code>, <code>mandatory</code>, <code>other_info</code>, <code>unknown</code></td>
+                <td>Nhóm an toàn bắt buộc chọn; cấm để <code>__undefined__</code> khi nộp bài.</td>
+              </tr>
+              <tr>
+                <td><code>relevance</code></td>
+                <td><span class="status-pill pill-info" style="font-size: 0.72rem;">select</span></td>
+                <td><code class="code-val">__undefined__</code></td>
+                <td><code>facing_ego</code>, <code>facing_away</code>, <code>lateral</code></td>
+                <td>Hướng hiệu lực mặt biển; phòng chống phanh oan (Phantom Braking).</td>
+              </tr>
+              <tr>
+                <td><code>occlusion</code></td>
+                <td><span class="status-pill pill-info" style="font-size: 0.72rem;">select</span></td>
+                <td><code class="code-val">none</code></td>
+                <td><code>none</code>, <code>partial</code>, <code>heavy</code></td>
+                <td>Mức độ che khuất 3D trong cảnh (vẫn vẽ trọn khối mặt biển vật lý).</td>
+              </tr>
+              <tr style="background: rgba(52, 211, 153, 0.05);">
+                <td><strong style="color: var(--accent-emerald);"><code>legibility</code></strong></td>
+                <td><span class="status-pill pill-info" style="font-size: 0.72rem;">select</span></td>
+                <td><code class="code-val">legible</code></td>
+                <td><code>legible</code>, <code>unreadable</code></td>
+                <td><strong>Độ sắc nét nội dung:</strong> Biển ở xa hoặc mờ/chói phải chủ động chọn <code>unreadable</code>.</td>
+              </tr>
+              <tr>
+                <td><code>escalate_review</code></td>
+                <td><span class="status-pill pill-warning" style="font-size: 0.72rem;">checkbox</span></td>
+                <td><code class="code-val">false</code></td>
+                <td><code>false</code> (Tick = <code>true</code>)</td>
+                <td>Đánh dấu các ca biên bất định về viền/hướng để QA Owner thẩm định.</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700; color: #c084fc;">
+                  <code>image_escalate</code>
+                </td>
+                <td colspan="2"><span class="status-pill pill-pass" style="background:#581c87; color:#e9d5ff; border-color:#a855f7; font-size: 0.72rem;">tag (toàn ảnh)</span></td>
+                <td><span style="color: var(--text-muted);">&mdash;</span></td>
+                <td><span style="color: var(--text-muted);">&mdash;</span></td>
+                <td>Gắn tag khi toàn bộ bức ảnh bị hỏng camera, chói lóa 100% hoặc sương mù dày đặc.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -1794,7 +2065,7 @@
           <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
             Khi biển báo tròn cấm đỗ xe bị cành cây xẻ dọc ở giữa: <strong>Vẽ 1 bounding box hình chữ nhật bao phủ toàn
               bộ vòng tròn vật lý</strong> (box chấp nhận chứa cành cây ở giữa). Tuyệt đối không lẹm viền và không tách
-            thành 2 box nhỏ vụn. Gán <code>occlusion = heavy</code>.
+            thành 2 box nhỏ vụn. Gán <code>occlusion = heavy</code>. Do biểu tượng cấm đỗ vẫn nhận diện tường minh &rarr; gán <code>legibility = legible</code>.
           </p>
         </div>
       </div>
@@ -1808,8 +2079,7 @@
           <div class="card-title">💡 Bài học kỹ thuật: Cụm biển xếp chồng & Nắng chói lóa</div>
           <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
             Cột biển gồm biển bát giác STOP ở trên và biển chỉ dẫn/biển phụ ở dưới: <strong>Bắt buộc tạo 2 bounding box
-              riêng biệt tiếp giáp nhau</strong>. Khi nắng chói lóa, chỉ lấy biên phản quang thực của mặt biển, không
-            lấy quầng sáng chói (halo) loang ra ngoài tán cây.
+              riêng biệt tiếp giáp nhau</strong> (biển STOP: <code>legibility = legible</code>). Với biển chỉ dẫn ở xa bị chói nắng làm mờ chữ bên trong &rarr; <strong>chủ động chuyển <code>legibility = unreadable</code></strong> (không để sót mặc định legible). Khi nắng chói, chỉ bám viền phản quang thực, không lấy quầng sáng lóa (halo).
           </p>
         </div>
       </div>
@@ -1823,8 +2093,7 @@
           <div class="card-title">💡 Bài học kỹ thuật: Ngược sáng & Biển gắn thân cột gỗ</div>
           <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
             Biển tam giác cảnh báo gắn trên thân cột gỗ bên phải: Box hình chữ nhật đóng khung chính xác 3 đỉnh ngoài
-            cùng của tam giác. Thân cột gỗ đâm thẳng từ trên xuống nhưng <strong>box không bao trùm cột gỗ</strong>. Rà
-            soát kỹ các góc tối ven đường để không sót biển nhỏ.
+            cùng của tam giác (<code>legibility = legible</code>). Thân cột gỗ đâm thẳng từ trên xuống nhưng <strong>box không bao trùm cột gỗ</strong>. Với biển nhỏ ở góc tường xa ($12 \le L < 30\text{px}$) bị chìm trong vùng tối &rarr; vẽ box và chọn <code>legibility = unreadable</code>.
           </p>
         </div>
       </div>
@@ -1839,7 +2108,7 @@
           <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
             Cành cây khô rụng lá tạo thành mạng lưới chằng chịt dễ gây ảo giác quang học. Annotator phải zoom 100% pixel
             gốc để tách bạch đâu là nhánh cây đè lên và đâu là viền ngoài của biển; không vẽ nhầm vào bóng đổ của cây
-            lên tường nhà.
+            lên tường nhà. Biển cảnh báo cạnh thân cây: <code>legibility = legible</code>; biển nhỏ ở xa vỉa hè: <code>legibility = unreadable</code>.
           </p>
         </div>
       </div>
@@ -1853,8 +2122,7 @@
           <div class="card-title">💡 Bài học kỹ thuật: Biển chỉ dẫn trên giá long môn cao tốc</div>
           <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
             Trên giá long môn có 2 tấm biển xanh lá và xanh lam: <strong>Vẽ 2 bounding box riêng biệt cho từng tấm
-              biển</strong>. Toàn bộ giàn khung thép chịu lực và dàn đèn cao áp chiếu sáng là hạ tầng phụ trợ &rarr;
-            <strong>IGNORE</strong> (Tuyệt đối không vẽ một box khổng lồ ôm cả giàn thép!).
+              biển</strong>. Dưới ánh đèn đường cao áp, chữ và biểu tượng phản quang hiển thị sắc nét &rarr; gán <code>legibility = legible</code> cho cả 2 biển. Toàn bộ giàn khung thép chịu lực và dàn đèn cao áp chiếu sáng là hạ tầng phụ trợ &rarr; <strong>IGNORE</strong> (Tuyệt đối không vẽ một box khổng lồ ôm cả giàn thép!).
           </p>
         </div>
       </div>
@@ -2097,9 +2365,8 @@
         <div class="check-item" onclick="toggleCheck(5)">
           <input type="checkbox" id="chk_5" onchange="updateChecklistProgress()">
           <div class="check-text">
-            <strong>6. Làm sạch 100% thuộc tính __undefined__</strong>
-            <span>Đã chủ động gán đầy đủ giá trị cho <code>sign_group</code> và <code>relevance</code>; không bỏ sót bất
-              kỳ box nào ở trạng thái mặc định.</span>
+            <strong>6. Làm sạch __undefined__ &amp; Chuẩn hóa legibility</strong>
+            <span>Đã chủ động gán đầy đủ giá trị cho <code>sign_group</code> và <code>relevance</code>; đặc biệt kiểm tra các biển ở xa ($12 \le L &lt; 30\text{px}$) hoặc mờ nhòe/chói nắng đã chuyển sang <code>legibility = unreadable</code> (không để sót mặc định legible).</span>
           </div>
         </div>
 
@@ -2125,7 +2392,7 @@
 
     <!-- Section 12: Practice Quiz -->
     <section id="quiz">
-      <h2 class="section-title">🎮 12. Trắc Nghiệm Thực Hành Chuyên Nghiệp (5 Tình Huống Thực Tế)</h2>
+      <h2 class="section-title">🎮 12. Trắc Nghiệm Thực Hành Chuyên Nghiệp (7 Tình Huống Thực Tế)</h2>
       <p class="section-desc">Kiểm tra năng lực thực chiến trước khi tiến hành gán nhãn trên CVAT:</p>
 
       <!-- Quiz 1 -->
@@ -2228,6 +2495,46 @@
           <div class="quiz-opt"
             onclick="checkQuiz(this, false, 'Sai. Nếu phần nhìn thấy vẫn đủ để nhận diện được loại biển và L >= 12px thì vẫn phải gán nhãn.')">
             C. Bỏ qua hoàn toàn (IGNORE) vì biển không toàn vẹn.
+          </div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 6 (NEW: LEGIBILITY ATTRIBUTE) -->
+      <div class="quiz-card">
+        <div class="quiz-q">6. Một biển giới hạn tốc độ tròn viền đỏ ở khoảng cách ~60m, đo được kích thước 18x18px (L=18 &ge; 12px). Khi zoom 100% thấy rõ viền tròn màu đỏ nhưng số bên trong bị mờ nhòe do chói nắng, mắt người không thể đọc rõ là số 50 hay 60 hay 80. Bạn gán nhãn và thuộc tính như thế nào?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai. Biển có L = 18px >= 12px và viền hình học tròn đỏ rõ ràng bắt buộc phải gán nhãn (LABEL), tuyệt đối không được bỏ qua!')">
+            A. Bỏ qua không gán box (IGNORE) vì không đọc được con số tốc độ cụ thể.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, true, 'Chính xác! Vẽ bounding box ôm sát viền tròn đỏ (sign_group = prohibitory, relevance = facing_ego), nhưng do mắt người không đọc rõ số nên BẮT BUỘC CHỦ ĐỘNG CHỌN legibility = unreadable!')">
+            B. Vẽ bounding box, chọn sign_group = prohibitory và chuyển legibility = unreadable.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai nghiêm trọng! Tuyệt đối không để nguyên mặc định legible và tự suy đoán số theo kinh nghiệm; điều này sẽ làm sai lệch tập dữ liệu huấn luyện OCR và gây nguy hiểm cho ADAS!')">
+            C. Vẽ bounding box, để nguyên mặc định legibility = legible và tự đoán số 50 theo tốc độ thông thường.
+          </div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 7 (NEW: CHE KHUẤT > 50% NHƯNG XÁC ĐỊNH ĐƯỢC BIỂN) -->
+      <div class="quiz-card">
+        <div class="quiz-q">7. Một biển báo tròn cấm đỗ xe (viền đỏ nền xanh có gạch chéo) bị cành cây rậm rạp che mất hơn 50% diện tích ở chính giữa, nhưng mắt người nhìn vào vẫn nhận biết chắc chắn đó là biển cấm đỗ. Bạn xử lý gán nhãn thế nào?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai. Khi mắt người vẫn xác định được loại biển thì ĐƯỢC PHÉP GÁN NHÃN RÕ (LABEL), chỉ bỏ qua khi bị che > 80% không còn bằng chứng thị giác!')">
+            A. Bỏ qua hoàn toàn (IGNORE) vì diện tích bị che khuất vượt quá 50%.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai nghiêm trọng! Vi phạm nguyên tắc 1-Object-1-Box, làm méo mó hình học của mặt biển và hỏng dữ liệu huấn luyện!')">
+            B. Tách thành 2 bounding box nhỏ ôm lấy 2 phần rìa còn hở ra ngoài tán cây.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, true, 'Chính xác! ĐƯỢC PHÉP GÁN RÕ: Dựng 1 box amodal ôm trọn hình tròn vật lý (chấp nhận cành cây ở giữa), gán sign_group = prohibitory, occlusion = heavy, và legibility = legible (do nhận dạng rõ biểu tượng cấm đỗ)!')">
+            C. Vẽ 1 box amodal ôm trọn hình tròn vật lý, gán sign_group = prohibitory, occlusion = heavy, và legibility = legible.
           </div>
         </div>
         <div class="quiz-explain"></div>
@@ -2776,6 +3083,7 @@
             <div>&bull; <strong>Shape &amp; Class:</strong> Sử dụng <code>Shape = rectangle</code> và nhãn <code>traffic_sign</code>.</div>
             <div>&bull; <strong>Cách vẽ BBox:</strong> Ôm sát khối biển nhìn thấy; nếu ở xa biển xếp chồng có 2 màu (đỏ và xanh/trắng) thì tách 2 box riêng biệt.</div>
             <div>&bull; <strong>Dung sai QA cho phép:</strong> Siết chặt hơn biển lớn: &Delta; &le; <strong>1.5 px</strong> | Lệch tâm &le; <strong>1.0 px</strong> | <strong>IoU &ge; 0.85</strong>.</div>
+            <div>&bull; <strong>Khả năng đọc (legibility):</strong> Nếu cự ly xa hoặc mờ nhòe không đọc rõ chữ số &rarr; Bắt buộc chuyển <code>legibility = unreadable</code> (không để sót mặc định legible).</div>
             <div>&bull; <strong>Bất định:</strong> Nếu mờ nhòe không phân biệt được viền &rarr; tick <code>escalate_review = true</code>.</div>
           `;
         }

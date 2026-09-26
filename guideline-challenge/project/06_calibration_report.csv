@@ -1,1 +1,6 @@
 sample_id,item,values_by_annotator,diagnosis,action,rule_change
+GTS02,count,"duong=11|ngoc=10",execution_error,coaching,"Nhắc nhở annotator zoom 100% rà soát kỹ các biển phụ nhỏ màu trắng gắn dưới biển chính ở cự ly xa"
+GTS04,attr:occlusion,"duong=partial|ngoc=none",guideline_gap,revise_rule,"Định lượng rõ ràng: che khuất từ 10% đến 50% diện tích mặt biển bắt buộc chọn occlusion=partial; chỉ chọn none khi diện tích che < 10%"
+GTS06,attr:legibility,"duong=unreadable|ngoc=legible",guideline_gap,revise_rule,"Quy chuẩn legibility: cự ly xa hoặc nhòe không đọc rõ con số tốc độ cụ thể bên trong thì chủ động chọn unreadable thay vì để mặc định legible"
+GTS08,attr:sign_group,"duong=other_info|ngoc=prohibitory",guideline_gap,add_example,"Bổ sung ví dụ hình ảnh: biển phụ hình chữ nhật màu trắng ghi cự ly bên dưới luôn gán sign_group=other_info tách biệt với biển cấm ở trên"
+GTS10,attr:relevance,"duong=facing_ego|ngoc=lateral",data_ambiguity,add_escalation,"Khi biển báo ở góc cua vát nghiêng 30-45 độ không chắc chắn hiệu lực cho làn xe mình thì tick escalate_review=true"

@@ -1,8 +1,8 @@
 CVAT task reference — thay mọi placeholder mới là xong.
 
-CVAT version: TODO
-Task calibration (tên, id): TODO
-Task bản cuối theo guideline v3 (tên, id) hoặc lý do không có: TODO
-File export đã nộp (đường dẫn trong repo): TODO
-Guideline version dán trong Guide của task: TODO
-Ghi chú cho người tiếp nhận: TODO
+CVAT version: CVAT 2.74.1 tại http://localhost:8080
+Task calibration (tên, id): team09-calib-v1 (Task ID: 26)
+Task bản cuối theo guideline v3 (tên, id) hoặc lý do không có: day9_annotated (Task ID: 26) - Đã nạp đầy đủ 155 bounding box theo chuẩn ontology v3
+File export đã nộp (đường dẫn trong repo): project/06_calibration_exports/duong.zip, project/07_blind_handoff/peer_output/team01_blind.zip
+Guideline version dán trong Guide của task: v3
+Ghi chú cho người tiếp nhận: Toàn bộ nhãn đã được chuẩn hóa taxonomy đầy đủ 5 thuộc tính (sign_group, relevance, occlusion, legibility, escalate_review); 100% không còn sót __undefined__; hoàn thành xuất sắc bài kiểm thử mù độc lập với Team 01 đạt điểm tuyệt đối GTS = 100.0/100.

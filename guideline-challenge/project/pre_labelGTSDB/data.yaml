@@ -1,0 +1,5 @@
+names:
+  0: traffic_sign
+  1: image_escalate
+path: .
+train: train.txt

@@ -1,0 +1,3399 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVAT Visual Annotation Guide v2.3 - Team 09</title>
+  <style>
+    :root {
+      --bg-primary: #0b1120;
+      --bg-secondary: #131c31;
+      --bg-card: #18233c;
+      --bg-card-hover: #223254;
+      --accent-blue: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-red: #f87171;
+      --accent-amber: #fbbf24;
+      --accent-emerald: #34d399;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-subtle: #293854;
+      --border-glow: rgba(56, 189, 248, 0.35);
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      line-height: 1.6;
+      padding-bottom: 90px;
+    }
+
+    /* Header & Hero */
+    header {
+      background: linear-gradient(135deg, #060913 0%, #1e1b4b 50%, #0c172e 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 44px 24px 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.28) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      bottom: -40px;
+      left: 10%;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .hero-title {
+      font-size: 2.3rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-subtitle {
+      font-size: 1.08rem;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      max-width: 950px;
+      line-height: 1.65;
+    }
+
+    .meta-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .badge-primary {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: var(--accent-blue);
+    }
+
+    .badge-danger {
+      background: rgba(248, 113, 113, 0.12);
+      border-color: rgba(248, 113, 113, 0.4);
+      color: var(--accent-red);
+    }
+
+    .badge-warning {
+      background: rgba(251, 191, 36, 0.12);
+      border-color: rgba(251, 191, 36, 0.4);
+      color: var(--accent-amber);
+    }
+
+    .badge-success {
+      background: rgba(52, 211, 153, 0.12);
+      border-color: rgba(52, 211, 153, 0.4);
+      color: var(--accent-emerald);
+    }
+
+    .badge-purple {
+      background: rgba(192, 132, 252, 0.12);
+      border-color: rgba(192, 132, 252, 0.4);
+      color: var(--accent-purple);
+    }
+
+    /* Sticky Navigation */
+    nav.quick-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 17, 32, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 0;
+    }
+
+    .nav-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .nav-btn {
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      color: #fff;
+      background: var(--accent-indigo);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Section layout */
+    section {
+      padding: 44px 0;
+      border-bottom: 1px solid rgba(41, 56, 84, 0.7);
+    }
+
+    .section-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #f1f5f9;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* Cards Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Box Demo Visualizer Canvas */
+    .box-demo-panel {
+      background: #090e1a;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .demo-canvas-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      height: 200px;
+      background: #101726;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 12px;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    .status-pill {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pill-pass {
+      background: #065f46;
+      color: #6ee7b7;
+      border: 1px solid #10b981;
+    }
+
+    .pill-fail {
+      background: #7f1d1d;
+      color: #fca5a5;
+      border: 1px solid #ef4444;
+    }
+
+    .pill-info {
+      background: #1e3a8a;
+      color: #93c5fd;
+      border: 1px solid #3b82f6;
+    }
+
+    /* Alert callout */
+    .alert {
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin: 18px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fde68a;
+    }
+
+    .alert-info {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #bae6fd;
+    }
+
+    .alert-success {
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      color: #a7f3d0;
+    }
+
+    /* Interactive Calculator Form */
+    .calc-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 20px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .calc-input-group label {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .calc-input-group input {
+      width: 100%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 0.95rem;
+      font-family: monospace;
+    }
+
+    .calc-input-group input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    .calc-result-display {
+      background: #090e1a;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    /* Comparison Table */
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+
+    .custom-table th,
+    .custom-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .custom-table th {
+      background: #111a2e;
+      color: var(--accent-blue);
+      font-weight: 700;
+    }
+
+    .custom-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Gallery Tabs */
+    .case-tab-header {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 10px;
+      margin-bottom: 24px;
+    }
+
+    .case-tab-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .case-tab-btn:hover,
+    .case-tab-btn.active {
+      background: var(--accent-indigo);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .case-content {
+      display: none;
+    }
+
+    .case-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .case-img-wrap {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 18px;
+      background: #000;
+    }
+
+    .case-img-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Quiz styling */
+    .quiz-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .quiz-q {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: #f1f5f9;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .quiz-opt {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .quiz-opt:hover {
+      background: #1e3a8a;
+      border-color: #3b82f6;
+    }
+
+    .quiz-opt.correct {
+      background: rgba(16, 185, 129, 0.2) !important;
+      border-color: #10b981 !important;
+      color: #6ee7b7 !important;
+    }
+
+    .quiz-opt.wrong {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border-color: #ef4444 !important;
+      color: #fca5a5 !important;
+    }
+
+    .quiz-explain {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.35);
+      font-size: 0.9rem;
+      display: none;
+      line-height: 1.5;
+    }
+
+    /* Pre-submission Checklist */
+    .checklist-wrap {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 16px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+    }
+
+    .check-item:last-child {
+      border-bottom: none;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--accent-emerald);
+      cursor: pointer;
+    }
+
+    /* 4 Golden Pillars Clean List */
+    .pillar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 18px 0 24px;
+    }
+
+    .pillar-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 18px;
+      background: rgba(30, 41, 59, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .pillar-list-item:hover {
+      background: rgba(30, 41, 59, 0.6);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .pillar-list-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .pillar-checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-emerald);
+      cursor: pointer;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .pillar-list-text {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .pillar-list-text strong {
+      color: #f8fafc;
+      font-weight: 700;
+    }
+
+    .pillar-avoid {
+      color: #f87171;
+      font-size: 0.88rem;
+      margin-left: 6px;
+    }
+
+    /* Section 2 Interactive L Module */
+    .l-calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .l-calc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .l-dropzone {
+      border: 2px dashed rgba(59, 130, 246, 0.4);
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 10px;
+      padding: 18px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 12px;
+    }
+
+    .l-dropzone:hover,
+    .l-dropzone.dragover {
+      border-color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .l-dropzone-icon {
+      font-size: 2rem;
+      margin-bottom: 6px;
+    }
+
+    .l-preview-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #090e1a;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      min-height: 140px;
+      max-height: 200px;
+      overflow: hidden;
+      position: relative;
+      padding: 10px;
+    }
+
+    .l-preview-wrap img {
+      max-width: 100%;
+      max-height: 180px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .l-preset-btn {
+      background: #1e293b;
+      border: 1px solid var(--border-subtle);
+      color: #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .l-preset-btn:hover {
+      background: #334155;
+      color: #fff;
+      border-color: var(--accent-blue);
+    }
+
+    .l-criteria-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      background: rgba(15, 23, 42, 0.4);
+      border-left: 3px solid transparent;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.2s ease;
+    }
+
+    .l-criteria-row:last-child {
+      border-bottom: none;
+    }
+
+    .l-criteria-row.active-tier-ignore {
+      background: rgba(239, 68, 68, 0.14);
+      border-left-color: #ef4444;
+      color: #fca5a5;
+      font-weight: 700;
+    }
+
+    .l-criteria-row.active-tier-warn {
+      background: rgba(234, 179, 8, 0.14);
+      border-left-color: #eab308;
+      color: #fef08a;
+      font-weight: 700;
+    }
+
+    .l-criteria-row.active-tier-pass {
+      background: rgba(16, 185, 129, 0.14);
+      border-left-color: #10b981;
+      color: #6ee7b7;
+      font-weight: 700;
+    }
+
+    /* Crop Modal */
+    .crop-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .crop-modal-overlay.active {
+      display: flex;
+    }
+
+    .crop-modal-dialog {
+      background: #0f172a;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      max-width: 960px;
+      width: 100%;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+      overflow: hidden;
+      animation: modalFadeIn 0.25s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .crop-modal-header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #111c35;
+    }
+
+    .crop-modal-header h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .crop-modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+      transition: color 0.15s;
+    }
+
+    .crop-modal-close:hover {
+      color: #fff;
+    }
+
+    .crop-modal-body {
+      padding: 16px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #090e1a;
+    }
+
+    .crop-canvas-container {
+      position: relative;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      max-width: 100%;
+      max-height: 60vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: crosshair;
+      user-select: none;
+    }
+
+    .crop-canvas-container canvas {
+      display: block;
+      max-width: 100%;
+      max-height: 58vh;
+      object-fit: contain;
+    }
+
+    .crop-modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #111c35;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .crop-btn-primary {
+      background: #2563eb;
+      color: #fff;
+      border: 1px solid #3b82f6;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .crop-btn-primary:hover:not(:disabled) {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .crop-btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .crop-btn-secondary {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .crop-btn-secondary:hover {
+      background: #334155;
+      color: #fff;
+    }
+
+    .check-text strong {
+      color: #f8fafc;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .check-text span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: #1e293b;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 14px 0 6px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-emerald));
+      transition: width 0.3s ease;
+    }
+
+    /* Scroll To Top Button */
+    .scroll-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.35);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px) scale(0.9);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 999;
+      outline: none;
+    }
+
+    .scroll-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    .scroll-to-top:hover {
+      background: linear-gradient(135deg, #0284c7, #6366f1);
+      transform: translateY(-4px) scale(1.08);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5), 0 0 30px rgba(99, 102, 241, 0.45);
+    }
+
+    .scroll-to-top:active {
+      transform: translateY(-1px) scale(0.96);
+    }
+
+    .scroll-to-top svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 2.5;
+      transition: transform 0.2s ease;
+    }
+
+    .scroll-to-top:hover svg {
+      transform: translateY(-2px);
+    }
+
+    .code-val {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--accent-blue);
+      font-family: monospace;
+      font-size: 0.88rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="hero-title">
+        <span>🚦 CVAT Visual Annotation Guide</span>
+        <span class="badge badge-purple">Version v2.3</span>
+      </div>
+      <p class="hero-subtitle">
+        Cẩm nang hình ảnh tương tác chuẩn hóa toàn diện <strong>Bộ Tứ Vàng Bounding Box</strong>, ma trận che khuất vs
+        cắt mép (Occluded vs Truncated), quy chuẩn loại trừ nhiễu nghiêm ngặt, hệ thống phân tầng thuộc tính ADAS và quy
+        trình quản trị ca biên thực tế (GTSDB / ADAS L2+/L3).
+      </p>
+      <div class="meta-badges">
+        <span class="badge badge-primary">Team: 09</span>
+        <span class="badge badge-warning">Peer Review: Team 01</span>
+        <span class="badge badge-success">Standard: Industrial 2D BBox & Taxonomy</span>
+        <span class="badge badge-danger">Safety-Critical: Anti-Phantom Braking & Zero Miss</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Quick Nav -->
+  <nav class="quick-nav">
+    <div class="container nav-scroll">
+      <a href="#pillars" class="nav-btn">📐 1. Bộ Tứ Vàng BBox</a>
+      <a href="#geometry" class="nav-btn">🎯 2. Dung sai Hình học</a>
+      <a href="#matrix-occ" class="nav-btn">🔲 3. Occluded vs Truncated</a>
+      <a href="#exclusions" class="nav-btn">🚫 4. Loại trừ Nhiễu</a>
+      <a href="#taxonomy" class="nav-btn">🏷️ 5. Phân tầng Thuộc tính</a>
+      <a href="#relevance" class="nav-btn">🧭 6. Hướng Hiệu lực</a>
+      <a href="#critical" class="nav-btn">⚡ 7. Lỗi Chí Mạng ADAS</a>
+      <a href="#cases" class="nav-btn">🖼️ 8. Gallery Ảnh Mẫu Thực Tế</a>
+      <a href="#issues" class="nav-btn">🚨 9. Mã Issue Escalation</a>
+      <a href="#tools" class="nav-btn">🧮 10. Bộ Công Cụ & IoU Simulator</a>
+      <a href="#checklist" class="nav-btn">📋 11. Checklist 8 Điểm Vàng</a>
+      <a href="#quiz" class="nav-btn">🎮 12. Trắc Nghiệm Thực Hành</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- Section 1: The 4 Golden Pillars of BBox -->
+    <section id="pillars">
+      <h2 class="section-title">📐 1. Bộ Tứ Vàng Bounding Box (The 4 Golden Pillars)</h2>
+      <p class="section-desc">
+        Một box chuẩn phải gồm các tiêu chí sau:
+      </p>
+
+      <div class="pillar-list">
+        <!-- Pillar 1: Tightness -->
+        <div class="pillar-list-item" onclick="togglePillarCheck(event, 0)">
+          <div class="pillar-list-main">
+            <input type="checkbox" id="pillar_chk_0" class="pillar-checkbox" onclick="event.stopPropagation()">
+            <div class="pillar-list-text">
+              <strong>1. Ôm sát mép biển (Tightness):</strong> Box vừa khít 4 mép ngoài của mặt biển.
+              <span class="pillar-avoid">(Tránh: không lấy cọc sắt, nền trời hay cắt lẹm viền)</span>
+            </div>
+          </div>
+          <span class="status-pill pill-pass">Vừa khít 4 mép</span>
+        </div>
+
+        <!-- Pillar 2: Atomicity -->
+        <div class="pillar-list-item" onclick="togglePillarCheck(event, 1)">
+          <div class="pillar-list-main">
+            <input type="checkbox" id="pillar_chk_1" class="pillar-checkbox" onclick="event.stopPropagation()">
+            <div class="pillar-list-text">
+              <strong>2. Mỗi biển 1 box riêng (Atomicity):</strong> Mỗi biển báo là một box độc lập, kể cả biển gắn
+              chung cột hay biển phụ.
+              <span class="pillar-avoid">(Tránh: tuyệt đối không gộp nhiều biển vào 1 box)</span>
+            </div>
+          </div>
+          <span class="status-pill pill-pass">1 Biển = 1 Box</span>
+        </div>
+
+        <!-- Pillar 3: Boundary Clamping -->
+        <div class="pillar-list-item" onclick="togglePillarCheck(event, 2)">
+          <div class="pillar-list-main">
+            <input type="checkbox" id="pillar_chk_2" class="pillar-checkbox" onclick="event.stopPropagation()">
+            <div class="pillar-list-text">
+              <strong>3. Giới hạn trong ảnh (Boundary Clamp):</strong> Box nằm trọn trong ảnh; nếu biển bị mép cắt ngang
+              thì dừng đúng mép ảnh.
+              <span class="pillar-avoid">(Tránh: không vẽ đoán phần ngoài ảnh)</span>
+            </div>
+          </div>
+          <span class="status-pill pill-pass">Nằm trọn trong ảnh</span>
+        </div>
+
+        <!-- Pillar 4: Visual Evidence -->
+        <div class="pillar-list-item" onclick="togglePillarCheck(event, 3)">
+          <div class="pillar-list-main">
+            <input type="checkbox" id="pillar_chk_3" class="pillar-checkbox" onclick="event.stopPropagation()">
+            <div class="pillar-list-text">
+              <strong>4. Thấy rõ mới vẽ (Visual Evidence):</strong> Chỉ vẽ khi mắt nhìn rõ hình dạng biển và kích thước
+              đạt từ 12px trở lên.
+              <span class="pillar-avoid">(Tránh: không đoán mò; phân vân thì chọn escalate_review)</span>
+            </div>
+          </div>
+          <span class="status-pill pill-pass">Rõ nét &ge; 12px</span>
+        </div>
+      </div>
+
+      <!-- Tightness Visual Comparison -->
+      <h3 style="font-size: 1.2rem; margin: 28px 0 14px; color: var(--accent-blue);">🔍 So sánh trực quan mức độ ôm khít
+        (Tightness Comparison)</h3>
+      <div class="grid-3">
+        <!-- Bad: Loose -->
+        <div class="box-demo-panel">
+          <div class="demo-canvas-wrap">
+            <svg width="220" height="150" viewBox="0 0 220 150">
+              <!-- Tree / Background -->
+              <rect x="0" y="0" width="220" height="150" fill="#111827" />
+              <!-- Pole -->
+              <line x1="110" y1="90" x2="110" y2="150" stroke="#64748b" stroke-width="6" />
+              <!-- Sign -->
+              <circle cx="110" cy="65" r="30" fill="#fff" stroke="#dc2626" stroke-width="8" />
+              <text x="110" y="73" font-size="20" font-weight="900" fill="#000" text-anchor="middle">50</text>
+              <!-- BAD LOOSE BOX -->
+              <rect x="65" y="20" width="90" height="110" fill="none" stroke="#ef4444" stroke-width="2.5"
+                stroke-dasharray="4,4" />
+            </svg>
+          </div>
+          <span class="status-pill pill-fail">❌ SAI: HỘP QUÁ RỘNG (LOOSE)</span>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; text-align: center;">
+            Box vẽ quá rộng, dính cả cọc sắt và nền trời xung quanh. Khiến AI học nhầm đối tượng.
+          </p>
+        </div>
+
+        <!-- Bad: Clipped -->
+        <div class="box-demo-panel">
+          <div class="demo-canvas-wrap">
+            <svg width="220" height="150" viewBox="0 0 220 150">
+              <rect x="0" y="0" width="220" height="150" fill="#111827" />
+              <line x1="110" y1="90" x2="110" y2="150" stroke="#64748b" stroke-width="6" />
+              <circle cx="110" cy="65" r="30" fill="#fff" stroke="#dc2626" stroke-width="8" />
+              <text x="110" y="73" font-size="20" font-weight="900" fill="#000" text-anchor="middle">50</text>
+              <!-- BAD CLIPPED BOX -->
+              <rect x="88" y="43" width="44" height="44" fill="none" stroke="#ef4444" stroke-width="2.5"
+                stroke-dasharray="4,4" />
+            </svg>
+          </div>
+          <span class="status-pill pill-fail">❌ SAI: HỘP BỊ LẸM (CLIPPED)</span>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; text-align: center;">
+            Box vẽ quá nhỏ, cắt lẹm mất viền đỏ của biển. Làm mất đặc trưng nhận diện hình dạng biển.
+          </p>
+        </div>
+
+        <!-- Good: Snug Fit -->
+        <div class="box-demo-panel">
+          <div class="demo-canvas-wrap">
+            <svg width="220" height="150" viewBox="0 0 220 150">
+              <rect x="0" y="0" width="220" height="150" fill="#111827" />
+              <line x1="110" y1="90" x2="110" y2="150" stroke="#64748b" stroke-width="6" />
+              <circle cx="110" cy="65" r="30" fill="#fff" stroke="#dc2626" stroke-width="8" />
+              <text x="110" y="73" font-size="20" font-weight="900" fill="#000" text-anchor="middle">50</text>
+              <!-- GOOD SNUG BOX -->
+              <rect x="75" y="30" width="70" height="70" fill="none" stroke="#10b981" stroke-width="2.5"></rect>
+            </svg>
+          </div>
+          <span class="status-pill pill-pass">✅ ĐÚNG: ÔM KHÍT (SNUG FIT)</span>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; text-align: center;">
+            Box ôm vừa khít 4 mép ngoài cùng của biển, dừng ngay điểm nối với cọc sắt. Chuẩn 100%!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Geometry & QA Tolerances -->
+    <section id="geometry">
+      <h2 class="section-title">🎯 2. Quy tắc Hình học & Dung sai Kiểm định (QA Geometry Tolerance)</h2>
+      <p class="section-desc">
+        Nếu quá khó để xác định có gán hay không, hãy tham khảo công cụ sau:
+      </p>
+
+      <!-- Interactive L Dimension & Labeling Decision Module -->
+      <div class="card" style="margin-bottom: 24px;">
+        <div class="card-header">
+          <span class="card-title">📏 Mô-đun Đo Kích Thước Đặc Trưng L &amp; Quyết Định Gán Nhãn</span>
+          <span class="status-pill pill-info">Kéo thả ảnh &amp; Tính tự động</span>
+        </div>
+
+        <div class="l-calc-grid">
+          <!-- Cột bên trái: Kéo thả ảnh & Nhập kích thước -->
+          <div class="l-calc-col-left">
+            <label
+              style="display: block; font-weight: 700; margin-bottom: 8px; font-size: 0.92rem; color: var(--accent-blue);">
+              1. Kéo thả ảnh vào đây (hoặc click để chọn file ảnh):
+            </label>
+            <div class="l-dropzone" id="l_dropzone" onclick="document.getElementById('l_file_input').click()">
+              <input type="file" id="l_file_input" accept="image/*" style="display: none;"
+                onchange="handleLFileSelect(this.files)">
+              <div class="l-dropzone-icon">🖼️</div>
+              <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 4px;">Kéo &amp; thả ảnh
+                biển báo vào đây</div>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">Tự động nhận diện pixel gốc của ảnh (w &times;
+                h)</div>
+            </div>
+
+            <!-- Preview box -->
+            <div class="l-preview-wrap" id="l_preview_wrap">
+              <div id="l_preview_content">
+                <!-- dynamic preview svg or img -->
+              </div>
+            </div>
+
+            <!-- Presets -->
+            <div style="margin-top: 12px;">
+              <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Hoặc thử
+                nhanh các trường hợp mẫu:</span>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="l-preset-btn" onclick="setLPreset('tiny')">🔴 Mẫu &lt; 12px (9&times;10
+                  px)</button>
+                <button type="button" class="l-preset-btn" onclick="setLPreset('small')">🟡 Mẫu 12-30px (22&times;24
+                  px)</button>
+                <button type="button" class="l-preset-btn" onclick="setLPreset('medium')">🟢 Mẫu &ge; 30px (48&times;48
+                  px)</button>
+              </div>
+            </div>
+
+            <!-- Manual input -->
+            <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
+              <span style="font-size: 0.85rem; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 8px;">2.
+                Hoặc nhập trực tiếp kích thước hộp bao (pixel):</span>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                  <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Chiều
+                    rộng w (px)</label>
+                  <input type="number" id="l_input_w" value="9" min="1" max="2000" oninput="handleLManualInput()"
+                    style="width: 100%; background: #090e1a; border: 1px solid var(--border-subtle); padding: 8px 12px; color: #fff; border-radius: 6px; font-family: monospace; font-size: 1rem;">
+                </div>
+                <div>
+                  <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Chiều
+                    cao h (px)</label>
+                  <input type="number" id="l_input_h" value="10" min="1" max="2000" oninput="handleLManualInput()"
+                    style="width: 100%; background: #090e1a; border: 1px solid var(--border-subtle); padding: 8px 12px; color: #fff; border-radius: 6px; font-family: monospace; font-size: 1rem;">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột bên phải: Quyết định có gán nhãn không & Gán như thế nào -->
+          <div class="l-calc-col-right">
+            <!-- Header display -->
+            <div
+              style="background: #090e1a; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px 18px; margin-bottom: 14px;">
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <span style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Kích thước đối
+                    tượng:</span>
+                  <div id="l_dims_display"
+                    style="font-size: 1.05rem; font-weight: 700; font-family: monospace; color: #f8fafc;">
+                    w = 9 px, h = 10 px
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Cạnh đặc trưng
+                    L = max(w, h):</span>
+                  <div id="l_val_display"
+                    style="font-size: 1.35rem; font-weight: 900; font-family: monospace; color: #ef4444;">
+                    L = 10 px
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Decision Box: Có gán nhãn không? -->
+            <div id="l_decision_box" style="margin-bottom: 14px;">
+              <!-- Dynamic alert box depending on L -->
+            </div>
+
+            <!-- Instructions: Gán như thế nào? -->
+            <div id="l_howto_box"
+              style="background: rgba(30, 41, 59, 0.4); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; margin-bottom: 14px;">
+              <div
+                style="font-size: 0.85rem; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <span>📋 Gán như thế nào trên CVAT?</span>
+              </div>
+              <div id="l_howto_content" style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">
+                <!-- dynamic text -->
+              </div>
+            </div>
+
+            <!-- 3-Tier Rule Reference Table -->
+            <div
+              style="border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; background: #090e1a;">
+              <div
+                style="padding: 8px 14px; background: rgba(255,255,255,0.03); font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+                Bảng quy chuẩn 3 ngưỡng kích thước L:
+              </div>
+
+              <div id="tier_large" class="l-criteria-row">
+                <div>
+                  <strong style="color: #6ee7b7;">L &ge; 30 px:</strong> Biển lớn / trung bình
+                </div>
+                <div>
+                  <span class="status-pill pill-pass" style="font-size: 0.75rem;">BẮT BUỘC GÁN (LABEL)</span>
+                </div>
+              </div>
+
+              <div id="tier_small" class="l-criteria-row">
+                <div>
+                  <strong style="color: #fef08a;">12 &le; L &lt; 30 px:</strong> Biển nhỏ / ở xa
+                </div>
+                <div>
+                  <span class="status-pill"
+                    style="background:#854d0e; color:#fef08a; border: 1px solid #eab308; font-size: 0.75rem;">GÁN NẾU RÕ
+                    KHỐI</span>
+                </div>
+              </div>
+
+              <div id="tier_tiny" class="l-criteria-row active-tier-ignore">
+                <div>
+                  <strong style="color: #fca5a5;">L &lt; 12 px:</strong> Quá nhỏ / không đủ bằng chứng
+                </div>
+                <div>
+                  <span class="status-pill pill-fail" style="font-size: 0.75rem;">BỎ QUA (IGNORE)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QA Acceptance Table -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">⚖️ Ngưỡng Dung sai Thẩm định (QA Acceptance)</span>
+          <span class="status-pill pill-pass">Gold Standard IoU &ge; 0.85</span>
+        </div>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Tiêu chí kiểm định</th>
+              <th>Biển lớn (L &ge; 30px)</th>
+              <th>Biển nhỏ (12 &le; L &lt; 30px)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Chỉ số IoU</strong></td>
+              <td><span class="status-pill pill-pass">&ge; 0.85</span></td>
+              <td><span class="status-pill pill-pass">&ge; 0.85</span></td>
+            </tr>
+            <tr>
+              <td><strong>Độ lệch cạnh tuyệt đối (&Delta;)</strong></td>
+              <td>&le; 3.0 px mỗi cạnh</td>
+              <td>&le; 1.5 px mỗi cạnh</td>
+            </tr>
+            <tr>
+              <td><strong>Lệch tâm (Center Shift)</strong></td>
+              <td>&le; 2.0 px</td>
+              <td>&le; 1.0 px</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 8px;">
+          <em>* Lưu ý: Khi chấm chéo Blind Test, bất kỳ box nào vi phạm dung sai trên đều bị hệ thống tính là 1
+            Geometry Defect.</em>
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 3: Occlusion vs Truncation Matrix -->
+    <section id="matrix-occ">
+      <h2 class="section-title">🔲 3. Ma trận phân biệt: Che khuất (Occluded) vs Cắt mép (Truncated)</h2>
+      <p class="section-desc">
+        Trong xử lý ảnh tự hành, việc nhầm lẫn giữa vật thể bị che chắn trong không gian 3D và vật thể bị cắt bởi biên
+        camera dẫn đến sai lệch lớn trong mô hình dự báo quỹ đạo:
+      </p>
+
+      <div class="grid-4">
+        <!-- State 1: Visible -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">1. Fully Visible</span>
+            <span class="status-pill pill-pass">Bình thường</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="180" height="120" viewBox="0 0 180 120">
+              <circle cx="90" cy="60" r="32" fill="#fff" stroke="#dc2626" stroke-width="8" />
+              <text x="90" y="68" font-size="20" font-weight="900" fill="#000" text-anchor="middle">STOP</text>
+              <rect x="53" y="23" width="74" height="74" fill="none" stroke="#10b981" stroke-width="2" />
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Biển nằm trọn vẹn trong khung hình, diện tích bị che khuất &lt; 10%. Gán: <code>occlusion = none</code>.
+          </p>
+        </div>
+
+        <!-- State 2: Occluded -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">2. Occluded (In-scene)</span>
+            <span class="status-pill pill-warning">Bị che khuất</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="180" height="120" viewBox="0 0 180 120">
+              <circle cx="90" cy="60" r="32" fill="#fff" stroke="#dc2626" stroke-width="8" />
+              <!-- Obstacle (Tree) -->
+              <path d="M100,20 Q120,50 140,70 L80,90 Z" fill="#15803d" opacity="0.9" />
+              <!-- Amodal BBox -->
+              <rect x="53" y="23" width="74" height="74" fill="none" stroke="#38bdf8" stroke-width="2"
+                stroke-dasharray="3,3" />
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Vật thể trong cảnh (cành cây, cột đèn, xe khác) che một phần mặt biển. <strong>Vẽ 1 box bao trọn khối
+              biển</strong>, gán <code>occlusion = partial/heavy</code>.
+          </p>
+        </div>
+
+        <!-- State 3: Truncated -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">3. Truncated (FOV Boundary)</span>
+            <span class="status-pill pill-danger">Cắt mép ảnh</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="180" height="120" viewBox="0 0 180 120">
+              <!-- Image boundary marker -->
+              <line x1="30" y1="0" x2="30" y2="120" stroke="#f87171" stroke-width="3" stroke-dasharray="4,2" />
+              <text x="25" y="15" fill="#f87171" font-size="9" text-anchor="end">Biên x=0</text>
+              <!-- Clipped Sign -->
+              <path d="M30,35 A30,30 0 0,1 30,95 Z" fill="#fff" stroke="#dc2626" stroke-width="7" />
+              <!-- Clamped BBox -->
+              <rect x="30" y="32" width="35" height="65" fill="none" stroke="#10b981" stroke-width="2" />
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Biển bị cắt bởi biên camera. Cạnh box <strong>bắt buộc dừng chính xác tại biên ảnh (x=0)</strong>. Cấm vẽ
+            tràn ra ngoài vùng ảnh!
+          </p>
+        </div>
+
+        <!-- State 4: Both -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">4. Occluded + Truncated</span>
+            <span class="status-pill pill-fail">Vừa che vừa cắt</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="180" height="120" viewBox="0 0 180 120">
+              <line x1="30" y1="0" x2="30" y2="120" stroke="#f87171" stroke-width="3" stroke-dasharray="4,2" />
+              <path d="M30,35 A30,30 0 0,1 30,95 Z" fill="#fff" stroke="#dc2626" stroke-width="7" />
+              <rect x="35" y="55" width="30" height="40" fill="#475569" opacity="0.9" />
+              <rect x="30" y="32" width="35" height="65" fill="none" stroke="#fbbf24" stroke-width="2" />
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Biển ở sát rìa ảnh đồng thời bị vật cản che. Clamp tại biên ảnh, tính tỷ lệ che khuất trên phần nhìn thấy,
+            gán <code>occlusion</code> phù hợp.
+          </p>
+        </div>
+      </div>
+
+      <!-- Spotlight Card: Heavy Occlusion > 50% Rule -->
+      <div class="card" style="margin-top: 24px; border-left: 5px solid var(--accent-emerald); background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%);">
+        <div class="card-header">
+          <span class="card-title" style="color: var(--accent-emerald); font-size: 1.18rem; display: flex; align-items: center; gap: 8px;">
+            🌿 QUY TẮC ĐẶC BIỆT: Bị che khuất &gt; 50% nhưng vẫn xác định được loại biển &rarr; ĐƯỢC PHÉP GÁN RÕ
+          </span>
+          <span class="status-pill pill-pass">Quy tắc chuẩn hóa dự án</span>
+        </div>
+
+        <div style="display: flex; gap: 24px; margin-top: 14px; flex-wrap: wrap; align-items: center;">
+          <!-- SVG Demo -->
+          <div style="flex: 0 0 260px; max-width: 100%; background: #0c1427; border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; align-items: center;">
+            <svg width="230" height="150" viewBox="0 0 230 150">
+              <!-- Background -->
+              <rect x="0" y="0" width="230" height="150" fill="#1e293b" rx="6" />
+              <!-- Pole -->
+              <line x1="115" y1="100" x2="115" y2="145" stroke="#64748b" stroke-width="5" />
+              <!-- Physical Traffic Sign: No Parking Round Blue/Red -->
+              <circle cx="115" cy="60" r="38" fill="#1e40af" stroke="#dc2626" stroke-width="8" />
+              <!-- Red slash -->
+              <line x1="90" y1="35" x2="140" y2="85" stroke="#dc2626" stroke-width="8" />
+              <!-- Heavy Obstacle: Tree foliage & branches covering center and left (>50%) -->
+              <path d="M 60 15 Q 110 35 125 75 Q 135 110 90 120 Q 60 100 55 60 Z" fill="#15803d" opacity="0.95" />
+              <path d="M 85 45 Q 120 60 145 65" stroke="#713f12" stroke-width="6" stroke-linecap="round" />
+              <!-- Amodal Bounding Box covering FULL physical circle -->
+              <rect x="73" y="18" width="84" height="84" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-dasharray="4,2" />
+              <!-- Handles -->
+              <circle cx="73" cy="18" r="3.5" fill="#22c55e" />
+              <circle cx="157" cy="102" r="3.5" fill="#22c55e" />
+              <text x="115" y="12" fill="#22c55e" font-size="10" font-weight="bold" text-anchor="middle">Vẽ 1 box bao trọn mặt biển vật lý</text>
+              <rect x="135" y="65" width="85" height="18" rx="4" fill="rgba(6, 78, 59, 0.9)" stroke="#10b981" stroke-width="1" />
+              <text x="177" y="77" fill="#6ee7b7" font-size="8" font-weight="700" text-anchor="middle">Che &gt; 50% &rarr; GÁN RÕ</text>
+            </svg>
+            <span style="color: #6ee7b7; font-size: 0.82rem; font-weight: 700; margin-top: 8px; text-align: center;">
+              ✅ Amodal BBox: Chấp nhận cành cây ở giữa, ôm trọn hình tròn
+            </span>
+          </div>
+
+          <!-- Detailed Explanation -->
+          <div style="flex: 1 1 360px; min-width: 0; font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;">
+            <p style="margin-bottom: 10px;">
+              <strong style="color: #fff;">Nguyên tắc nghiệp vụ:</strong> Khi một biển báo bị cành cây, cột đèn, biển báo khác hoặc phương tiện che khuất <strong>hơn 50% diện tích bề mặt</strong>, nhưng người gán nhãn bằng mắt thường <strong>vẫn nhận biết chắc chắn đó là biển gì</strong> (dựa vào hình dạng tròn/tam giác, màu sắc đặc trưng viền đỏ nền xanh/trắng, hoặc một phần biểu tượng/mũi tên cốt lõi còn lộ ra ngoài):
+            </p>
+            <ul style="padding-left: 20px; margin-bottom: 10px;">
+              <li>
+                <strong style="color: var(--accent-emerald);">1. Quyết định:</strong> <span class="status-pill pill-pass" style="font-size: 0.72rem;">LABEL</span> &mdash; <strong>ĐƯỢC PHÉP GÁN NHÃN RÕ RÀNG</strong>. Tuyệt đối không bỏ qua (không IGNORE)!
+              </li>
+              <li>
+                <strong style="color: var(--accent-blue);">2. Quy cách dựng BBox:</strong> Sử dụng <em>Amodal Bounding Box</em> &mdash; Vẽ 1 box chữ nhật bao trọn toàn bộ hình khối vật lý nguyên bản của biển (box chấp nhận chứa cành cây/chướng ngại vật ở giữa). <strong>CẤM</strong> cắt lẹm box vào trong chỉ để né tán cây, và <strong>CẤM</strong> tách thành 2 box vụn!
+              </li>
+              <li>
+                <strong style="color: var(--accent-amber);">3. Gán thuộc tính occlusion:</strong> Chọn <code class="code-val">occlusion = heavy</code> (do diện tích bị che khuất &gt; 50%).
+              </li>
+              <li>
+                <strong style="color: var(--accent-indigo);">4. Gán thuộc tính sign_group:</strong> Gán rõ ràng nhóm biển tương ứng (ví dụ: <code class="code-val">prohibitory</code> nếu nhận ra biển cấm đỗ/dừng, <code class="code-val">warning</code> nếu nhận ra tam giác nguy hiểm, <code class="code-val">mandatory</code> nếu nhận ra hiệu lệnh xanh...).
+              </li>
+              <li>
+                <strong style="color: var(--accent-emerald);">5. Gán thuộc tính legibility:</strong> Nếu phần ký hiệu cốt lõi nhìn thấy đủ để xác định chính xác biển báo (như biển cấm đỗ trong <code class="code-val">occu.png</code>) &rarr; <strong>ĐƯỢC PHÉP GÁN <code class="code-val">legibility = legible</code></strong>! Nếu chỉ nhận dạng được hình khối mà mờ tịt nội dung thì chọn <code class="code-val">unreadable</code>.
+              </li>
+            </ul>
+            <div class="alert alert-info" style="margin: 0;">
+              <div>
+                <strong>💡 Lưu ý ngưỡng loại trừ:</strong> CHỈ KHI diện tích bị che khuất <strong>quá nặng (&gt; 80%)</strong> đến mức mắt người hoàn toàn không thể nhận diện được hình khối hay màu sắc của biển báo thì mới chọn <code class="code-val">IGNORE</code> (không vẽ box).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Strict Noise Exclusions -->
+    <section id="exclusions">
+      <h2 class="section-title">🚫 4. Quy chuẩn Loại trừ Nhiễu Nghiêm ngặt (Strict Noise Exclusions)</h2>
+      <p class="section-desc">
+        Hệ thống tự hành rất dễ bị đánh lừa bởi các hình ảnh giả lập (False Positives). Tuyệt đối <strong>IGNORE (không
+          vẽ box)</strong> cho các trường hợp sau:
+      </p>
+
+      <div class="grid-4">
+        <!-- Exclusion 1: Vehicle Decals -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🚌 Decal / Tem in trên xe</span>
+            <span class="status-pill pill-fail">IGNORE</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="180" height="110" viewBox="0 0 180 110">
+              <!-- Bus Back -->
+              <rect x="30" y="20" width="120" height="85" rx="8" fill="#334155" stroke="#475569" stroke-width="3" />
+              <!-- Bus Window -->
+              <rect x="42" y="30" width="96" height="30" rx="4" fill="#0f172a" />
+              <!-- Speed limit sticker printed on bus -->
+              <circle cx="120" cy="78" r="14" fill="#fff" stroke="#dc2626" stroke-width="4" />
+              <text x="120" y="82" font-size="10" font-weight="900" fill="#000" text-anchor="middle">60</text>
+              <!-- Cross red line -->
+              <line x1="100" y1="60" x2="140" y2="95" stroke="#ef4444" stroke-width="3" />
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Biển hạn chế tốc độ "60" dán sau đuôi xe tải/xe buýt. Nếu vẽ box, mô hình sẽ phân loại xe thành biển báo,
+            gây mất dấu phương tiện dẫn đường!
+          </p>
+        </div>
+
+        <!-- Exclusion 2: Reflection -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🪞 Ảnh phản chiếu</span>
+            <span class="status-pill pill-fail">IGNORE</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="180" height="110" viewBox="0 0 180 110">
+              <!-- Wet road / Hood reflection -->
+              <ellipse cx="90" cy="70" rx="70" ry="25" fill="#1e293b" />
+              <path d="M50,70 Q90,85 130,70" stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.4" />
+              <!-- Inverted blurry reflection -->
+              <circle cx="90" cy="68" r="18" fill="#fff" stroke="#dc2626" stroke-width="4" opacity="0.45" />
+              <line x1="60" y1="50" x2="120" y2="90" stroke="#ef4444" stroke-width="3" />
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Hình ảnh biển báo phản chiếu trên nắp ca-pô bóng, vũng nước mưa mặt đường hoặc cửa kính tòa nhà ven đường.
+            Không phải thực thể 3D thực tế.
+          </p>
+        </div>
+
+        <!-- Exclusion 3: Cast Shadows & Glare -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">☀️ Bóng đổ & Quầng sáng</span>
+            <span class="status-pill pill-fail">KHÔNG LẤY VÀO BOX</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="180" height="110" viewBox="0 0 180 110">
+              <!-- Sun halo -->
+              <circle cx="90" cy="50" r="40" fill="radial-gradient(circle, rgba(251,191,36,0.3) 0%, transparent 70%)" />
+              <!-- Real Sign -->
+              <circle cx="90" cy="50" r="22" fill="#fff" stroke="#dc2626" stroke-width="5" />
+              <!-- Good Box -->
+              <rect x="65" y="25" width="50" height="50" fill="none" stroke="#10b981" stroke-width="2" />
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Quầng lóa (flare/halo) khi chụp ngược sáng hoặc bóng đổ của cột biển xuống lòng đường. Chỉ đóng khung phần
+            viền vật lý của mặt biển.
+          </p>
+        </div>
+
+        <!-- Exclusion 4: Non-Sign Infrastructure -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🚦 Đèn & Hạ tầng phụ</span>
+            <span class="status-pill pill-fail">IGNORE</span>
+          </div>
+          <div class="demo-canvas-wrap">
+            <svg width="180" height="110" viewBox="0 0 180 110">
+              <!-- Traffic Light Box -->
+              <rect x="75" y="20" width="30" height="70" rx="5" fill="#1e293b" stroke="#475569" stroke-width="2" />
+              <circle cx="90" cy="35" r="7" fill="#ef4444" />
+              <circle cx="90" cy="55" r="7" fill="#f59e0b" />
+              <circle cx="90" cy="75" r="7" fill="#10b981" />
+              <line x1="60" y1="20" x2="120" y2="90" stroke="#ef4444" stroke-width="3" />
+            </svg>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Đèn tín hiệu giao thông (traffic light), camera phạt nguội, cọc tiêu mềm, rào chắn công trường và biển quảng
+            cáo thương mại.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Taxonomy -->
+    <section id="taxonomy">
+      <h2 class="section-title">🏷️ 5. Phân tầng Thuộc tính (Taxonomy &amp; Schema Details)</h2>
+      <p class="section-desc">
+        Hệ thống phân tầng nhãn chuẩn theo hợp đồng dữ liệu <code class="code-val">03_cvat_labels.json</code>. Bao gồm
+        nhãn chính <code>traffic_sign</code> (dạng <code>rectangle</code>) với 5 thuộc tính bắt buộc, cùng nhãn phụ
+        <code>image_escalate</code> (dạng <code>tag</code> toàn ảnh):
+      </p>
+
+      <!-- 5.1 Sign Group -->
+      <div style="margin-bottom: 30px;">
+        <h3 style="font-size: 1.18rem; color: var(--accent-blue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <span>📌 5.1. Nhóm chức năng (<code>sign_group</code>)</span>
+          <span class="status-pill pill-fail" style="font-size: 0.72rem;">Bắt buộc chọn &bull; Chống bỏ quên</span>
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 14px;">
+          Thuộc tính <code>sign_group</code> có giá trị mặc định là <code class="code-val">__undefined__</code>. Annotator
+          <strong>bắt buộc phải chủ động chọn 1 trong 5 nhóm hợp lệ</strong> bên dưới (không để sót giá trị mặc định):
+        </p>
+
+        <div class="grid-4">
+          <!-- Prohibitory -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">prohibitory</span>
+              <span class="status-pill pill-fail">Cấm / Dừng</span>
+            </div>
+            <div class="demo-canvas-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="#fff" stroke="#dc2626" stroke-width="10" />
+                <rect x="25" y="44" width="50" height="12" fill="#dc2626" />
+              </svg>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Tròn viền đỏ (Cấm vượt, Cấm rẽ, Giới hạn tốc độ), bát giác STOP, tam giác ngược Nhường đường (Yield). Bắt buộc
+              nhận diện để kích hoạt hệ thống phanh an toàn.
+            </p>
+          </div>
+
+          <!-- Warning -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">warning</span>
+              <span class="status-pill pill-pass" style="background:#854d0e; color:#fef08a; border-color:#eab308;">Nguy hiểm</span>
+            </div>
+            <div class="demo-canvas-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <polygon points="50,15 90,82 10,82" fill="#fff" stroke="#dc2626" stroke-width="8" stroke-linejoin="round" />
+                <line x1="50" y1="40" x2="50" y2="62" stroke="#000" stroke-width="7" stroke-linecap="round" />
+                <circle cx="50" cy="74" r="4" fill="#000" />
+              </svg>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Tam giác viền đỏ đỉnh hướng lên (hoặc hình thoi vàng kiểu Mỹ). Báo hiệu khúc cua nguy hiểm, công trường, động
+              vật băng qua đường.
+            </p>
+          </div>
+
+          <!-- Mandatory -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">mandatory</span>
+              <span class="status-pill pill-info">Hiệu lệnh</span>
+            </div>
+            <div class="demo-canvas-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="#2563eb" stroke="#fff" stroke-width="4" />
+                <path d="M50,22 L50,68 M35,40 L50,22 L65,40" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+              </svg>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Tròn nền xanh lam viền trắng, mũi tên chỉ hướng đi bắt buộc, đường dành riêng cho xe buýt/xe đạp, tốc độ tối
+              thiểu.
+            </p>
+          </div>
+
+          <!-- Other Info -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">other_info</span>
+              <span class="status-pill pill-pass">Chỉ dẫn &amp; Biển phụ</span>
+            </div>
+            <div class="demo-canvas-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <rect x="15" y="25" width="70" height="50" rx="4" fill="#fff" stroke="#334155" stroke-width="4" />
+                <text x="50" y="55" font-size="14" font-weight="700" fill="#000" text-anchor="middle">300 m</text>
+              </svg>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Tất cả các biển chỉ dẫn địa danh, biển phân làn trên giá long môn, biển thoi vàng Priority Road, và <strong>mọi
+              biển phụ hình chữ nhật gắn dưới biển chính</strong>.
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
+          * Lưu ý: Giá trị <code>unknown</code> chỉ dùng khi biển bị phai màu bạc trắng hoàn toàn hoặc hư hỏng nặng không thể phân biệt màu sắc, nhưng vẫn nhận dạng được hình học biển báo.
+        </div>
+      </div>
+
+      <!-- 5.2 Legibility Attribute (CRITICAL - SPEC FROM 03_cvat_labels.json) -->
+      <div style="margin-bottom: 30px; border-top: 1px dashed var(--border-subtle); padding-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <h3 style="font-size: 1.18rem; color: var(--accent-emerald); display: flex; align-items: center; gap: 8px;">
+            <span>👁️ 5.2. Khả năng đọc hiểu nội dung mặt biển (<code>legibility</code>)</span>
+          </h3>
+          <span class="status-pill pill-pass" style="font-size: 0.72rem;">Schema: select &bull; Values: [legible, unreadable]</span>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6;">
+          Thuộc tính <code>legibility</code> trong <code class="code-val">03_cvat_labels.json</code> đánh giá chất lượng thị giác
+          của nội dung chi tiết bên trong biển (chữ số, ký tự, biểu tượng). Đây là tín hiệu trọng yếu giúp hệ thống tự lái ADAS
+          phân biệt giữa <strong>"thông tin đã đọc rõ để thực thi"</strong> và <strong>"biết có biển nhưng không thể đọc chữ số"</strong>:
+        </p>
+
+        <div class="grid-2">
+          <!-- Card Legible -->
+          <div class="card" style="border-left: 4px solid var(--accent-emerald);">
+            <div class="card-header">
+              <span class="card-title" style="color: var(--accent-emerald);">🟢 legible (Đọc rõ ràng)</span>
+              <span class="status-pill pill-pass">Sắc Nét &bull; Tin Cậy</span>
+            </div>
+            <div class="demo-canvas-wrap" style="padding: 16px 0;">
+              <svg width="200" height="125" viewBox="0 0 200 125">
+                <circle cx="100" cy="55" r="40" fill="#ffffff" stroke="#dc2626" stroke-width="9" />
+                <text x="100" y="66" font-size="30" font-weight="900" fill="#000000" text-anchor="middle" font-family="sans-serif">50</text>
+                <rect x="56" y="11" width="88" height="88" fill="none" stroke="#10b981" stroke-width="2.5" stroke-dasharray="4 2" />
+                <circle cx="56" cy="11" r="3.5" fill="#10b981" />
+                <circle cx="144" cy="99" r="3.5" fill="#10b981" />
+                <text x="100" y="116" font-size="10.5" font-weight="700" fill="#34d399" text-anchor="middle">Mắt người đọc rõ số "50" nét căng ✅</text>
+              </svg>
+            </div>
+            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.65;">
+              <p style="margin-bottom: 8px;">
+                <strong style="color: #fff;">Điều kiện thị giác:</strong> Phóng to (zoom 100% pixel gốc), mắt người bình thường có
+                thể đọc chính xác 100% các ký tự số (50, 60, 80; khoảng cách 200m), chữ viết (STOP, ZONE, TAXI) hoặc nhận diện
+                tường minh biểu tượng đồ họa (mũi tên rẽ, người đi bộ, công trường, xe đạp).
+              </p>
+              <p style="margin-bottom: 8px;">
+                <strong style="color: #38bdf8;">Tác động Downstream ADAS:</strong> Đầu vào tin cậy cho Multi-task classification head
+                và hệ thống nhận dạng ký tự (OCR). Xe tự hành tự tin đọc số tốc độ để kích hoạt Tính năng kiểm soát tốc độ thích ứng
+                (ISA / ACC) hoặc dừng đỗ chính xác trước vạch.
+              </p>
+              <p style="color: #6ee7b7; font-weight: 600;">
+                &rarr; Gán nhãn: <code class="code-val">legibility = legible</code> (Đây là giá trị mặc định của CVAT).
+              </p>
+            </div>
+          </div>
+
+          <!-- Card Unreadable -->
+          <div class="card" style="border-left: 4px solid var(--accent-amber);">
+            <div class="card-header">
+              <span class="card-title" style="color: var(--accent-amber);">🟡 unreadable (Không đọc được nội dung)</span>
+              <span class="status-pill pill-warning">Mờ / Xa / Chói Lóa</span>
+            </div>
+            <div class="demo-canvas-wrap" style="padding: 16px 0;">
+              <svg width="200" height="125" viewBox="0 0 200 125">
+                <defs>
+                  <filter id="svgBlurSign" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3.2" />
+                  </filter>
+                </defs>
+                <circle cx="100" cy="55" r="38" fill="#ffffff" stroke="#dc2626" stroke-width="8" opacity="0.92" />
+                <!-- Blurred inner content -->
+                <g filter="url(#svgBlurSign)">
+                  <ellipse cx="100" cy="55" rx="16" ry="12" fill="#334155" opacity="0.75" />
+                  <text x="100" y="64" font-size="24" font-weight="900" fill="#0f172a" text-anchor="middle">80</text>
+                </g>
+                <rect x="58" y="13" width="84" height="84" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="4 2" />
+                <circle cx="58" cy="13" r="3.5" fill="#fbbf24" />
+                <circle cx="142" cy="97" r="3.5" fill="#fbbf24" />
+                <text x="100" y="116" font-size="10.5" font-weight="700" fill="#fbbf24" text-anchor="middle">Rõ viền tròn đỏ nhưng số mờ tịt ⚠️</text>
+              </svg>
+            </div>
+            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.65;">
+              <p style="margin-bottom: 8px;">
+                <strong style="color: #fff;">Điều kiện thị giác:</strong> Biển báo ở xa ($12 \le L < 30\text{ px}$), bị nhòe chuyển động
+                (motion blur do xe xóc nảy), chói sáng gắt (sun glare / đèn pha đối diện), thiếu sáng chiều tà / đêm tối, hoặc thời tiết sương mù.
+                Annotator <strong>vẫn thấy rõ hình khối viền ngoài (tròn, tam giác, chữ nhật)</strong> và màu sắc cơ bản (vẫn bắt buộc vẽ box
+                <code>LABEL</code>), nhưng <strong>hoàn toàn không thể đọc chính xác chữ số bên trong</strong> (không biết là số 50 hay 60 hay 80).
+              </p>
+              <p style="margin-bottom: 8px;">
+                <strong style="color: #fbbf24;">Tác động Downstream ADAS:</strong> Báo cho mô hình tự hành: <em>"Tại đây có một biển báo cấm/cảnh báo,
+                nhưng không đủ độ tin cậy để đọc ký tự"</em>. Xe tự hành lập tức chuyển sang chế độ lái an toàn cẩn trọng (Cautious Mode)
+                và tra cứu bản đồ số HD Map thay vì đoán mò chữ số gây phanh gấp oan uổng.
+              </p>
+              <p style="color: #fef08a; font-weight: 600;">
+                &rarr; Gán nhãn: <code class="code-val">legibility = unreadable</code> (Bắt buộc đổi thủ công trên CVAT).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning Callout on Default Value -->
+        <div class="alert alert-warning" style="margin-top: 16px;">
+          <div style="font-size: 1.25rem;">⚠️</div>
+          <div style="font-size: 0.88rem; line-height: 1.6;">
+            <strong style="color: #fff;">CẢNH BÁO BẪY MẶC ĐỊNH TRÊN CVAT (Default Value Trap):</strong><br>
+            Trong file <code class="code-val">03_cvat_labels.json</code>, thuộc tính <code>legibility</code> có <code>default_value = "legible"</code>.
+            Do đó, khi gán nhãn các biển báo ở xa ($12 \le L < 30\text{ px}$), biển ngược nắng chói lóa (<code class="code-val">sang.png</code>),
+            hoặc biển trong điều kiện thiếu sáng (<code class="code-val">toi.png</code>), annotator <strong>BẮT BUỘC PHẢI CHỦ ĐỘNG CHUYỂN THUỘC TÍNH SANG <code>unreadable</code></strong>.
+            Tuyệt đối không lười bấm mà để nguyên mặc định <code>legible</code> cho các biển mà mắt người không thể đọc rõ con số bên trong!
+          </div>
+        </div>
+
+        <!-- Note on Heavy Occlusion & Legibility -->
+        <div class="alert alert-info" style="margin-top: 10px;">
+          <div style="font-size: 1.25rem;">🌿</div>
+          <div style="font-size: 0.88rem; line-height: 1.6;">
+            <strong>Trường hợp che khuất &gt; 50% (<code>occlusion = heavy</code>):</strong> Nếu mắt người vẫn nhận dạng được chính xác đó là biển gì qua phần biểu tượng/màu sắc cốt lõi còn lộ ra ngoài (như biển cấm đỗ xe trong <code class="code-val">occu.png</code>), annotator <strong>được phép gán rõ nhóm chức năng (ví dụ <code>sign_group = prohibitory</code>) và chọn <code>legibility = legible</code></strong>!
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.3 Complete CVAT Schema Reference Table -->
+      <div style="margin-top: 24px; border-top: 1px dashed var(--border-subtle); padding-top: 20px;">
+        <h3 style="font-size: 1.15rem; color: var(--accent-indigo); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <span>📋 5.3. Bảng Quy Chuẩn Schema CVAT Đầy Đủ (Đối Chiếu <code>03_cvat_labels.json</code>)</span>
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+          Toàn bộ cấu hình nhãn và thuộc tính đã được khóa cứng (freeze) trong môi trường CVAT của dự án:
+        </p>
+
+        <div style="overflow-x: auto;">
+          <table class="custom-table" style="margin: 0;">
+            <thead>
+              <tr>
+                <th style="width: 14%;">Nhãn (Label)</th>
+                <th style="width: 18%;">Thuộc tính (Attribute)</th>
+                <th style="width: 12%;">Kiểu nhập (Type)</th>
+                <th style="width: 16%;">Mặc định (Default)</th>
+                <th style="width: 20%;">Tập giá trị (Allowed Values)</th>
+                <th style="width: 20%;">Quy tắc nghiệp vụ ADAS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="5" style="vertical-align: top; font-weight: 700; color: #38bdf8;">
+                  <code>traffic_sign</code><br>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">(Shape: rectangle,<br>Color: #1E88E5)</span>
+                </td>
+                <td><code>sign_group</code></td>
+                <td><span class="status-pill pill-info" style="font-size: 0.72rem;">select</span></td>
+                <td><code class="code-val">__undefined__</code></td>
+                <td><code>prohibitory</code>, <code>warning</code>, <code>mandatory</code>, <code>other_info</code>, <code>unknown</code></td>
+                <td>Nhóm an toàn bắt buộc chọn; cấm để <code>__undefined__</code> khi nộp bài.</td>
+              </tr>
+              <tr>
+                <td><code>relevance</code></td>
+                <td><span class="status-pill pill-info" style="font-size: 0.72rem;">select</span></td>
+                <td><code class="code-val">__undefined__</code></td>
+                <td><code>facing_ego</code>, <code>facing_away</code>, <code>lateral</code></td>
+                <td>Hướng hiệu lực mặt biển; phòng chống phanh oan (Phantom Braking).</td>
+              </tr>
+              <tr>
+                <td><code>occlusion</code></td>
+                <td><span class="status-pill pill-info" style="font-size: 0.72rem;">select</span></td>
+                <td><code class="code-val">none</code></td>
+                <td><code>none</code>, <code>partial</code>, <code>heavy</code></td>
+                <td>Mức độ che khuất 3D trong cảnh (vẫn vẽ trọn khối mặt biển vật lý).</td>
+              </tr>
+              <tr style="background: rgba(52, 211, 153, 0.05);">
+                <td><strong style="color: var(--accent-emerald);"><code>legibility</code></strong></td>
+                <td><span class="status-pill pill-info" style="font-size: 0.72rem;">select</span></td>
+                <td><code class="code-val">legible</code></td>
+                <td><code>legible</code>, <code>unreadable</code></td>
+                <td><strong>Độ sắc nét nội dung:</strong> Biển ở xa hoặc mờ/chói phải chủ động chọn <code>unreadable</code>.</td>
+              </tr>
+              <tr>
+                <td><code>escalate_review</code></td>
+                <td><span class="status-pill pill-warning" style="font-size: 0.72rem;">checkbox</span></td>
+                <td><code class="code-val">false</code></td>
+                <td><code>false</code> (Tick = <code>true</code>)</td>
+                <td>Đánh dấu các ca biên bất định về viền/hướng để QA Owner thẩm định.</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 700; color: #c084fc;">
+                  <code>image_escalate</code>
+                </td>
+                <td colspan="2"><span class="status-pill pill-pass" style="background:#581c87; color:#e9d5ff; border-color:#a855f7; font-size: 0.72rem;">tag (toàn ảnh)</span></td>
+                <td><span style="color: var(--text-muted);">&mdash;</span></td>
+                <td><span style="color: var(--text-muted);">&mdash;</span></td>
+                <td>Gắn tag khi toàn bộ bức ảnh bị hỏng camera, chói lóa 100% hoặc sương mù dày đặc.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Relevance & Phantom Braking -->
+    <section id="relevance">
+      <h2 class="section-title">🧭 6. Hướng Hiệu lực (relevance) & Phòng chống Phanh Oan (Phantom Braking)</h2>
+      <p class="section-desc">
+        Hệ thống tự hành phân tích góc xoay mặt biển để quyết định quyền điều khiển. Bấm vào từng nút bên dưới để xem mô
+        phỏng chi tiết:
+      </p>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;" id="relevance_btn_group">
+        <button class="case-tab-btn rel-tab-btn active" onclick="showRelevanceDetail('facing_ego', this)">🟢 facing_ego (Hướng thẳng vào xe mình)</button>
+        <button class="case-tab-btn rel-tab-btn" onclick="showRelevanceDetail('facing_away', this)">⚪ facing_away (Quay lưng / Làn đối diện)</button>
+        <button class="case-tab-btn rel-tab-btn" onclick="showRelevanceDetail('lateral', this)">🟡 lateral (Đường gom / Nhánh rẽ)</button>
+      </div>
+
+      <div class="card" id="relevance_card_display" style="border-left: 4px solid var(--accent-emerald);">
+        <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 24px; flex-wrap: wrap;">
+          <!-- Cột bên trái: Chi tiết đặc điểm & Tác động ADAS -->
+          <div style="flex: 1 1 380px; min-width: 0;">
+            <h3 id="rel_title" style="color: #34d399; font-size: 1.25rem; margin-bottom: 14px;">🟢 facing_ego (Hướng thẳng vào xe mình)</h3>
+            <div id="rel_desc">
+              <p style="font-size: 0.94rem; margin-bottom: 12px;"><strong>Đặc điểm nhận dạng:</strong> Mặt trước của biển vuông góc hoặc lệch góc &lt; 60&deg; hướng thẳng vào tầm nhìn của xe Ego trên làn đường đang chạy.</p>
+              <p style="font-size: 0.94rem; margin-bottom: 12px;"><strong>Tác động ADAS:</strong> Hệ thống ra quyết định lập tức đọc giá trị biển báo để điều khiển xe (ví dụ giảm tốc về 60 km/h).</p>
+              <div class="alert alert-info">
+                <div><strong>Áp dụng:</strong> Mọi biển hiệu lệnh, cấm, cảnh báo ở lề phải hoặc giá long môn làn xe mình.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Khung bên phải: Hình ảnh mô tả trực quan -->
+          <div id="rel_visual_box" style="flex: 0 0 280px; width: 280px; max-width: 100%; background: #0c1427; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);">
+            <div id="rel_visual_badge" style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 12px; border-radius: 20px; background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); margin-bottom: 8px;">
+              Góc nhìn trực diện (&lt; 60&deg;)
+            </div>
+            <div id="rel_visual_svg_container" style="width: 100%; display: flex; align-items: center; justify-content: center;">
+              <svg width="250" height="150" viewBox="0 0 250 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; border-radius: 8px;">
+                <rect x="20" y="5" width="125" height="140" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+                <line x1="82" y1="5" x2="82" y2="145" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8 6" opacity="0.5"/>
+                <line x1="20" y1="5" x2="20" y2="145" stroke="#64748b" stroke-width="2"/>
+                <line x1="145" y1="5" x2="145" y2="145" stroke="#64748b" stroke-width="2"/>
+                <rect x="145" y="5" width="85" height="140" rx="6" fill="#0f172a" stroke="#1e293b"/>
+                <rect x="25" y="10" width="82" height="18" rx="4" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="1"/>
+                <text x="66" y="22.5" fill="#34d399" font-size="8" font-weight="700" text-anchor="middle" font-family="sans-serif">Làn xe Ego</text>
+                <g transform="translate(93, 85)">
+                  <polygon points="5,0 -5,-30 15,-30" fill="rgba(254, 240, 138, 0.12)"/>
+                  <polygon points="23,0 13,-30 33,-30" fill="rgba(254, 240, 138, 0.12)"/>
+                  <rect x="0" y="0" width="28" height="46" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
+                  <rect x="3" y="10" width="22" height="10" rx="2" fill="#082f49"/>
+                  <rect x="5" y="32" width="18" height="6" rx="2" fill="#082f49"/>
+                  <circle cx="5" cy="2" r="2" fill="#fef08a"/>
+                  <circle cx="23" cy="2" r="2" fill="#fef08a"/>
+                  <text x="14" y="27" fill="#ffffff" font-size="8" font-weight="800" text-anchor="middle" font-family="sans-serif">EGO</text>
+                </g>
+                <polygon points="107,85 178,28 198,28" fill="rgba(52, 211, 153, 0.18)"/>
+                <line x1="107" y1="85" x2="188" y2="35" stroke="#34d399" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <g transform="translate(188, 30)">
+                  <line x1="0" y1="0" x2="0" y2="28" stroke="#64748b" stroke-width="3"/>
+                  <circle cx="0" cy="0" r="14" fill="#ffffff" stroke="#ef4444" stroke-width="3"/>
+                  <text x="0" y="4" fill="#1e293b" font-size="10" font-weight="900" text-anchor="middle" font-family="sans-serif">60</text>
+                </g>
+                <rect x="135" y="75" width="80" height="20" rx="4" fill="rgba(6, 78, 59, 0.85)" stroke="#10b981" stroke-width="1"/>
+                <text x="175" y="88.5" fill="#34d399" font-size="8.5" font-weight="700" text-anchor="middle" font-family="sans-serif">Góc nhìn &lt; 60&deg; ✅</text>
+              </svg>
+            </div>
+            <div id="rel_visual_caption" style="font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 8px; line-height: 1.4;">
+              Biển đối diện xe (&lt; 60&deg;) &rarr; <strong style="color: #34d399;">ADAS xử lý tức thời</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Critical Safety Failures -->
+    <section id="critical">
+      <h2 class="section-title">⚡ 7. Hai Lỗi Chí Mạng Trong Xe Tự Hành (Safety-Critical Failures)</h2>
+      <p class="section-desc">
+        Trong tiêu chuẩn an toàn ISO 26262 và SOTIF, đây là 2 lỗi nghiêm trọng tuyệt đối không được phép mắc phải:
+      </p>
+
+      <div class="grid-2">
+        <div class="card" style="border-color: rgba(239, 68, 68, 0.4);">
+          <div class="card-header">
+            <span class="card-title" style="color: #fca5a5;">💥 CRITICAL 1: Bỏ Sót Biển An Toàn (False Negative)</span>
+            <span class="status-pill pill-fail">Mức độ 1</span>
+          </div>
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px;">
+            Annotator bỏ sót không vẽ box, gắn nhãn IGNORE, hoặc phân loại sai nhóm cho biển STOP, biển Cấm đi ngược
+            chiều hoặc biển Công trường đang hướng thẳng về xe mình (<code class="code-val">facing_ego</code>).
+          </p>
+          <div class="alert alert-danger" style="margin: 0;">
+            <div><strong>Hậu quả thảm khốc:</strong> Xe tự hành lao qua giao lộ nguy hiểm với tốc độ cao mà không hãm
+              phanh, dẫn đến tai nạn trực diện!</div>
+          </div>
+        </div>
+
+        <div class="card" style="border-color: rgba(245, 158, 11, 0.4);">
+          <div class="card-header">
+            <span class="card-title" style="color: #fde68a;">🛑 CRITICAL 2: Nhầm Hướng Gây Phanh Oan (Phantom
+              Braking)</span>
+            <span class="status-pill pill-fail">Mức độ 1</span>
+          </div>
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px;">
+            Gán nhầm <code class="code-val">relevance = facing_ego</code> cho biển cấm tốc độ 30 km/h ở đường nhánh rẽ
+            (<code class="code-val">lateral</code>) hoặc biển của làn đường ngược chiều (<code
+              class="code-val">facing_away</code>).
+          </p>
+          <div class="alert alert-danger" style="margin: 0;">
+            <div><strong>Hậu quả thảm khốc:</strong> Xe đang chạy 100 km/h trên cao tốc bỗng nhiên phanh khẩn cấp vô cớ,
+              gây chuỗi tai nạn dồn toa từ các xe chạy sau!</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 8: Real Annotated Gallery -->
+    <section id="cases">
+      <h2 class="section-title">🖼️ 8. Bộ Sưu Tập Ảnh Mẫu Gán Nhãn Thực Tế (CVAT Annotated Gallery)</h2>
+      <p class="section-desc">
+        Các tình huống mẫu thực tế đã được đội ngũ QA và Gold Owner kiểm duyệt từ thư mục
+        <code>images/guideline-images/</code>:
+      </p>
+
+      <div class="case-tab-header">
+        <button class="case-tab-btn active" onclick="switchCaseTab('occu')">🌿 occu.png: Che Khuất Cây Cối</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('sang')">☀️ sang.png: Nắng Chói & Cụm Biển</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('toi')">🌆 toi.png: Ngược Sáng Chiều Tà</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('hard')">❄️ hard.png: Đô Thị Mùa Đông</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('troitoi')">🌙 troitoi.png: Giá Long Môn Đêm</button>
+      </div>
+
+      <!-- Case 1 -->
+      <div id="case_occu" class="case-content active">
+        <div class="case-img-wrap">
+          <img src="../images/guideline-images/occu.png" alt="Mẫu gán nhãn che khuất occu.png">
+        </div>
+        <div class="card">
+          <div class="card-title">💡 Bài học kỹ thuật: Che khuất nặng (Heavy Occlusion)</div>
+          <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
+            Khi biển báo tròn cấm đỗ xe bị cành cây xẻ dọc ở giữa: <strong>Vẽ 1 bounding box hình chữ nhật bao phủ toàn
+              bộ vòng tròn vật lý</strong> (box chấp nhận chứa cành cây ở giữa). Tuyệt đối không lẹm viền và không tách
+            thành 2 box nhỏ vụn. Gán <code>occlusion = heavy</code>. Do biểu tượng cấm đỗ vẫn nhận diện tường minh &rarr; gán <code>legibility = legible</code>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Case 2 -->
+      <div id="case_sang" class="case-content">
+        <div class="case-img-wrap">
+          <img src="../images/guideline-images/sang.png" alt="Mẫu gán nhãn nắng chói sang.png">
+        </div>
+        <div class="card">
+          <div class="card-title">💡 Bài học kỹ thuật: Cụm biển xếp chồng & Nắng chói lóa</div>
+          <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
+            Cột biển gồm biển bát giác STOP ở trên và biển chỉ dẫn/biển phụ ở dưới: <strong>Bắt buộc tạo 2 bounding box
+              riêng biệt tiếp giáp nhau</strong> (biển STOP: <code>legibility = legible</code>). Với biển chỉ dẫn ở xa bị chói nắng làm mờ chữ bên trong &rarr; <strong>chủ động chuyển <code>legibility = unreadable</code></strong> (không để sót mặc định legible). Khi nắng chói, chỉ bám viền phản quang thực, không lấy quầng sáng lóa (halo).
+          </p>
+        </div>
+      </div>
+
+      <!-- Case 3 -->
+      <div id="case_toi" class="case-content">
+        <div class="case-img-wrap">
+          <img src="../images/guideline-images/toi.png" alt="Mẫu gán nhãn ngược sáng toi.png">
+        </div>
+        <div class="card">
+          <div class="card-title">💡 Bài học kỹ thuật: Ngược sáng & Biển gắn thân cột gỗ</div>
+          <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
+            Biển tam giác cảnh báo gắn trên thân cột gỗ bên phải: Box hình chữ nhật đóng khung chính xác 3 đỉnh ngoài
+            cùng của tam giác (<code>legibility = legible</code>). Thân cột gỗ đâm thẳng từ trên xuống nhưng <strong>box không bao trùm cột gỗ</strong>. Với biển nhỏ ở góc tường xa ($12 \le L < 30\text{px}$) bị chìm trong vùng tối &rarr; vẽ box và chọn <code>legibility = unreadable</code>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Case 4 -->
+      <div id="case_hard" class="case-content">
+        <div class="case-img-wrap">
+          <img src="../images/guideline-images/hard.png" alt="Mẫu gán nhãn đô thị mùa đông hard.png">
+        </div>
+        <div class="card">
+          <div class="card-title">💡 Bài học kỹ thuật: Cành cây khô mùa đông đan xen</div>
+          <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
+            Cành cây khô rụng lá tạo thành mạng lưới chằng chịt dễ gây ảo giác quang học. Annotator phải zoom 100% pixel
+            gốc để tách bạch đâu là nhánh cây đè lên và đâu là viền ngoài của biển; không vẽ nhầm vào bóng đổ của cây
+            lên tường nhà. Biển cảnh báo cạnh thân cây: <code>legibility = legible</code>; biển nhỏ ở xa vỉa hè: <code>legibility = unreadable</code>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Case 5 -->
+      <div id="case_troitoi" class="case-content">
+        <div class="case-img-wrap">
+          <img src="../images/guideline-images/troitoi.png" alt="Mẫu gán nhãn giá long môn ban đêm troitoi.png">
+        </div>
+        <div class="card">
+          <div class="card-title">💡 Bài học kỹ thuật: Biển chỉ dẫn trên giá long môn cao tốc</div>
+          <p style="font-size: 0.92rem; color: var(--text-muted); margin: 10px 0;">
+            Trên giá long môn có 2 tấm biển xanh lá và xanh lam: <strong>Vẽ 2 bounding box riêng biệt cho từng tấm
+              biển</strong>. Dưới ánh đèn đường cao áp, chữ và biểu tượng phản quang hiển thị sắc nét &rarr; gán <code>legibility = legible</code> cho cả 2 biển. Toàn bộ giàn khung thép chịu lực và dàn đèn cao áp chiếu sáng là hạ tầng phụ trợ &rarr; <strong>IGNORE</strong> (Tuyệt đối không vẽ một box khổng lồ ôm cả giàn thép!).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 9: Issue Escalation Codes -->
+    <section id="issues">
+      <h2 class="section-title">🚨 9. Quản trị Ca Bất định & Hệ thống Mã Issue Chuẩn</h2>
+      <p class="section-desc">
+        Khi gặp tình huống chưa chắc chắn, tuân thủ nguyên tắc <strong>"Dừng suy đoán — Mở Issue leo thang"</strong>
+        thay vì đoán bừa cho xong việc:
+      </p>
+
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">UNCERTAIN_CLASS</span>
+            <span class="status-pill pill-warning">Không rõ loại</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">
+            Nhận diện rõ viền hình khối nhưng họa tiết bên trong bị mờ/bạc màu, không thể phân định giữa
+            <code>prohibitory</code> và <code>warning</code>.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">UNCERTAIN_BOUNDARY</span>
+            <span class="status-pill pill-warning">Không rõ viền</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">
+            Đối tượng bị nhòe chuyển động (motion blur) nặng hoặc bị lóa đèn pha làm tan biến 1 trong 4 cạnh, không thể
+            định vị mép cực trị.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">UNCERTAIN_SCOPE</span>
+            <span class="status-pill pill-warning">Nghi ngoài scope</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">
+            Vật thể nghi ngờ là pano quảng cáo, biển số nhà, biển trạm xăng tạm hoặc đồ họa in trên áo phản quang của
+            công nhân công trường.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">ATTRIBUTE_CHECK</span>
+            <span class="status-pill pill-warning">Kiểm tra góc</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">
+            Góc quay nằm ở ranh giới nhạy cảm (50&deg; - 70&deg;) giữa <code>facing_ego</code> và <code>lateral</code>,
+            cần Lead chốt để tránh lỗi Phantom Braking.
+          </p>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <div>
+          <strong>Quy trình Escalation 3 Bước:</strong><br>
+          1. Annotator tạo box &rarr; gán <code>sign_group = unknown</code> &rarr; tick
+          <code>escalate_review = true</code> (hoặc gắn tag <code>image_escalate</code> nếu toàn ảnh lỗi).<br>
+          2. Ghi chép <code>sample_id</code>, tọa độ box và mã Issue vào biên bản review nội bộ.<br>
+          3. QA Owner (Phạm Xuân Duy) và Spec Owner (Phạm Hữu Hải) đưa ra phán quyết chuẩn vàng căn cứ trên Downstream
+          Safety Contract.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 10: Interactive Tools & IoU Simulator -->
+    <section id="tools">
+      <h2 class="section-title">🧮 10. Bộ Công Cụ Tương Tác: Đo Kích Thước & Mô Phỏng IoU Dung Sai QA</h2>
+      <p class="section-desc">
+        Người gán nhãn có thể nhập tọa độ để tự kiểm tra phân loại kích thước L hoặc mô phỏng chấm điểm IoU giữa box của
+        mình với Ground Truth:
+      </p>
+
+      <!-- Tool 1: Box Dimension & Classifer -->
+      <div class="calc-box">
+        <h3 style="font-size: 1.15rem; margin-bottom: 14px; color: var(--accent-blue);">📏 1. Phân loại Kích thước đặc
+          trưng L</h3>
+        <div class="calc-grid">
+          <div class="calc-input-group">
+            <label>xmin (px)</label>
+            <input type="number" id="in_xmin" value="723" oninput="calculateBoxSize()">
+          </div>
+          <div class="calc-input-group">
+            <label>ymin (px)</label>
+            <input type="number" id="in_ymin" value="431" oninput="calculateBoxSize()">
+          </div>
+          <div class="calc-input-group">
+            <label>xmax (px)</label>
+            <input type="number" id="in_xmax" value="752" oninput="calculateBoxSize()">
+          </div>
+          <div class="calc-input-group">
+            <label>ymax (px)</label>
+            <input type="number" id="in_ymax" value="457" oninput="calculateBoxSize()">
+          </div>
+        </div>
+        <div class="calc-result-display">
+          <div>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Kích thước hình học:</span>
+            <div id="res_dims" style="font-size: 1.1rem; font-weight: 700; font-family: monospace;">w = 29 px, h = 26 px
+              &rarr; L = 29 px</div>
+          </div>
+          <div id="res_status">
+            <span class="status-pill pill-pass">LABEL (12 &le; L &lt; 30px | Dung sai cạnh &le; 1.5px)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tool 2: IoU & Edge Shift Simulator -->
+      <div class="calc-box" style="margin-top: 24px;">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+          <h3 style="font-size: 1.15rem; color: var(--accent-emerald);">🎯 2. Mô phỏng Chỉ số IoU & Sai số Lệch Cạnh
+            (&Delta;)</h3>
+          <div style="display: flex; gap: 8px;">
+            <button class="case-tab-btn" style="padding: 4px 10px; font-size: 0.8rem;"
+              onclick="loadIoUPreset('pass')">Nạp mẫu ĐẠT (IoU 0.91)</button>
+            <button class="case-tab-btn" style="padding: 4px 10px; font-size: 0.8rem;"
+              onclick="loadIoUPreset('fail')">Nạp mẫu TRƯỢT (IoU 0.76)</button>
+          </div>
+        </div>
+
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 16px;">
+          <!-- Box Annotator -->
+          <div style="background: #090e1a; padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: var(--accent-blue); font-size: 0.9rem; margin-bottom: 8px;">Hộp của
+              Annotator (Box A)</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <input type="number" id="a_xmin" value="100" placeholder="xmin" oninput="runIoUSimulator()"
+                style="background:#111827; border:1px solid #334155; padding:6px; color:#fff; border-radius:4px;">
+              <input type="number" id="a_ymin" value="100" placeholder="ymin" oninput="runIoUSimulator()"
+                style="background:#111827; border:1px solid #334155; padding:6px; color:#fff; border-radius:4px;">
+              <input type="number" id="a_xmax" value="150" placeholder="xmax" oninput="runIoUSimulator()"
+                style="background:#111827; border:1px solid #334155; padding:6px; color:#fff; border-radius:4px;">
+              <input type="number" id="a_ymax" value="150" placeholder="ymax" oninput="runIoUSimulator()"
+                style="background:#111827; border:1px solid #334155; padding:6px; color:#fff; border-radius:4px;">
+            </div>
+          </div>
+
+          <!-- Box Ground Truth -->
+          <div style="background: #090e1a; padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: var(--accent-emerald); font-size: 0.9rem; margin-bottom: 8px;">Hộp
+              Ground Truth / Gold (Box B)</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <input type="number" id="b_xmin" value="102" placeholder="xmin" oninput="runIoUSimulator()"
+                style="background:#111827; border:1px solid #334155; padding:6px; color:#fff; border-radius:4px;">
+              <input type="number" id="b_ymin" value="101" placeholder="ymin" oninput="runIoUSimulator()"
+                style="background:#111827; border:1px solid #334155; padding:6px; color:#fff; border-radius:4px;">
+              <input type="number" id="b_xmax" value="151" placeholder="xmax" oninput="runIoUSimulator()"
+                style="background:#111827; border:1px solid #334155; padding:6px; color:#fff; border-radius:4px;">
+              <input type="number" id="b_ymax" value="149" placeholder="ymax" oninput="runIoUSimulator()"
+                style="background:#111827; border:1px solid #334155; padding:6px; color:#fff; border-radius:4px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-result-display">
+          <div>
+            <div id="sim_iou" style="font-size: 1.15rem; font-weight: 800; font-family: monospace; color: #6ee7b7;">IoU
+              = 0.912 (91.2%)</div>
+            <div id="sim_shifts" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">&Delta;xmin:
+              2.0px | &Delta;ymin: 1.0px | &Delta;xmax: 1.0px | &Delta;ymax: 1.0px</div>
+          </div>
+          <div id="sim_verdict">
+            <span class="status-pill pill-pass">PASS: ĐẠT CHUẨN QA (IoU &ge; 0.85 &amp; &Delta; &le; 3.0px)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 11: Pre-Submission Checklist -->
+    <section id="checklist">
+      <h2 class="section-title">📋 11. Checklist 8 Điểm Vàng Trước Khi Bấm Save (Ctrl+S)</h2>
+      <p class="section-desc">
+        Tự tích kiểm tra 8 tiêu chí kiểm soát chất lượng (Pre-submission Quality Gate) để triệt tiêu 100% lỗi trước khi
+        bàn giao:
+      </p>
+
+      <div class="checklist-wrap">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-size: 0.9rem; font-weight: 700; color: var(--accent-blue);">Tiến độ hoàn thành
+            Checklist:</span>
+          <span id="check_pct" style="font-weight: 800; font-family: monospace; color: var(--accent-emerald);">0 / 8
+            (0%)</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div id="progress_bar" class="progress-bar-fill"></div>
+        </div>
+
+        <div class="check-item" onclick="toggleCheck(0)">
+          <input type="checkbox" id="chk_0" onchange="updateChecklistProgress()">
+          <div class="check-text">
+            <strong>1. Đúng Class và Shape hình học</strong>
+            <span>Mọi bounding box dùng Shape <code>rectangle</code> và gắn đúng nhãn <code>traffic_sign</code>.</span>
+          </div>
+        </div>
+
+        <div class="check-item" onclick="toggleCheck(1)">
+          <input type="checkbox" id="chk_1" onchange="updateChecklistProgress()">
+          <div class="check-text">
+            <strong>2. Tuân thủ Nguyên tắc 1-Object-1-Box</strong>
+            <span>Tách biệt độc lập từng mặt biển; cụm biển xếp chồng ở xa có 2 màu (đỏ/vàng và trắng/xanh) đã được tách
+              thành 2 box riêng.</span>
+          </div>
+        </div>
+
+        <div class="check-item" onclick="toggleCheck(2)">
+          <input type="checkbox" id="chk_2" onchange="updateChecklistProgress()">
+          <div class="check-text">
+            <strong>3. BBox ôm sát 4 điểm cực trị (Tightness)</strong>
+            <span>Box ôm khít mép ngoài mặt hiển thị; không dính cọc sắt cắm biển và không lấy bóng đổ xuống
+              đường.</span>
+          </div>
+        </div>
+
+        <div class="check-item" onclick="toggleCheck(3)">
+          <input type="checkbox" id="chk_3" onchange="updateChecklistProgress()">
+          <div class="check-text">
+            <strong>4. Chặn biên tuyệt đối (Frame Boundary Clamping)</strong>
+            <span>Tọa độ box không vượt ra ngoài biên ảnh ($0 \le x \le 1360, 0 \le y \le 800$). Biển cắt mép dừng chính
+              xác tại rìa ảnh.</span>
+          </div>
+        </div>
+
+        <div class="check-item" onclick="toggleCheck(4)">
+          <input type="checkbox" id="chk_4" onchange="updateChecklistProgress()">
+          <div class="check-text">
+            <strong>5. Thỏa mãn ngưỡng kích thước đặc trưng</strong>
+            <span>Các biển được vẽ đều có $L = \max(w, h) \ge 12\text{px}$ trên tọa độ gốc; kiên quyết loại bỏ các đốm
+              nhiễu $L < 12\text{px}$.</span>
+          </div>
+        </div>
+
+        <div class="check-item" onclick="toggleCheck(5)">
+          <input type="checkbox" id="chk_5" onchange="updateChecklistProgress()">
+          <div class="check-text">
+            <strong>6. Làm sạch __undefined__ &amp; Chuẩn hóa legibility</strong>
+            <span>Đã chủ động gán đầy đủ giá trị cho <code>sign_group</code> và <code>relevance</code>; đặc biệt kiểm tra các biển ở xa ($12 \le L &lt; 30\text{px}$) hoặc mờ nhòe/chói nắng đã chuyển sang <code>legibility = unreadable</code> (không để sót mặc định legible).</span>
+          </div>
+        </div>
+
+        <div class="check-item" onclick="toggleCheck(6)">
+          <input type="checkbox" id="chk_6" onchange="updateChecklistProgress()">
+          <div class="check-text">
+            <strong>7. Loại trừ triệt để decal và phản chiếu ảo</strong>
+            <span>Đã kiểm tra không vẽ nhầm vào decal dán sau đuôi xe buýt/xe tải, ảnh phản chiếu nắp ca-pô hoặc đèn tín
+              hiệu giao thông.</span>
+          </div>
+        </div>
+
+        <div class="check-item" onclick="toggleCheck(7)">
+          <input type="checkbox" id="chk_7" onchange="updateChecklistProgress()">
+          <div class="check-text">
+            <strong>8. Xử lý ca bất định chuẩn quy trình Escalation</strong>
+            <span>Mọi ca phân vân về viền/hướng đều đã được tick <code>escalate_review = true</code> và ghi vào nhật ký
+              bàn giao.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 12: Practice Quiz -->
+    <section id="quiz">
+      <h2 class="section-title">🎮 12. Trắc Nghiệm Thực Hành Chuyên Nghiệp (7 Tình Huống Thực Tế)</h2>
+      <p class="section-desc">Kiểm tra năng lực thực chiến trước khi tiến hành gán nhãn trên CVAT:</p>
+
+      <!-- Quiz 1 -->
+      <div class="quiz-card">
+        <div class="quiz-q">1. Một cột bên phải đường có 1 biển cấm tốc độ 60 km/h ở trên và 1 biển phụ chữ nhật "300m"
+          ở dưới. Bạn sẽ vẽ thế nào?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai. Gộp 2 biển vào 1 box là lỗi vi phạm nguyên tắc 1-Object-1-Box, làm sai tỷ lệ bbox và không gán được attribute riêng.')">
+            A. Vẽ 1 box to bao trùm cả 2 biển và cọc sắt ở giữa.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, true, 'Chính xác! Mỗi mặt biển độc lập là 1 box riêng tiếp giáp nhau: biển trên prohibitory, biển dưới other_info.')">
+            B. Vẽ 2 box riêng biệt cho từng mặt biển, không lấy cọc sắt.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai. Biển phụ là tấm biển riêng thuộc scope bắt buộc gán nhãn downstream.')">
+            C. Chỉ vẽ biển cấm ở trên, bỏ qua biển phụ ở dưới.
+          </div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 2 -->
+      <div class="quiz-card">
+        <div class="quiz-q">2. Biển báo giới hạn tốc độ 40 km/h cắm ở đường nhánh rẽ phải (làn rẽ sang đường gom khác).
+          Xe Ego đang chạy thẳng ở làn chính cao tốc. Gán thuộc tính relevance là gì?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Nguy hiểm! Nếu gán facing_ego xe tự hành sẽ phanh oan (phantom braking) khẩn cấp giữa cao tốc!')">
+            A. facing_ego
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, true, 'Chính xác! Biển ở đường nhánh/đường gom rẽ nhánh chọn lateral để xe Ego không bị phanh oan.')">
+            B. lateral
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'facing_away chỉ dùng khi biển quay lưng hoàn toàn xoay góc > 90° so với hướng xe.')">
+            C. facing_away
+          </div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 3 -->
+      <div class="quiz-card">
+        <div class="quiz-q">3. Một biển báo ở rất xa hậu cảnh, đo được kích thước xmin=400, xmax=408, ymin=200, ymax=209
+          (w=8px, h=9px, L=9px). Quyết định xử lý là gì?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai. Quy định kích thước tối thiểu là L >= 12px trên ảnh gốc.')">
+            A. Vẫn vẽ box vì nhìn thấy màu đỏ.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, true, 'Chính xác! Kích thước L = 9px < 12px thuộc ngoại vi phạm vi -> IGNORE (không vẽ box).')">
+            B. IGNORE (Không tạo bounding box).
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Chỉ escalate khi kích thước đạt >= 12px nhưng viền không xác định.')">
+            C. Gán tag image_escalate.
+          </div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 4 -->
+      <div class="quiz-card">
+        <div class="quiz-q">4. Quan sát thấy một xe bồn chở dầu đang chạy phía trước, phía sau đuôi bồn có dán một tem
+          tròn viền đỏ giới hạn tốc độ "60". Bạn xử lý thế nào?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, true, 'Chính xác! Đây là decal 2D in trên thân phương tiện, thuộc ngoại vi phạm vi -> IGNORE để tránh làm hỏng mô hình nhận diện xe.')">
+            A. IGNORE (Không tạo bounding box vì đây là decal dán trên xe).
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai. Gán nhãn decal trên xe sẽ khiến xe tự hành nhận nhầm xe bồn thành một cây cọc cắm biển báo!')">
+            B. Vẽ box traffic_sign và chọn sign_group = prohibitory.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Không đúng. Đây là quy tắc chuẩn loại trừ nhiễu đã được quy định rõ trong guideline, không cần leo thang.')">
+            C. Gán escalate_review = true.
+          </div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 5 -->
+      <div class="quiz-card">
+        <div class="quiz-q">5. Một biển báo cấm hình tròn nằm ở sát rìa trái khung hình và bị mép ảnh cắt mất một nửa
+          (Truncated, chỉ nhìn thấy nửa bên phải từ x=0 đến x=25px). Cách dựng box chuẩn là:</div>
+        <div class="quiz-options">
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai nghiêm trọng! Tọa độ box bị clamp tuyệt đối trong [0, W], cấm suy đoán vẽ phần ngoài ảnh.')">
+            A. Tưởng tượng nửa hình tròn còn lại nằm ngoài ảnh và vẽ box tràn sang tọa độ âm (xmin = -25).
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, true, 'Chính xác! Tuân thủ nguyên tắc Frame Boundary Clamping: cạnh trái box dừng chính xác tại xmin = 0 (mép ảnh).')">
+            B. Dừng cạnh trái box chính xác tại mép ảnh (xmin = 0), bao trọn phần nhìn thấy trong khung hình.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai. Nếu phần nhìn thấy vẫn đủ để nhận diện được loại biển và L >= 12px thì vẫn phải gán nhãn.')">
+            C. Bỏ qua hoàn toàn (IGNORE) vì biển không toàn vẹn.
+          </div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 6 (NEW: LEGIBILITY ATTRIBUTE) -->
+      <div class="quiz-card">
+        <div class="quiz-q">6. Một biển giới hạn tốc độ tròn viền đỏ ở khoảng cách ~60m, đo được kích thước 18x18px (L=18 &ge; 12px). Khi zoom 100% thấy rõ viền tròn màu đỏ nhưng số bên trong bị mờ nhòe do chói nắng, mắt người không thể đọc rõ là số 50 hay 60 hay 80. Bạn gán nhãn và thuộc tính như thế nào?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai. Biển có L = 18px >= 12px và viền hình học tròn đỏ rõ ràng bắt buộc phải gán nhãn (LABEL), tuyệt đối không được bỏ qua!')">
+            A. Bỏ qua không gán box (IGNORE) vì không đọc được con số tốc độ cụ thể.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, true, 'Chính xác! Vẽ bounding box ôm sát viền tròn đỏ (sign_group = prohibitory, relevance = facing_ego), nhưng do mắt người không đọc rõ số nên BẮT BUỘC CHỦ ĐỘNG CHỌN legibility = unreadable!')">
+            B. Vẽ bounding box, chọn sign_group = prohibitory và chuyển legibility = unreadable.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai nghiêm trọng! Tuyệt đối không để nguyên mặc định legible và tự suy đoán số theo kinh nghiệm; điều này sẽ làm sai lệch tập dữ liệu huấn luyện OCR và gây nguy hiểm cho ADAS!')">
+            C. Vẽ bounding box, để nguyên mặc định legibility = legible và tự đoán số 50 theo tốc độ thông thường.
+          </div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+
+      <!-- Quiz 7 (NEW: CHE KHUẤT > 50% NHƯNG XÁC ĐỊNH ĐƯỢC BIỂN) -->
+      <div class="quiz-card">
+        <div class="quiz-q">7. Một biển báo tròn cấm đỗ xe (viền đỏ nền xanh có gạch chéo) bị cành cây rậm rạp che mất hơn 50% diện tích ở chính giữa, nhưng mắt người nhìn vào vẫn nhận biết chắc chắn đó là biển cấm đỗ. Bạn xử lý gán nhãn thế nào?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai. Khi mắt người vẫn xác định được loại biển thì ĐƯỢC PHÉP GÁN NHÃN RÕ (LABEL), chỉ bỏ qua khi bị che > 80% không còn bằng chứng thị giác!')">
+            A. Bỏ qua hoàn toàn (IGNORE) vì diện tích bị che khuất vượt quá 50%.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, false, 'Sai nghiêm trọng! Vi phạm nguyên tắc 1-Object-1-Box, làm méo mó hình học của mặt biển và hỏng dữ liệu huấn luyện!')">
+            B. Tách thành 2 bounding box nhỏ ôm lấy 2 phần rìa còn hở ra ngoài tán cây.
+          </div>
+          <div class="quiz-opt"
+            onclick="checkQuiz(this, true, 'Chính xác! ĐƯỢC PHÉP GÁN RÕ: Dựng 1 box amodal ôm trọn hình tròn vật lý (chấp nhận cành cây ở giữa), gán sign_group = prohibitory, occlusion = heavy, và legibility = legible (do nhận dạng rõ biểu tượng cấm đỗ)!')">
+            C. Vẽ 1 box amodal ôm trọn hình tròn vật lý, gán sign_group = prohibitory, occlusion = heavy, và legibility = legible.
+          </div>
+        </div>
+        <div class="quiz-explain"></div>
+      </div>
+    </section>
+
+    <!-- Crop Selection Modal for Section 2 -->
+    <div id="crop_modal_overlay" class="crop-modal-overlay">
+      <div class="crop-modal-dialog">
+        <div class="crop-modal-header">
+          <h3>✂️ Chọn vùng biển báo trên ảnh để đo kích thước L</h3>
+          <button type="button" class="crop-modal-close" onclick="closeCropModal()">&times;</button>
+        </div>
+
+        <div class="crop-modal-body">
+          <div
+            style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.88rem; flex-wrap: wrap; gap: 8px;">
+            <span style="color: #94a3b8;">
+              🖱️ <strong>Hướng dẫn:</strong> Nhấp và kéo chuột trên ảnh để vẽ hộp bao quanh đối tượng cần kiểm tra.
+            </span>
+            <span id="crop_dims_badge"
+              style="font-family: monospace; font-weight: 700; color: #38bdf8; background: #1e293b; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+              Kéo chuột trên ảnh để vẽ vùng chọn
+            </span>
+          </div>
+
+          <div class="crop-canvas-container" id="crop_canvas_container">
+            <canvas id="crop_canvas"></canvas>
+          </div>
+        </div>
+
+        <div class="crop-modal-footer">
+          <div style="font-size: 0.82rem; color: #94a3b8;">
+            * Kích thước vùng chọn được tự động quy đổi chuẩn xác theo pixel gốc của ảnh ban đầu.
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="crop-btn-secondary" onclick="closeCropModal()">Hủy bỏ</button>
+            <button type="button" id="crop_confirm_btn" class="crop-btn-primary" onclick="confirmCropSelection()"
+              disabled>
+              ✂️ Cắt Vùng Chọn &amp; Tính Toán L
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollToTopBtn" class="scroll-to-top" aria-label="Cuộn lên đầu trang" title="Cuộn lên đầu trang">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+    </svg>
+  </button>
+
+  <script>
+    // Box dimension calculation
+    function calculateBoxSize() {
+      const xmin = parseInt(document.getElementById('in_xmin').value) || 0;
+      const ymin = parseInt(document.getElementById('in_ymin').value) || 0;
+      const xmax = parseInt(document.getElementById('in_xmax').value) || 0;
+      const ymax = parseInt(document.getElementById('in_ymax').value) || 0;
+
+      const w = Math.abs(xmax - xmin);
+      const h = Math.abs(ymax - ymin);
+      const L = Math.max(w, h);
+
+      document.getElementById('res_dims').innerText = `w = ${w} px, h = ${h} px → L = ${L} px`;
+
+      const statusEl = document.getElementById('res_status');
+      if (L >= 30) {
+        statusEl.innerHTML = `<span class="status-pill pill-pass">LABEL (L ≥ 30px | Dung sai cạnh ≤ 3.0px)</span>`;
+      } else if (L >= 12) {
+        statusEl.innerHTML = `<span class="status-pill pill-pass">LABEL (12 ≤ L < 30px | Dung sai cạnh ≤ 1.5px)</span>`;
+      } else {
+        statusEl.innerHTML = `<span class="status-pill pill-fail">IGNORE (L = ${L}px < 12px: Bỏ qua không gán box)</span>`;
+      }
+    }
+
+    // IoU & Edge Shift Simulator
+    function runIoUSimulator() {
+      const a_xmin = parseFloat(document.getElementById('a_xmin').value) || 0;
+      const a_ymin = parseFloat(document.getElementById('a_ymin').value) || 0;
+      const a_xmax = parseFloat(document.getElementById('a_xmax').value) || 0;
+      const a_ymax = parseFloat(document.getElementById('a_ymax').value) || 0;
+
+      const b_xmin = parseFloat(document.getElementById('b_xmin').value) || 0;
+      const b_ymin = parseFloat(document.getElementById('b_ymin').value) || 0;
+      const b_xmax = parseFloat(document.getElementById('b_xmax').value) || 0;
+      const b_ymax = parseFloat(document.getElementById('b_ymax').value) || 0;
+
+      // Shifts
+      const dx1 = Math.abs(a_xmin - b_xmin);
+      const dy1 = Math.abs(a_ymin - b_ymin);
+      const dx2 = Math.abs(a_xmax - b_xmax);
+      const dy2 = Math.abs(a_ymax - b_ymax);
+
+      // Areas
+      const areaA = Math.max(0, a_xmax - a_xmin) * Math.max(0, a_ymax - a_ymin);
+      const areaB = Math.max(0, b_xmax - b_xmin) * Math.max(0, b_ymax - b_ymin);
+
+      // Intersection
+      const interX1 = Math.max(a_xmin, b_xmin);
+      const interY1 = Math.max(a_ymin, b_ymin);
+      const interX2 = Math.min(a_xmax, b_xmax);
+      const interY2 = Math.min(a_ymax, b_ymax);
+
+      const interW = Math.max(0, interX2 - interX1);
+      const interH = Math.max(0, interY2 - interY1);
+      const interArea = interW * interH;
+
+      // Union
+      const unionArea = areaA + areaB - interArea;
+      const iou = unionArea > 0 ? (interArea / unionArea) : 0;
+
+      const maxShift = Math.max(dx1, dy1, dx2, dy2);
+      const maxL = Math.max(a_xmax - a_xmin, a_ymax - a_ymin, b_xmax - b_xmin, b_ymax - b_ymin);
+      const shiftLimit = maxL >= 30 ? 3.0 : 1.5;
+
+      const iouPercent = (iou * 100).toFixed(1);
+      const iouEl = document.getElementById('sim_iou');
+      iouEl.innerText = `IoU = ${iou.toFixed(3)} (${iouPercent}%)`;
+
+      document.getElementById('sim_shifts').innerText =
+        `Δxmin: ${dx1.toFixed(1)}px | Δymin: ${dy1.toFixed(1)}px | Δxmax: ${dx2.toFixed(1)}px | Δymax: ${dy2.toFixed(1)}px (Ngưỡng cho phép: ≤ ${shiftLimit}px)`;
+
+      const verdictEl = document.getElementById('sim_verdict');
+      if (iou >= 0.85 && maxShift <= shiftLimit) {
+        iouEl.style.color = '#6ee7b7';
+        verdictEl.innerHTML = `<span class="status-pill pill-pass">PASS: ĐẠT CHUẨN QA (IoU ≥ 0.85 &amp; Lệch cạnh ≤ ${shiftLimit}px)</span>`;
+      } else {
+        iouEl.style.color = '#fca5a5';
+        let reason = [];
+        if (iou < 0.85) reason.push(`IoU ${iou.toFixed(2)} < 0.85`);
+        if (maxShift > shiftLimit) reason.push(`Cạnh lệch max ${maxShift.toFixed(1)}px > ${shiftLimit}px`);
+        verdictEl.innerHTML = `<span class="status-pill pill-fail">FAIL: KHÔNG ĐẠT (${reason.join(', ')})</span>`;
+      }
+    }
+
+    function loadIoUPreset(type) {
+      if (type === 'pass') {
+        document.getElementById('a_xmin').value = 100;
+        document.getElementById('a_ymin').value = 100;
+        document.getElementById('a_xmax').value = 150;
+        document.getElementById('a_ymax').value = 150;
+
+        document.getElementById('b_xmin').value = 102;
+        document.getElementById('b_ymin').value = 101;
+        document.getElementById('b_xmax').value = 151;
+        document.getElementById('b_ymax').value = 149;
+      } else {
+        document.getElementById('a_xmin').value = 100;
+        document.getElementById('a_ymin').value = 100;
+        document.getElementById('a_xmax').value = 150;
+        document.getElementById('a_ymax').value = 150;
+
+        document.getElementById('b_xmin').value = 107;
+        document.getElementById('b_ymin').value = 106;
+        document.getElementById('b_xmax').value = 156;
+        document.getElementById('b_ymax').value = 154;
+      }
+      runIoUSimulator();
+    }
+
+    // Relevance Switcher
+    function showRelevanceDetail(type, btnEl) {
+      const titleEl = document.getElementById('rel_title');
+      const descEl = document.getElementById('rel_desc');
+      const cardEl = document.getElementById('relevance_card_display');
+      const svgContainer = document.getElementById('rel_visual_svg_container');
+      const badgeEl = document.getElementById('rel_visual_badge');
+      const captionEl = document.getElementById('rel_visual_caption');
+
+      // Update active tab buttons in relevance section
+      const tabBtns = document.querySelectorAll('#relevance_btn_group .rel-tab-btn');
+      tabBtns.forEach(btn => btn.classList.remove('active'));
+      if (btnEl) {
+        btnEl.classList.add('active');
+      } else {
+        if (type === 'facing_ego' && tabBtns[0]) tabBtns[0].classList.add('active');
+        if (type === 'facing_away' && tabBtns[1]) tabBtns[1].classList.add('active');
+        if (type === 'lateral' && tabBtns[2]) tabBtns[2].classList.add('active');
+      }
+
+      if (type === 'facing_ego') {
+        cardEl.style.borderLeftColor = 'var(--accent-emerald)';
+        titleEl.style.color = '#34d399';
+        titleEl.innerText = '🟢 facing_ego (Hướng thẳng vào xe mình)';
+        descEl.innerHTML = `
+          <p style="font-size: 0.94rem; margin-bottom: 12px;"><strong>Đặc điểm nhận dạng:</strong> Mặt trước của biển vuông góc hoặc lệch góc &lt; 60&deg; hướng thẳng vào tầm nhìn của xe Ego trên làn đường đang chạy.</p>
+          <p style="font-size: 0.94rem; margin-bottom: 12px;"><strong>Tác động ADAS:</strong> Hệ thống ra quyết định lập tức đọc giá trị biển báo để điều khiển xe (ví dụ giảm tốc về 60 km/h).</p>
+          <div class="alert alert-info"><div><strong>Áp dụng:</strong> Mọi biển hiệu lệnh, cấm, cảnh báo ở lề phải hoặc giá long môn làn xe mình.</div></div>
+        `;
+        if (badgeEl) {
+          badgeEl.style.background = 'rgba(52, 211, 153, 0.15)';
+          badgeEl.style.color = '#34d399';
+          badgeEl.style.borderColor = 'rgba(52, 211, 153, 0.3)';
+          badgeEl.innerText = 'Góc nhìn trực diện (< 60°)';
+        }
+        if (captionEl) {
+          captionEl.innerHTML = 'Biển đối diện xe (&lt; 60&deg;) &rarr; <strong style="color: #34d399;">ADAS xử lý tức thời</strong>';
+        }
+        if (svgContainer) {
+          svgContainer.innerHTML = `
+            <svg width="250" height="150" viewBox="0 0 250 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; border-radius: 8px;">
+              <rect x="20" y="5" width="125" height="140" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+              <line x1="82" y1="5" x2="82" y2="145" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8 6" opacity="0.5"/>
+              <line x1="20" y1="5" x2="20" y2="145" stroke="#64748b" stroke-width="2"/>
+              <line x1="145" y1="5" x2="145" y2="145" stroke="#64748b" stroke-width="2"/>
+              <rect x="145" y="5" width="85" height="140" rx="6" fill="#0f172a" stroke="#1e293b"/>
+              <rect x="25" y="10" width="82" height="18" rx="4" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="1"/>
+              <text x="66" y="22.5" fill="#34d399" font-size="8" font-weight="700" text-anchor="middle" font-family="sans-serif">Làn xe Ego</text>
+              <g transform="translate(93, 85)">
+                <polygon points="5,0 -5,-30 15,-30" fill="rgba(254, 240, 138, 0.12)"/>
+                <polygon points="23,0 13,-30 33,-30" fill="rgba(254, 240, 138, 0.12)"/>
+                <rect x="0" y="0" width="28" height="46" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
+                <rect x="3" y="10" width="22" height="10" rx="2" fill="#082f49"/>
+                <rect x="5" y="32" width="18" height="6" rx="2" fill="#082f49"/>
+                <circle cx="5" cy="2" r="2" fill="#fef08a"/>
+                <circle cx="23" cy="2" r="2" fill="#fef08a"/>
+                <text x="14" y="27" fill="#ffffff" font-size="8" font-weight="800" text-anchor="middle" font-family="sans-serif">EGO</text>
+              </g>
+              <polygon points="107,85 178,28 198,28" fill="rgba(52, 211, 153, 0.18)"/>
+              <line x1="107" y1="85" x2="188" y2="35" stroke="#34d399" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <g transform="translate(188, 30)">
+                <line x1="0" y1="0" x2="0" y2="28" stroke="#64748b" stroke-width="3"/>
+                <circle cx="0" cy="0" r="14" fill="#ffffff" stroke="#ef4444" stroke-width="3"/>
+                <text x="0" y="4" fill="#1e293b" font-size="10" font-weight="900" text-anchor="middle" font-family="sans-serif">60</text>
+              </g>
+              <rect x="135" y="75" width="80" height="20" rx="4" fill="rgba(6, 78, 59, 0.85)" stroke="#10b981" stroke-width="1"/>
+              <text x="175" y="88.5" fill="#34d399" font-size="8.5" font-weight="700" text-anchor="middle" font-family="sans-serif">Góc nhìn &lt; 60&deg; ✅</text>
+            </svg>
+          `;
+        }
+      } else if (type === 'facing_away') {
+        cardEl.style.borderLeftColor = '#94a3b8';
+        titleEl.style.color = '#94a3b8';
+        titleEl.innerText = '⚪ facing_away (Quay lưng / Ngược chiều)';
+        descEl.innerHTML = `
+          <p style="font-size: 0.94rem; margin-bottom: 12px;"><strong>Đặc điểm nhận dạng:</strong> Mặt trước của biển xoay góc &gt; 90&deg; so với hướng xe mình (ví dụ biển của luồng giao thông chiều ngược lại).</p>
+          <p style="font-size: 0.94rem; margin-bottom: 12px;"><strong>Tác động ADAS:</strong> Bỏ qua không tác động tới điều khiển xe. Ngăn ngừa nhận nhầm biển cấm chiều kia.</p>
+          <div class="alert alert-warning"><div><strong>Chú ý:</strong> Nếu mặt sau trơn nhẵn 180° hoàn toàn không thấy viền/hình &rarr; <em>IGNORE (không vẽ box)</em>.</div></div>
+        `;
+        if (badgeEl) {
+          badgeEl.style.background = 'rgba(148, 163, 184, 0.15)';
+          badgeEl.style.color = '#94a3b8';
+          badgeEl.style.borderColor = 'rgba(148, 163, 184, 0.3)';
+          badgeEl.innerText = 'Biển Quay Lưng / Làn Ngược (> 90°)';
+        }
+        if (captionEl) {
+          captionEl.innerHTML = 'Góc quay &gt; 90&deg; (Mặt sau) &rarr; <strong style="color: #94a3b8;">Bỏ qua, không tác động Ego</strong>';
+        }
+        if (svgContainer) {
+          svgContainer.innerHTML = `
+            <svg width="250" height="150" viewBox="0 0 250 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; border-radius: 8px;">
+              <rect x="20" y="5" width="125" height="140" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+              <line x1="79" y1="5" x2="79" y2="145" stroke="#eab308" stroke-width="1.5" opacity="0.8"/>
+              <line x1="83" y1="5" x2="83" y2="145" stroke="#eab308" stroke-width="1.5" opacity="0.8"/>
+              <line x1="20" y1="5" x2="20" y2="145" stroke="#64748b" stroke-width="2"/>
+              <line x1="145" y1="5" x2="145" y2="145" stroke="#64748b" stroke-width="2"/>
+              <rect x="145" y="5" width="85" height="140" rx="6" fill="#0f172a" stroke="#1e293b"/>
+              <g transform="translate(48, 55)">
+                <path d="M 0 0 L 0 35 M -4 28 L 0 35 L 4 28" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+                <text x="0" y="-8" fill="#94a3b8" font-size="7.5" font-weight="600" text-anchor="middle" font-family="sans-serif">Làn đối diện ⬇</text>
+              </g>
+              <g transform="translate(95, 85)">
+                <rect x="0" y="0" width="28" height="46" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
+                <rect x="3" y="10" width="22" height="10" rx="2" fill="#082f49"/>
+                <rect x="5" y="32" width="18" height="6" rx="2" fill="#082f49"/>
+                <circle cx="5" cy="2" r="2" fill="#fef08a"/>
+                <circle cx="23" cy="2" r="2" fill="#fef08a"/>
+                <text x="14" y="27" fill="#ffffff" font-size="8" font-weight="800" text-anchor="middle" font-family="sans-serif">EGO</text>
+              </g>
+              <g transform="translate(188, 30)">
+                <line x1="0" y1="0" x2="0" y2="28" stroke="#64748b" stroke-width="3"/>
+                <rect x="-12" y="-12" width="24" height="24" rx="12" fill="#475569" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="-12" y1="0" x2="12" y2="0" stroke="#64748b" stroke-width="2.5"/>
+                <circle cx="0" cy="0" r="2.5" fill="#cbd5e1"/>
+                <path d="M 0 -16 L 0 -26 M -3 -22 L 0 -26 L 3 -22" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+                <text x="0" y="-30" fill="#94a3b8" font-size="7.5" font-weight="700" text-anchor="middle" font-family="sans-serif">Quay lưng</text>
+              </g>
+              <line x1="109" y1="85" x2="176" y2="35" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <g transform="translate(142, 60)">
+                <circle cx="0" cy="0" r="9" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.2"/>
+                <text x="0" y="3.5" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle" font-family="sans-serif">✕</text>
+              </g>
+              <rect x="135" y="80" width="85" height="20" rx="4" fill="rgba(51, 65, 85, 0.85)" stroke="#64748b" stroke-width="1"/>
+              <text x="177" y="93.5" fill="#cbd5e1" font-size="8" font-weight="700" text-anchor="middle" font-family="sans-serif">Góc &gt; 90&deg; (Bỏ qua)</text>
+            </svg>
+          `;
+        }
+      } else if (type === 'lateral') {
+        cardEl.style.borderLeftColor = 'var(--accent-amber)';
+        titleEl.style.color = '#fbbf24';
+        titleEl.innerText = '🟡 lateral (Hướng sang đường nhánh / đường gom)';
+        descEl.innerHTML = `
+          <p style="font-size: 0.94rem; margin-bottom: 12px;"><strong>Đặc điểm nhận dạng:</strong> Biển hướng mặt vuông góc sang đường giao cắt, đường gom song song hoặc nhánh rẽ.</p>
+          <p style="font-size: 0.94rem; margin-bottom: 12px;"><strong>Tác động ADAS:</strong> Tuyệt đối không phanh xe trên làn chính. Chỉ áp dụng nếu xe kích hoạt xi-nhan rẽ sang nhánh đó.</p>
+          <div class="alert alert-danger"><div><strong>Trọng yếu:</strong> Nhầm lateral thành facing_ego gây lỗi phantom braking nguy hiểm chết người!</div></div>
+        `;
+        if (badgeEl) {
+          badgeEl.style.background = 'rgba(251, 191, 36, 0.15)';
+          badgeEl.style.color = '#fbbf24';
+          badgeEl.style.borderColor = 'rgba(251, 191, 36, 0.3)';
+          badgeEl.innerText = 'Biển Nhánh Rẽ (~90° - Lateral)';
+        }
+        if (captionEl) {
+          captionEl.innerHTML = 'Xe đi thẳng làn chính &rarr; <strong style="color: #fbbf24;">KHÔNG phanh (Tránh phanh oan)</strong>';
+        }
+        if (svgContainer) {
+          svgContainer.innerHTML = `
+            <svg width="250" height="150" viewBox="0 0 250 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; border-radius: 8px;">
+              <path d="M 15 5 L 85 5 L 85 145 L 15 145 Z" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+              <line x1="50" y1="5" x2="50" y2="145" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="8 6" opacity="0.5"/>
+              <path d="M 85 145 L 85 95 Q 92 48 160 25 L 235 25 L 235 75 Q 150 78 125 145 Z" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+              <path d="M 85 95 Q 92 65 125 45 L 115 105 Z" fill="#0f172a" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="3 2"/>
+              <text x="105" y="85" fill="#fbbf24" font-size="6.5" font-weight="700" text-anchor="middle" font-family="sans-serif">ĐẢO</text>
+              <g transform="translate(36, 85)">
+                <rect x="0" y="0" width="28" height="46" rx="5" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
+                <rect x="3" y="10" width="22" height="10" rx="2" fill="#082f49"/>
+                <rect x="5" y="32" width="18" height="6" rx="2" fill="#082f49"/>
+                <circle cx="5" cy="2" r="2" fill="#fef08a"/>
+                <circle cx="23" cy="2" r="2" fill="#fef08a"/>
+                <text x="14" y="27" fill="#ffffff" font-size="8" font-weight="800" text-anchor="middle" font-family="sans-serif">EGO</text>
+                <path d="M 14 -3 L 14 -18 M 10 -13 L 14 -18 L 18 -13" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+              </g>
+              <g transform="translate(195, 25)">
+                <line x1="0" y1="0" x2="0" y2="24" stroke="#64748b" stroke-width="2.5"/>
+                <circle cx="0" cy="0" r="13" fill="#ffffff" stroke="#ef4444" stroke-width="2.8"/>
+                <text x="0" y="3.5" fill="#1e293b" font-size="9" font-weight="900" text-anchor="middle" font-family="sans-serif">40</text>
+                <path d="M -15 15 L -25 22 M -19 22 L -25 22 L -23 16" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+              </g>
+              <line x1="64" y1="85" x2="182" y2="28" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <g transform="translate(125, 58)">
+                <rect x="-38" y="-9" width="76" height="18" rx="4" fill="rgba(120, 53, 15, 0.9)" stroke="#fbbf24" stroke-width="1"/>
+                <text x="0" y="3.5" fill="#fef08a" font-size="7.5" font-weight="700" text-anchor="middle" font-family="sans-serif">⚠️ Biển rẽ (~90&deg;)</text>
+              </g>
+              <rect x="135" y="115" width="85" height="20" rx="4" fill="rgba(239, 68, 68, 0.2)" stroke="#ef4444" stroke-width="1"/>
+              <text x="177" y="128.5" fill="#fca5a5" font-size="7.5" font-weight="700" text-anchor="middle" font-family="sans-serif">CẤM PHANH LÀN CHÍNH</text>
+            </svg>
+          `;
+        }
+      }
+    }
+
+    // Gallery tab switcher
+    function switchCaseTab(tabId) {
+      document.querySelectorAll('.case-tab-header .case-tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.case-content').forEach(content => content.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById('case_' + tabId).classList.add('active');
+    }
+
+    // 4 Golden Pillars Checklist Toggle
+    function togglePillarCheck(e, idx) {
+      if (e && e.target && e.target.tagName.toLowerCase() === 'input') return;
+      const chk = document.getElementById('pillar_chk_' + idx);
+      if (chk) chk.checked = !chk.checked;
+    }
+
+    // Checklist Logic
+    function toggleCheck(idx) {
+      const chk = document.getElementById('chk_' + idx);
+      chk.checked = !chk.checked;
+      updateChecklistProgress();
+    }
+
+    function updateChecklistProgress() {
+      let count = 0;
+      for (let i = 0; i < 8; i++) {
+        if (document.getElementById('chk_' + i).checked) count++;
+      }
+      const pct = Math.round((count / 8) * 100);
+      document.getElementById('check_pct').innerText = `${count} / 8 (${pct}%)`;
+      document.getElementById('progress_bar').style.width = pct + '%';
+    }
+
+    // Quiz evaluation
+    function checkQuiz(btn, isCorrect, explainText) {
+      const parent = btn.parentElement;
+      const explainBox = parent.nextElementSibling;
+
+      parent.querySelectorAll('.quiz-opt').forEach(opt => {
+        opt.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        explainBox.style.display = 'block';
+        explainBox.style.color = '#6ee7b7';
+        explainBox.innerHTML = '<strong>Đúng!</strong> ' + explainText;
+      } else {
+        btn.classList.add('wrong');
+        explainBox.style.display = 'block';
+        explainBox.style.color = '#fca5a5';
+        explainBox.innerHTML = '<strong>Chưa chính xác!</strong> ' + explainText;
+      }
+    }
+
+    // Scroll to Top Logic
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        scrollToTopBtn.classList.add('visible');
+      } else {
+        scrollToTopBtn.classList.remove('visible');
+      }
+    }, { passive: true });
+
+    scrollToTopBtn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Section 2 Interactive L Module & Drag-Drop Logic
+    function updateLModule(w, h, labelSource, customImgSrc) {
+      w = Math.max(1, Math.round(w));
+      h = Math.max(1, Math.round(h));
+      const L = Math.max(w, h);
+
+      const inputW = document.getElementById('l_input_w');
+      const inputH = document.getElementById('l_input_h');
+      if (inputW && inputW.value != w) inputW.value = w;
+      if (inputH && inputH.value != h) inputH.value = h;
+
+      const dimsEl = document.getElementById('l_dims_display');
+      if (dimsEl) dimsEl.innerText = `w = ${w} px, h = ${h} px`;
+
+      const valEl = document.getElementById('l_val_display');
+      if (valEl) {
+        valEl.innerText = `L = ${L} px`;
+        valEl.style.color = L >= 30 ? '#10b981' : (L >= 12 ? '#f59e0b' : '#ef4444');
+      }
+
+      // Update Preview
+      const previewEl = document.getElementById('l_preview_content');
+      if (previewEl) {
+        if (customImgSrc) {
+          previewEl.innerHTML = `
+            <div style="position: relative; display: inline-block;">
+              <img src="${customImgSrc}" alt="Uploaded Sign" style="max-height: 120px; border: 2px dashed ${L >= 12 ? '#10b981' : '#ef4444'}; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+              <div style="margin-top: 6px; font-size: 0.82rem; font-family: monospace; color: #cbd5e1;">
+                Vùng cắt: <strong style="color: #fff;">${w} &times; ${h} px</strong> &bull; L = <strong style="color: ${L >= 12 ? '#10b981' : '#ef4444'}">${L}px</strong>
+              </div>
+              <button type="button" class="l-preset-btn" style="margin: 8px auto 0; font-size: 0.78rem;" onclick="reopenCurrentCrop()">✂️ Cắt lại vùng khác trên ảnh</button>
+            </div>
+          `;
+        } else {
+          // Render SVG based on size
+          if (L < 12) {
+            previewEl.innerHTML = `
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <svg width="100" height="80" viewBox="0 0 100 80" style="background: #111827; border-radius: 6px; border: 1px dashed rgba(239, 68, 68, 0.4);">
+                  <defs>
+                    <pattern id="pixelGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+                      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+                    </pattern>
+                  </defs>
+                  <rect width="100" height="80" fill="url(#pixelGrid)" />
+                  <circle cx="50" cy="40" r="5" fill="#ef4444" opacity="0.8" />
+                  <rect x="45" y="35" width="10" height="10" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="2,2"/>
+                </svg>
+                <div style="font-size: 0.8rem; color: #f87171;">Biển cực nhỏ (&lt; 12px) &bull; Mờ nhòe, không rõ hình khối</div>
+              </div>
+            `;
+          } else if (L < 30) {
+            previewEl.innerHTML = `
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <svg width="100" height="80" viewBox="0 0 100 80" style="background: #111827; border-radius: 6px; border: 1px dashed rgba(234, 179, 8, 0.4);">
+                  <circle cx="50" cy="40" r="14" fill="#ffffff" stroke="#dc2626" stroke-width="4"/>
+                  <text x="50" y="44" font-size="10" font-weight="900" fill="#000" text-anchor="middle">40</text>
+                  <rect x="36" y="26" width="28" height="28" fill="none" stroke="#eab308" stroke-width="1.5"/>
+                </svg>
+                <div style="font-size: 0.8rem; color: #fbbf24;">Biển nhỏ / ở xa (12 &le; L &lt; 30px) &bull; Nhận diện được khối tròn</div>
+              </div>
+            `;
+          } else {
+            previewEl.innerHTML = `
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <svg width="100" height="80" viewBox="0 0 100 80" style="background: #111827; border-radius: 6px; border: 1px dashed rgba(16, 185, 129, 0.4);">
+                  <circle cx="50" cy="40" r="26" fill="#ffffff" stroke="#dc2626" stroke-width="7"/>
+                  <text x="50" y="47" font-size="18" font-weight="900" fill="#000" text-anchor="middle">50</text>
+                  <rect x="24" y="14" width="52" height="52" fill="none" stroke="#10b981" stroke-width="2"/>
+                </svg>
+                <div style="font-size: 0.8rem; color: #34d399;">Biển lớn / trung bình (L &ge; 30px) &bull; Rõ nét 100%</div>
+              </div>
+            `;
+          }
+        }
+      }
+
+      // Decision and Instructions Box
+      const decBox = document.getElementById('l_decision_box');
+      const howtoContent = document.getElementById('l_howto_content');
+
+      const tierLarge = document.getElementById('tier_large');
+      const tierSmall = document.getElementById('tier_small');
+      const tierTiny = document.getElementById('tier_tiny');
+
+      // Reset tier classes
+      if (tierLarge) tierLarge.className = 'l-criteria-row';
+      if (tierSmall) tierSmall.className = 'l-criteria-row';
+      if (tierTiny) tierTiny.className = 'l-criteria-row';
+
+      if (L >= 30) {
+        if (decBox) {
+          decBox.innerHTML = `
+            <div class="alert" style="margin: 0; padding: 14px; border-radius: 8px; background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; color: #a7f3d0;">
+              <div style="font-size: 1.05rem; font-weight: 800; color: #34d399; margin-bottom: 4px;">
+                ✅ CÓ GÁN NHÃN: BẮT BUỘC GÁN (LABEL)
+              </div>
+              <div style="font-size: 0.88rem; color: #d1fae5; line-height: 1.55;">
+                Đối tượng có <strong>L = ${L}px &ge; 30px</strong> (Biển kích thước lớn hoặc trung bình). Đây là biển ở khoảng cách quan sát trực tiếp, bắt buộc 100% phải tạo bounding box phục vụ xe tự hành ra quyết định điều khiển.
+              </div>
+            </div>
+          `;
+        }
+        if (howtoContent) {
+          howtoContent.innerHTML = `
+            <div>&bull; <strong>Shape &amp; Class:</strong> Sử dụng <code>Shape = rectangle</code> và gắn nhãn <code>traffic_sign</code>.</div>
+            <div>&bull; <strong>Cách vẽ BBox:</strong> Ôm khít 4 mép ngoài cùng của biển, không lấy cọc sắt, không lẹm viền phản quang.</div>
+            <div>&bull; <strong>Dung sai QA cho phép:</strong> Sai số lệch cạnh &Delta; &le; <strong>3.0 px</strong> | Lệch tâm &le; <strong>2.0 px</strong> | <strong>IoU &ge; 0.85</strong>.</div>
+            <div>&bull; <strong>Thuộc tính:</strong> Phải chọn đủ <code>sign_group</code> (không để __undefined__) và <code>relevance</code>.</div>
+          `;
+        }
+        if (tierLarge) tierLarge.classList.add('active-tier-pass');
+      } else if (L >= 12) {
+        if (decBox) {
+          decBox.innerHTML = `
+            <div class="alert" style="margin: 0; padding: 14px; border-radius: 8px; background: rgba(234, 179, 8, 0.12); border: 1px solid #eab308; color: #fef08a;">
+              <div style="font-size: 1.05rem; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">
+                🟡 CÓ GÁN NHÃN: GÁN CÓ ĐIỀU KIỆN (LABEL)
+              </div>
+              <div style="font-size: 0.88rem; color: #fde68a; line-height: 1.55;">
+                Đối tượng có <strong>12px &le; L = ${L}px &lt; 30px</strong> (Biển nhỏ hoặc ở xa). Bắt buộc gán nhãn nếu mắt người còn nhận diện được hình khối (tròn, tam giác, chữ nhật) hoặc viền phản quang của biển.
+              </div>
+            </div>
+          `;
+        }
+        if (howtoContent) {
+          howtoContent.innerHTML = `
+            <div>&bull; <strong>Shape &amp; Class:</strong> Sử dụng <code>Shape = rectangle</code> và nhãn <code>traffic_sign</code>.</div>
+            <div>&bull; <strong>Cách vẽ BBox:</strong> Ôm sát khối biển nhìn thấy; nếu ở xa biển xếp chồng có 2 màu (đỏ và xanh/trắng) thì tách 2 box riêng biệt.</div>
+            <div>&bull; <strong>Dung sai QA cho phép:</strong> Siết chặt hơn biển lớn: &Delta; &le; <strong>1.5 px</strong> | Lệch tâm &le; <strong>1.0 px</strong> | <strong>IoU &ge; 0.85</strong>.</div>
+            <div>&bull; <strong>Khả năng đọc (legibility):</strong> Nếu cự ly xa hoặc mờ nhòe không đọc rõ chữ số &rarr; Bắt buộc chuyển <code>legibility = unreadable</code> (không để sót mặc định legible).</div>
+            <div>&bull; <strong>Bất định:</strong> Nếu mờ nhòe không phân biệt được viền &rarr; tick <code>escalate_review = true</code>.</div>
+          `;
+        }
+        if (tierSmall) tierSmall.classList.add('active-tier-warn');
+      } else {
+        if (decBox) {
+          decBox.innerHTML = `
+            <div class="alert alert-danger" style="margin: 0; padding: 14px; border-radius: 8px;">
+              <div style="font-size: 1.05rem; font-weight: 800; color: #f87171; margin-bottom: 4px;">
+                ❌ KHÔNG GÁN NHÃN: BỎ QUA HOÀN TOÀN (IGNORE)
+              </div>
+              <div style="font-size: 0.88rem; color: #fecaca; line-height: 1.55;">
+                Đối tượng có <strong>L = ${L}px &lt; 12px</strong> (Ngoại vi phạm vi dự án). Vật thể quá nhỏ, mắt người không đủ bằng chứng thị giác để xác định chính xác. <strong>Tuyệt đối không vẽ box</strong> để tránh gây nhiễu cho mô hình học máy.
+              </div>
+            </div>
+          `;
+        }
+        if (howtoContent) {
+          howtoContent.innerHTML = `
+            <div>&bull; <strong>Thao tác:</strong> <strong>BỎ QUA (IGNORE)</strong> &mdash; Không tạo bất kỳ bounding box nào trên CVAT.</div>
+            <div>&bull; <strong>Lý do kỹ thuật:</strong> Nếu cố gán đối tượng &lt; 12px, mô hình AI xe tự hành sẽ học phải các đốm nhiễu nền, gây ra hiện tượng ảo giác (False Positive).</div>
+            <div>&bull; <strong>Dung sai QA:</strong> Không áp dụng chấm dung sai do đối tượng nằm ngoài hợp đồng dữ liệu.</div>
+          `;
+        }
+        if (tierTiny) tierTiny.classList.add('active-tier-ignore');
+      }
+    }
+
+    function setLPreset(type) {
+      if (type === 'tiny') {
+        updateLModule(9, 10, 'Preset Tiny', null);
+      } else if (type === 'small') {
+        updateLModule(22, 24, 'Preset Small', null);
+      } else if (type === 'medium') {
+        updateLModule(48, 48, 'Preset Medium', null);
+      }
+    }
+
+    function handleLManualInput() {
+      const w = parseInt(document.getElementById('l_input_w').value) || 1;
+      const h = parseInt(document.getElementById('l_input_h').value) || 1;
+      updateLModule(w, h, 'Manual', null);
+    }
+
+    // Crop Selection State
+    let cropOrigImg = null;
+    let cropFileName = '';
+    let cropIsDrawing = false;
+    let cropStartX = 0, cropStartY = 0;
+    let cropCurrentX = 0, cropCurrentY = 0;
+    let cropHasSelection = false;
+    let cropScaleX = 1, cropScaleY = 1;
+    let cropCurrentW = 0, cropCurrentH = 0;
+
+    function openCropModalWithImage(img, filename) {
+      cropOrigImg = img;
+      cropFileName = filename || 'image.png';
+
+      const canvas = document.getElementById('crop_canvas');
+      if (!canvas) return;
+
+      // Calculate display size to fit comfortably in viewport
+      const maxW = Math.min(880, window.innerWidth - 60);
+      const maxH = Math.min(520, window.innerHeight * 0.58);
+      const aspect = img.naturalWidth / img.naturalHeight;
+
+      let canvasW = maxW;
+      let canvasH = maxW / aspect;
+
+      if (canvasH > maxH) {
+        canvasH = maxH;
+        canvasW = maxH * aspect;
+      }
+
+      canvasW = Math.max(100, Math.round(canvasW));
+      canvasH = Math.max(100, Math.round(canvasH));
+
+      canvas.width = canvasW;
+      canvas.height = canvasH;
+      canvas.style.width = canvasW + 'px';
+      canvas.style.height = canvasH + 'px';
+
+      cropScaleX = img.naturalWidth / canvasW;
+      cropScaleY = img.naturalHeight / canvasH;
+
+      cropHasSelection = false;
+      cropIsDrawing = false;
+      document.getElementById('crop_confirm_btn').disabled = true;
+      document.getElementById('crop_dims_badge').innerText = 'Kéo chuột trên ảnh để vẽ vùng chọn';
+      document.getElementById('crop_dims_badge').style.borderColor = 'var(--border-subtle)';
+      document.getElementById('crop_dims_badge').style.color = '#38bdf8';
+
+      document.getElementById('crop_modal_overlay').classList.add('active');
+
+      renderCropCanvas();
+      setupCropEvents();
+    }
+
+    function closeCropModal() {
+      document.getElementById('crop_modal_overlay').classList.remove('active');
+      cropIsDrawing = false;
+    }
+
+    function getCanvasCoords(e, canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
+      const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
+      return {
+        x: Math.max(0, Math.min(canvas.width, (clientX - rect.left) * (canvas.width / rect.width))),
+        y: Math.max(0, Math.min(canvas.height, (clientY - rect.top) * (canvas.height / rect.height)))
+      };
+    }
+
+    function renderCropCanvas() {
+      const canvas = document.getElementById('crop_canvas');
+      if (!canvas || !cropOrigImg) return;
+      const ctx = canvas.getContext('2d');
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(cropOrigImg, 0, 0, canvas.width, canvas.height);
+
+      if (cropHasSelection) {
+        const x = Math.min(cropStartX, cropCurrentX);
+        const y = Math.min(cropStartY, cropCurrentY);
+        const w = Math.abs(cropCurrentX - cropStartX);
+        const h = Math.abs(cropCurrentY - cropStartY);
+
+        // Dim outside area
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        ctx.fillRect(0, 0, canvas.width, y);
+        ctx.fillRect(0, y + h, canvas.width, canvas.height - (y + h));
+        ctx.fillRect(0, y, x, h);
+        ctx.fillRect(x + w, y, canvas.width - (x + w), h);
+
+        // Native pixel calculation
+        const realW = Math.max(1, Math.round(w * cropScaleX));
+        const realH = Math.max(1, Math.round(h * cropScaleY));
+        const realL = Math.max(realW, realH);
+        cropCurrentW = realW;
+        cropCurrentH = realH;
+
+        const color = realL >= 30 ? '#10b981' : (realL >= 12 ? '#eab308' : '#ef4444');
+
+        // Draw rectangle
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 3]);
+        ctx.strokeRect(x, y, w, h);
+        ctx.setLineDash([]);
+
+        // Corner handles
+        ctx.fillStyle = color;
+        const handleSize = 6;
+        ctx.fillRect(x - 3, y - 3, handleSize, handleSize);
+        ctx.fillRect(x + w - 3, y - 3, handleSize, handleSize);
+        ctx.fillRect(x - 3, y + h - 3, handleSize, handleSize);
+        ctx.fillRect(x + w - 3, y + h - 3, handleSize, handleSize);
+
+        // Tooltip badge above selection
+        const labelText = `${realW} × ${realH} px | L = ${realL}px`;
+        ctx.font = 'bold 11px monospace';
+        const textWidth = ctx.measureText(labelText).width;
+        const badgeY = y > 24 ? y - 6 : y + h + 18;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        ctx.fillRect(x, badgeY - 14, textWidth + 10, 18);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, badgeY - 14, textWidth + 10, 18);
+        ctx.fillStyle = color;
+        ctx.fillText(labelText, x + 5, badgeY - 1);
+
+        // Header badge
+        const badge = document.getElementById('crop_dims_badge');
+        const tierText = realL >= 30 ? 'LABEL (≥30px)' : (realL >= 12 ? 'LABEL (12-30px)' : 'IGNORE (<12px)');
+        badge.style.color = color;
+        badge.style.borderColor = color;
+        badge.innerText = `Vùng chọn: w = ${realW}px, h = ${realH}px | L = ${realL}px ➔ ${tierText}`;
+
+        document.getElementById('crop_confirm_btn').disabled = false;
+      }
+    }
+
+    let cropEventsAttached = false;
+    function setupCropEvents() {
+      if (cropEventsAttached) return;
+      cropEventsAttached = true;
+
+      const canvas = document.getElementById('crop_canvas');
+
+      const handleStart = (e) => {
+        cropIsDrawing = true;
+        const coords = getCanvasCoords(e, canvas);
+        cropStartX = coords.x;
+        cropStartY = coords.y;
+        cropCurrentX = coords.x;
+        cropCurrentY = coords.y;
+        cropHasSelection = false;
+        renderCropCanvas();
+      };
+
+      const handleMove = (e) => {
+        if (!cropIsDrawing) return;
+        if (e.cancelable) e.preventDefault();
+        const coords = getCanvasCoords(e, canvas);
+        cropCurrentX = coords.x;
+        cropCurrentY = coords.y;
+        cropHasSelection = (Math.abs(cropCurrentX - cropStartX) > 2 && Math.abs(cropCurrentY - cropStartY) > 2);
+        renderCropCanvas();
+      };
+
+      const handleEnd = () => {
+        if (cropIsDrawing) {
+          cropIsDrawing = false;
+          renderCropCanvas();
+        }
+      };
+
+      canvas.addEventListener('mousedown', handleStart);
+      window.addEventListener('mousemove', handleMove);
+      window.addEventListener('mouseup', handleEnd);
+
+      canvas.addEventListener('touchstart', handleStart, { passive: false });
+      window.addEventListener('touchmove', handleMove, { passive: false });
+      window.addEventListener('touchend', handleEnd);
+    }
+
+    function confirmCropSelection() {
+      if (!cropHasSelection || !cropOrigImg) return;
+
+      const minX = Math.min(cropStartX, cropCurrentX);
+      const minY = Math.min(cropStartY, cropCurrentY);
+      const boxW = Math.abs(cropCurrentX - cropStartX);
+      const boxH = Math.abs(cropCurrentY - cropStartY);
+
+      const realCropX = Math.round(minX * cropScaleX);
+      const realCropY = Math.round(minY * cropScaleY);
+      const realCropW = Math.max(1, Math.round(boxW * cropScaleX));
+      const realCropH = Math.max(1, Math.round(boxH * cropScaleY));
+
+      const offCanvas = document.createElement('canvas');
+      offCanvas.width = realCropW;
+      offCanvas.height = realCropH;
+      const offCtx = offCanvas.getContext('2d');
+      offCtx.drawImage(cropOrigImg, realCropX, realCropY, realCropW, realCropH, 0, 0, realCropW, realCropH);
+      const croppedDataUrl = offCanvas.toDataURL();
+
+      closeCropModal();
+      updateLModule(realCropW, realCropH, 'Cắt từ: ' + cropFileName, croppedDataUrl);
+    }
+
+    function reopenCurrentCrop() {
+      if (cropOrigImg) {
+        openCropModalWithImage(cropOrigImg, cropFileName);
+      }
+    }
+
+    function handleLFileSelect(files) {
+      if (!files || files.length === 0) return;
+      const file = files[0];
+      if (!file.type.startsWith('image/')) {
+        alert('Vui lòng chọn hoặc kéo thả tệp hình ảnh (PNG, JPG, WebP, SVG).');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          openCropModalWithImage(img, file.name);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Init Drag and Drop Event Listeners
+    function initLDropzone() {
+      const dropzone = document.getElementById('l_dropzone');
+      if (!dropzone) return;
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('dragover');
+        }, false);
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleLFileSelect(files);
+      }, false);
+    }
+
+    // Init simulators
+    window.addEventListener('DOMContentLoaded', () => {
+      calculateBoxSize();
+      runIoUSimulator();
+      initLDropzone();
+      setLPreset('tiny');
+    });
+  </script>
+</body>
+
+</html>
