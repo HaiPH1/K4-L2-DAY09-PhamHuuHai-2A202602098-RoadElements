@@ -1,1 +1,13 @@
 sample_id,decision_id,expected,severity,rationale
+GTS09,d1,count=14,major,"Đếm đủ 14 mặt biển nhìn thấy trong ảnh cự ly trung bình và xa"
+GTS09,d2,sign_group=prohibitory,critical,"Biển cấm vượt viền đỏ tròn cốt lõi bảo đảm an toàn xe tự hành tránh tai nạn đối đầu"
+GTS09,d3,"geometry: box ôm sát viền tròn đỏ ngoài cùng, không lấy phần cột",minor,"Theo quy chuẩn vẽ hình học Mục 3 guideline"
+GTS11,d1,count=4,major,"Phát hiện đủ 4 biển báo tiêu chuẩn trên tuyến đường ban ngày rõ nét"
+GTS11,d2,legibility=legible,minor,"Ảnh ban ngày rõ nét chữ số và biểu tượng nhận diện rõ ràng 100%"
+GTS13,d1,occlusion=partial,major,"Cành cây che khuất từ 10% đến 50% diện tích mặt biển vật lý"
+GTS13,d2,"geometry: vẽ amodal box bao trọn cả mặt biển hình tam giác, chấp nhận tán lá đè lên",minor,"Nguyên tắc Amodal Bounding Box giữ nguyên hình khối học cho detector"
+GTS15,d1,legibility=unreadable,major,"Biển ở cự ly xa kích thước 15x15px mắt người không đọc rõ con số tốc độ cụ thể"
+GTS15,d2,sign_group=prohibitory,critical,"Dù không đọc được số nhưng viền tròn đỏ đặc trưng xác định chắc chắn là biển cấm"
+GTS20,d1,count=14,major,"Tách biệt từng biển phụ và biển chính trên cùng một cột theo nguyên tắc 1-Object-1-Box"
+GTS20,d2,sign_group=other_info,major,"Biển phụ hình chữ nhật màu trắng ghi cự ly bổ sung thuộc nhóm other_info"
+GTS20,d3,relevance=facing_ego,critical,"Biển hướng thẳng vào làn xe chủ quyết định kích hoạt tính năng hỗ trợ lái xe an toàn ADAS"
