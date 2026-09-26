@@ -54,6 +54,11 @@ Tuyệt đối **KHÔNG** tạo bounding box (`IGNORE`) đối với:
 - **Nguyên tắc phân rã Instance:**
   - Mỗi mặt biển vật lý độc lập là **đúng 1 instance** `traffic_sign`.
   - **Cụm biển lắp chung một cột:** Nếu một cột có 2 hoặc 3 biển báo xếp chồng lên nhau (ví dụ: Biển cấm vượt ở trên, Biển phụ cự ly ở dưới), annotator phải vẽ **từng box riêng biệt** cho từng mặt biển. Nghiêm cấm vẽ 1 box to bao trùm toàn bộ cột hoặc gộp nhiều biển thành một.
+  - **🔴 EDGE CASE ĐẶC BIỆT — BIỂN Ở XA CÓ 2 MÀU KHÁC NHAU:**
+    - Khi quan sát ở cự ly xa, một cột biển thường xuất hiện dưới dạng một cụm nhỏ gồm **2 dải màu sắc/hình khối khác biệt xếp chồng theo trục dọc** (ví dụ: đốm màu đỏ/vàng của biển cấm/cảnh báo ở trên, và đốm màu trắng/xanh của biển phụ hoặc biển hiệu lệnh ở dưới).
+    - **Quy tắc bắt buộc:** Dù ở xa kích thước hiển thị rất nhỏ (mỗi mảng chỉ từ $12\text{ px}$ đến $18\text{ px}$), annotator **BẮT BUỘC PHẢI GÁN 2 BOUNDING BOX RIÊNG BIỆT**, một box cho mảng màu phía trên và một box cho mảng màu phía dưới.
+    - **Cấm gộp box:** Tuyệt đối **KHÔNG** vẽ 1 box to bao trùm cả 2 mảng màu, vì sẽ làm sai hoàn toàn tỷ lệ khung hình $(w/h)$ của mặt biển và làm hỏng đầu ra phân loại thuộc tính của downstream model.
+    - **Cấm bỏ sót biển dưới:** Tuyệt đối **KHÔNG** chỉ vẽ biển màu đỏ phía trên mà bỏ quên biển màu trắng/xanh phía dưới.
   - **Biển có nhiều thông tin trên cùng một tấm mặt:** Nếu một tấm biển kim loại duy nhất chứa nhiều biểu tượng hoặc chữ viết, chỉ vẽ **1 bounding box duy nhất** bao trọn toàn bộ tấm biển đó.
   - **Biển bị vật cản cắt ngang (occlusion split):** Nếu một mặt biển bị cành cây, dây điện hoặc cột đèn chắn ngang chia mặt biển thành 2 phần nhìn thấy tách rời, annotator vẽ **1 bounding box duy nhất** bao phủ toàn bộ vùng biên ngoài của mặt biển (box chấp nhận chứa vật cản ở phần giữa). Không tách thành 2 box nhỏ.
   - **Không liên kết định danh (No tracking):** Mỗi ảnh được gán độc lập; cùng một biển xuất hiện ở các ảnh khác nhau vẫn được gán như các instance mới, không liên kết ID giữa các ảnh.
@@ -67,6 +72,7 @@ Tuyệt đối **KHÔNG** tạo bounding box (`IGNORE`) đối với:
 - **Điểm biên:** Bounding box được xác định bởi 2 cặp tọa độ trên ảnh gốc: góc trên bên trái $(x_{min}, y_{min})$ và góc dưới bên phải $(x_{max}, y_{max})$.
 - **Không vẽ tràn ra ngoài:** Box không được bao trùm phần cọc sắt gắn biển, không lấy bóng đổ trên mặt đường và không lấy phần quầng sáng xung quanh khi chụp ngược sáng.
 - **Biển cắt mép khung hình (truncation):** Nếu biển báo nằm ở rìa bức ảnh và bị cắt cụt một phần, cạnh của bounding box phải dừng chính xác tại biên ảnh ($x=0$, $x=1360$, $y=0$, hoặc $y=800$). Tuyệt đối không suy đoán vẽ tràn ra ngoài vùng ảnh.
+- **Ranh giới tiếp giáp giữa 2 box trong cụm biển xếp chồng ở xa:** Khi 2 biển gắn sát nhau trên cùng một cột ở khoảng cách xa, cạnh đáy của box trên ($y_{max1}$) và cạnh đỉnh của box dưới ($y_{min2}$) phải đặt tiếp giáp trực tiếp tại đúng dải pixel phân cách màu sắc giữa 2 biển (ví dụ điểm chuyển giao giữa dải đỏ và dải trắng). Độ chồng lấn giữa 2 box cho phép $\le 1 \text{ px}$, tuyệt đối không chừa khoảng trống nhân tạo giữa 2 mặt biển.
 
 ### 3.2 Công thức kích thước & Ngưỡng lọc
 - Đo đạc trực tiếp trên tọa độ ảnh gốc (không đo theo kích thước hiển thị trên màn hình zoom):
@@ -120,6 +126,7 @@ Ma trận tra cứu nhanh hành động cho người gán nhãn:
 | Biển chuẩn, rõ nét, viền xác định | $L \ge 12 \text{ px}$ | **LABEL** | Vẽ rectangle `traffic_sign`, chọn `sign_group`, `relevance`, `occlusion = none`, `legibility = legible`. |
 | Biển bị mờ/xa nhưng nhận diện được nhóm | $L \ge 12 \text{ px}$ | **LABEL** | Vẽ rectangle, chọn đúng nhóm biển, chọn `legibility = unreadable`. |
 | Cột có nhiều biển báo xếp dọc | Mỗi biển $L \ge 12 \text{ px}$ | **LABEL riêng** | Vẽ từng rectangle cho từng mặt biển riêng biệt. |
+| **Cụm biển ở xa có 2 màu khác nhau (đốm đỏ trên, đốm trắng/xanh dưới)** | Kích thước nhỏ ($L \approx 12 - 18\text{ px}$) | **LABEL 2 box riêng** | **Bắt buộc vẽ 2 rectangle riêng biệt** ôm sát từng dải màu; gán box trên là `prohibitory`/`warning`, box dưới là `other_info`/`mandatory`. Tuyệt đối không gộp 1 box. |
 | Biển phụ hình chữ nhật gắn dưới biển chính | $L \ge 12 \text{ px}$ | **LABEL** | Vẽ rectangle riêng, gán `sign_group = other_info`. |
 | Biển cấm ở đường gom/nhánh rẽ | $L \ge 12 \text{ px}$ | **LABEL** | Vẽ rectangle, chọn `sign_group = prohibitory`, chọn `relevance = lateral`. |
 | Biển cấm ở làn ngược chiều (ngoảnh mặt đi) | Thấy viền trước/nghiêng | **LABEL** | Vẽ rectangle, chọn `relevance = facing_away`. |
@@ -158,6 +165,21 @@ Ma trận tra cứu nhanh hành động cho người gán nhãn:
 
 ### 6.5 Ảnh phản chiếu (Reflection)
 - Biển báo phản chiếu trên nắp ca-pô xe mình, trên mặt đường ướt sũng nước mưa hoặc trên kính tòa nhà ven đường: **Tuyệt đối không gán nhãn (`IGNORE`)**. Chỉ gán nhãn thực thể vật lý thực thụ trên đường.
+
+### 6.6 Edge case đặc thù: Biển ở xa có 2 màu khác nhau (Distant multi-color stacked signs)
+- **Bản chất vật lý và hiện tượng quang học:**
+  - Ở cự ly xa, một cột biển giao thông thường treo 2 biển: biển chính phía trên (thường là viền đỏ nền trắng/vàng cảnh báo hoặc cấm) và biển phụ phía dưới (nền trắng chữ đen bổ nghĩa cự ly/thời gian) hoặc biển hiệu lệnh (nền xanh lam).
+  - Do góc máy xa và hiệu ứng nén phối cảnh (telephoto/perspective compression), kích thước của từng biển bị thu hẹp đáng kể (mỗi biển chỉ đạt từ $12 \text{ px}$ đến $18 \text{ px}$). Mắt thường nhìn lướt qua dễ bị ảo giác coi đây là "một vật thể duy nhất có 2 màu" hoặc chỉ chú ý vào đốm màu đỏ rực rỡ ở trên mà hoàn toàn bỏ qua đốm màu trắng/xanh mờ nhạt ở dưới.
+- **Quy tắc gán nhãn bắt buộc (Mandatory Dual-Box Rule):**
+  1. **Nhận diện bằng độ tương phản màu sắc:** Khi zoom ảnh ở $100\%$ pixel gốc, nếu phát hiện cấu trúc gồm 2 khối màu độc lập xếp chồng nhau theo trục dọc (hoặc trục ngang), annotator **BẮT BUỘC PHẢI TẠO 2 BOUNDING BOX RIÊNG BIỆT**.
+  2. **Cách đặt viền box:**
+     - Box 1 (phía trên): Ôm trọn mảng pixel màu đỏ/vàng của biển chính.
+     - Box 2 (phía dưới): Ôm trọn mảng pixel màu trắng/xanh của biển phụ hoặc biển hiệu lệnh.
+     - Cạnh dưới của Box 1 và cạnh trên của Box 2 tiếp giáp nhau tại vạch ranh giới chuyển giao màu sắc, độ lệch chồng lấn $\le 1 \text{ px}$.
+  3. **Gán thuộc tính:**
+     - Box trên: Thường có màu đỏ $\rightarrow$ gán `sign_group = prohibitory` (hoặc `warning` nếu đỉnh hướng lên); `relevance = facing_ego`; `legibility = unreadable` (vì ở xa không đọc được số bên trong).
+     - Box dưới: Thường có màu trắng $\rightarrow$ gán `sign_group = other_info` (biển phụ); `relevance = facing_ego`; `legibility = unreadable`.
+  4. **Quy tắc Escalation:** Nếu cụm biển ở quá xa tới mức bị nhòe bệt màu (color bleeding), hai dải màu trộn lẫn vào nhau không thể xác định được đường ranh giới tiếp giáp để phân chia 2 box: Annotator vẽ 1 box bao trọn cụm và tick ngay `escalate_review = true` để hội đồng QA thẩm định.
 
 ---
 
@@ -213,9 +235,94 @@ Căn cứ hợp đồng downstream contract tại `01_problem_statement.md`, hai
 
 ---
 
-## 9. Concrete examples (Minh chứng dữ liệu thực tế)
+## 9. Concrete examples & Demo thực tế từ ảnh gán nhãn mẫu
 
-Các ví dụ sau đây được trích xuất trực tiếp từ các file ảnh trong kho dữ liệu `data/gtsdb/` của nhóm:
+Dưới đây là bộ ảnh mẫu gán nhãn thực tế đã được đội ngũ QA và Gold Owner kiểm duyệt, lưu trữ tại thư mục `images/guideline-images/`. Các ví dụ này đại diện trực tiếp cho các tình huống gán nhãn điển hình và hóc búa nhất trong môi trường tự hành thực tế:
+
+---
+
+### 9.1 Phân tích các ca gán nhãn mẫu thực tế (`images/guideline-images/`)
+
+#### 📷 Case 1: Xử lý che khuất nặng (Heavy Occlusion) & Phân rã cụm biển
+- **Tệp ảnh minh chứng:** [occu.png](../images/guideline-images/occu.png)
+- **Bối cảnh hiện trường:** Tuyến đường đô thị có dải phân cách trồng hàng cây xanh rậm rạp. Camera quan sát thấy 3 biển báo ở các cự ly và trạng thái che khuất khác nhau.
+
+![Minh họa ca che khuất occu.png](../images/guideline-images/occu.png)
+
+- **Phân tích từng bounding box đã gán nhãn mẫu (màu xanh dương):**
+  1. **Box 1 (Biển quay đầu xe chữ U to bên phải lề đường):**
+     - *Quan sát:* Tấm biển hình vuông to bản màu xanh lam có mũi tên chữ U màu trắng rõ nét, không bị che khuất.
+     - *Quy cách vẽ:* Bounding box ôm khít 4 cạnh viền ngoài màu xanh của tấm biển; dừng lại ngay trên điểm tiếp giáp với cọc sọc đỏ trắng (không bao trùm cọc).
+     - *Thuộc tính:* `sign_group = mandatory` (hoặc `other_info`), `relevance = facing_ego`, `occlusion = none`, `legibility = legible`, `escalate_review = false`.
+  2. **Box 2 (Biển cấm dừng đỗ tròn đỏ-xanh bị cành cây che khuất nặng ở giữa - CA MẪU MỰC):**
+     - *Quan sát:* Biển tròn viền đỏ nền xanh cấm đỗ/dừng xe bị thân cây và tán lá che chắn gần một nửa diện tích mặt biển (phần giữa và góc trên bị cành lá đè lên).
+     - *Quy cách vẽ:* **Bắt buộc vẽ 1 bounding box hình chữ nhật bao trọn toàn bộ hình tròn vật lý nhìn thấy của biển** (box chấp nhận chứa cành cây và kẽ lá ở phần giữa). Tuyệt đối **không** lẹm mép box vào trong để tránh lá cây, và **không** tách thành 2 box vụn hai bên!
+     - *Thuộc tính:* `sign_group = prohibitory`, `relevance = facing_ego`, `occlusion = heavy` (do bị che > 50%), `legibility = legible` (vẫn nhận dạng được hình họa cấm đỗ), `escalate_review = false`.
+  3. **Box 3 (Biển người đi bộ qua đường ở cự ly xa bên lề trái):**
+     - *Quan sát:* Biển vuông màu xanh có biểu tượng tam giác người đi bộ gắn trên cọc ở xa hơn.
+     - *Thuộc tính:* `sign_group = other_info` (hoặc `warning`), `relevance = facing_ego`, `occlusion = none`, `legibility = legible`.
+- **💡 Bài học cốt lõi cho Annotator:** Khi gặp biển bị cây cối cắt ngang mặt, nguyên tắc vàng là: **"Giữ nguyên hình khối hình học chuẩn của mặt biển, vẽ 1 box bao trùm và đánh dấu `occlusion = partial` hoặc `heavy`"**.
+
+---
+
+#### 📷 Case 2: Cụm biển xếp chồng nhiều màu (Multi-color Stacked Signs) & Ánh sáng chói lóa
+- **Tệp ảnh minh chứng:** [sang.png](../images/guideline-images/sang.png)
+- **Bối cảnh hiện trường:** Ngã ba giao cắt ven rừng, ánh sáng ban ngày chiếu rọi cực mạnh tạo độ tương phản cao (High Dynamic Range / Sun Glare). Có 2 cụm biển xếp chồng ở hai bên đường và 1 biển chỉ dẫn ở hậu cảnh.
+
+![Minh họa ca nắng chói sang.png](../images/guideline-images/sang.png)
+
+- **Phân tích từng bounding box đã gán nhãn mẫu:**
+  1. **Cụm biển bên phải lề đường (Giao lộ dừng xe):**
+     - *Box trên:* Biển bát giác đỏ **STOP** &rarr; Vẽ box ôm khít 8 cạnh bát giác. Gán: `sign_group = prohibitory`, `relevance = facing_ego`, `occlusion = none`, `legibility = legible`.
+     - *Box dưới:* Biển phụ/chỉ dẫn hình chữ nhật màu xanh viền vàng gắn ngay bên dưới biển STOP &rarr; **Bắt buộc vẽ box thứ hai riêng biệt tiếp giáp khít với đáy biển STOP**. Gán: `sign_group = other_info`, `relevance = facing_ego`, `occlusion = none`, `legibility = legible`.
+     - *Cấm kỵ:* Tuyệt đối không gộp biển STOP và biển chỉ dẫn thành 1 box to!
+  2. **Cụm biển bên trái lề đường:**
+     - *Box trên:* Biển bát giác đỏ **STOP** &rarr; Vẽ box riêng, `sign_group = prohibitory`, `relevance = facing_ego`.
+     - *Box dưới:* Biển tròn nền xanh lam mũi tên trắng chỉ hướng đi bắt buộc &rarr; Vẽ box riêng, `sign_group = mandatory`, `relevance = facing_ego`.
+  3. **Biển chỉ dẫn ở xa (Chính giữa ngã ba):**
+     - Biển chữ nhật xanh chỉ hướng đường ở cự ly xa &rarr; Vẽ 1 box vừa vặn, gán `sign_group = other_info`, `relevance = facing_ego`, `legibility = unreadable` (do cự ly xa và ánh sáng chói làm mờ chữ bên trong).
+- **💡 Bài học cốt lõi cho Annotator:** Đây là minh chứng hoàn hảo cho quy tắc **"Một cột có 2 biển khác màu/khác nhóm thì BẮT BUỘC gán 2 box riêng biệt tiếp giáp nhau"**. Khi gặp nắng chói lóa, chỉ lấy biên phản quang thực của mặt biển, không lấy quầng sáng loang ra tán cây xung quanh.
+
+---
+
+#### 📷 Case 3: Điều kiện ngược sáng / Hoàng hôn thiếu sáng (Low Light / Backlit Scene)
+- **Tệp ảnh minh chứng:** [toi.png](../images/guideline-images/toi.png)
+- **Bối cảnh hiện trường:** Đường cong nông thôn một làn xe trong điều kiện chiều muộn ngược sáng, bầu trời sáng nhưng mặt đường và cảnh vật ven đường chìm trong bóng tối (Low-light Shadow).
+
+![Minh họa ca thiếu sáng toi.png](../images/guideline-images/toi.png)
+
+- **Phân tích từng bounding box đã gán nhãn mẫu:**
+  1. **Box 1 (Biển tam giác cảnh báo gắn trên cột điện bằng gỗ bên phải):**
+     - *Quan sát:* Biển tam giác viền đỏ cảnh báo trượt tuyết gắn trực tiếp vào thân cột điện gỗ bên lề đường. 
+     - *Quy cách vẽ:* Bounding box hình chữ nhật đóng khung chính xác 3 đỉnh ngoài cùng của tam giác. Cột điện gỗ đâm thẳng từ trên xuống dưới biển nhưng **box không bao trùm thân cột gỗ**, dừng sát mép tam giác.
+     - *Thuộc tính:* `sign_group = warning`, `relevance = facing_ego`, `occlusion = none`, `legibility = legible`.
+  2. **Box 2 (Biển nhỏ ở cự ly rất xa bên hông ngôi nhà phía xa):**
+     - *Quan sát:* Một biển báo nhỏ gắn ở góc tường ngôi nhà bên lề trái đường cong. Dù khung cảnh bị tối nhưng zoom lên vẫn thấy viền hình học và thỏa mãn $L \ge 12 \text{ px}$.
+     - *Thuộc tính:* `sign_group = other_info` (hoặc `warning`), `relevance = facing_ego`, `legibility = unreadable`, `escalate_review = false`.
+- **💡 Bài học cốt lõi cho Annotator:** Ở điều kiện ánh sáng yếu, mắt thường dễ bỏ sót các biển nhỏ nằm chìm trong vùng tối của nhà cửa/cây cối. Annotator phải kiên trì rà soát các cột điện và góc tường ven đường; không được lấy thân cọc gỗ vào box.
+
+---
+
+#### 📷 Case 4: Đô thị mùa đông phức tạp & Cành cây rụng lá chằng chịt (Complex Urban Scene)
+- **Tệp ảnh minh chứng:** [hard.png](../images/guideline-images/hard.png)
+- **Bối cảnh hiện trường:** Khu phố dân cư đô thị mùa đông, các hàng cây rụng lá tạo ra nhiều cành nhánh đan xen phức tạp vào nền trời và nhà cửa.
+
+![Minh họa ca khó hard.png](../images/guideline-images/hard.png)
+
+- **Phân tích từng bounding box đã gán nhãn mẫu:**
+  1. **Box 1 (Biển cảnh báo gắn cạnh thân cây cổ thụ bên phải):**
+     - *Quan sát:* Biển báo tam giác viền đỏ nằm trong khung bảo vệ vuông màu xanh gắn bên thân cây to. Box ôm sát toàn bộ mặt hiển thị nhìn thấy.
+     - *Thuộc tính:* `sign_group = warning`, `relevance = facing_ego`, `occlusion = none`, `legibility = legible`.
+  2. **Box 2 (Biển nhỏ ở xa bên lề trái ngã tư):**
+     - *Quan sát:* Biển báo nhỏ cắm ở vỉa hè xa phía trước trạm xe buýt/tòa nhà. Đo pixel ảnh gốc đạt $L \ge 12 \text{ px}$.
+     - *Thuộc tính:* `sign_group = other_info`, `relevance = facing_ego`, `legibility = unreadable`.
+- **💡 Bài học cốt lõi cho Annotator:** Cành cây khô mùa đông dễ gây nhầm lẫn đường viền. Annotator phải phân biệt rõ đâu là nhánh cây đè lên biển và đâu là viền phản quang của biển; không vẽ nhầm vào các bóng đen hoặc biển số nhà ven phố.
+
+---
+
+### 9.2 Các ví dụ bổ sung trích xuất từ dữ liệu GTSDB của nhóm
+
+Các ví dụ dưới đây đối chiếu trực tiếp với các tệp ảnh trong kho `data/gtsdb/`:
 
 ### Ví dụ 1: Cụm biển xếp dọc nhiều tầng trên cùng một cột bên lề phải
 - **Tệp dữ liệu:** [GTS01.png](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/data/gtsdb/GTS01.png)
@@ -274,6 +381,26 @@ Các ví dụ sau đây được trích xuất trực tiếp từ các file ản
   - Gán thuộc tính: `sign_group = prohibitory`, `relevance = facing_ego`, `occlusion = partial`, `legibility = legible`.
 - **Quy tắc minh chứng:** Không cắt cúp mép box lẹm vào trong chỉ để tránh tán cây; giữ nguyên hình học bao quanh mặt biển vật lý.
 
+### Ví dụ 5: Edge case cụm biển ở xa có 2 khối màu khác biệt (Distant Two-Color Stacked Signs)
+- **Tệp dữ liệu minh chứng:** [GTS01.png](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/data/gtsdb/GTS01.png) (cụm biển ở xa bên làn đối diện) hoặc [GTS05.png](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/data/gtsdb/GTS05.png) / [GTS15.png](file:///home/dp/Documents/projects/team10team/K4-L2-DAY09-Road-Elements-Lab-Student-VuongTuanDuong-2A202602046/guideline-challenge/data/gtsdb/GTS15.png)
+- **Hiện trường quan sát:** Cột biển báo nằm ở xa hậu cảnh (cách camera trên 50 mét); kích thước tổng thể cụm biển chỉ khoảng $25 \text{ px}$ chiều cao, nhưng quan sát zoom $100\%$ thấy rõ **2 mảng màu tách biệt**: mảng trên màu đỏ viền tròn/tam giác ($w \approx 14 \text{ px}, h \approx 13 \text{ px}$) và mảng dưới màu trắng/xanh hình chữ nhật ($w \approx 14 \text{ px}, h \approx 11 \text{ px}$).
+- **Expected Annotation:**
+  - **Box 1 (Mảng màu đỏ phía trên):**
+    - `Class`: `traffic_sign`
+    - `sign_group`: `prohibitory` (nếu tròn) hoặc `warning` (nếu tam giác)
+    - `relevance`: `facing_ego` (nếu cùng chiều) hoặc `facing_away` (nếu chiều ngược lại)
+    - `occlusion`: `none`
+    - `legibility`: `unreadable` (ở xa không đọc được nội dung chữ số)
+    - `escalate_review`: `false`
+  - **Box 2 (Mảng màu trắng/xanh phía dưới):**
+    - `Class`: `traffic_sign`
+    - `sign_group`: `other_info` (biển phụ) hoặc `mandatory` (biển hiệu lệnh xanh)
+    - `relevance`: cùng hướng với Box 1
+    - `occlusion`: `none`
+    - `legibility`: `unreadable`
+    - `escalate_review`: `false`
+- **Quy tắc minh chứng:** Bắt buộc vẽ đủ 2 box. Tuyệt đối không gộp 1 box chung và không bỏ sót mảng màu trắng phía dưới.
+
 ---
 
 ## 10. Common mistakes & Annotator Checklist
@@ -289,6 +416,7 @@ Các ví dụ sau đây được trích xuất trực tiếp từ các file ản
 | **E-05** | Bao trùm cả cột cọc và bóng đổ vào box | Kéo chuột từ chân cọc lên đỉnh biển | IoU giảm mạnh ($< 0.85$), model detect box bị lệch tâm | Chỉ đặt góc trên và góc dưới bám sát mép ngoài của mặt hiển thị tròn/tam giác/chữ nhật của biển. |
 | **E-06** | Đo kích thước $12 \text{ px}$ theo màn hình zoom | Nhầm lẫn kích thước hiển thị với pixel ảnh gốc | Gán nhầm các biển siêu nhỏ dưới $12 \text{ px}$ hoặc bỏ sót biển hợp lệ | Xem tọa độ góc $(x_1, y_1), (x_2, y_2)$ hiển thị trên CVAT và tính $L = \max(|x_2-x_1|, |y_2-y_1|)$. |
 | **E-07** | Tự ý bỏ qua ca khó mà không báo cáo | Ngại hỏi, đoán mò hoặc bỏ qua | Gây bất đồng ngầm giữa các annotator, kéo tụt điểm GTS | Bắt buộc tick `escalate_review = true` và ghi vào sổ nhật ký QA của nhóm. |
+| **E-08** | Gộp chung hoặc bỏ sót biển dưới khi gặp cụm biển ở xa có 2 màu | Thấy cụm biển nhỏ ở xa nên vẽ 1 box bao cả 2 màu, hoặc chỉ vẽ đốm đỏ mà quên đốm trắng/xanh bên dưới | Vi phạm hợp đồng 1 instance = 1 box, làm mất thông tin biển phụ hạ nguồn | Khi zoom thấy 2 mảng màu tách biệt theo trục dọc: Bắt buộc vẽ 2 box riêng biệt tiếp giáp nhau. |
 
 ### 10.2 Checklist 5 bước của Annotator trước khi bấm Save (Ctrl+S)
 

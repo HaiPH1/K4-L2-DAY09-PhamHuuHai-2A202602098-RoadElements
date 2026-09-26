@@ -14,6 +14,20 @@ File này là kho nội bộ của nhóm, **không gửi cho peer**. Card dùng 
 
 ---
 
+CASE ID: EC-01-DISTANT-TWO-COLOR
+Sample: GTS01
+Scene: Đường quốc lộ ngoại ô, cụm biển báo ở cự ly xa bên lề đường
+Observation: Cột biển báo ở xa (khoảng cách > 50m), quan sát phóng to 100% thấy 2 mảng màu tách biệt theo trục dọc: mảng trên màu đỏ viền tròn (kích thước ~14x13 px), mảng dưới màu trắng hình chữ nhật (kích thước ~14x11 px).
+Decision: LABEL (Bắt buộc tạo 2 box riêng biệt)
+Expected: 
+- Box 1: traffic_sign, sign_group=prohibitory, relevance=facing_ego, occlusion=none, legibility=unreadable, escalate_review=false.
+- Box 2: traffic_sign, sign_group=other_info, relevance=facing_ego, occlusion=none, legibility=unreadable, escalate_review=false.
+Rationale: Hợp đồng downstream contract yêu cầu phân tách từng mặt biển độc lập để multitask attribute classification head học đúng phân loại nhóm biển và tránh làm méo mó tỷ lệ khung hình bounding box.
+Common mistake: Gộp chung cả 2 mảng màu vào 1 bounding box to, hoặc chỉ vẽ biển đỏ ở trên mà bỏ quên biển phụ màu trắng ở dưới.
+Diversity: small_far, conflict, edge
+
+---
+
 CASE ID: TODO
 Sample: TODO (sample_id)
 Scene: TODO

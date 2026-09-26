@@ -765,6 +765,52 @@
           </div>
         </div>
       </div>
+
+      <!-- Edge Case Spotlight: Distant Two-Color Stacked Signs -->
+      <div class="card" style="margin-top: 20px; border-left: 5px solid var(--accent-amber); background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(15, 23, 42, 0.8) 100%);">
+        <div class="card-header">
+          <span class="card-title" style="color: var(--accent-amber); font-size: 1.15rem;">
+            🔍 EDGE CASE ĐẶC THÙ: Biển ở xa có 2 màu khác nhau &rarr; Bắt buộc gán 2 box riêng biệt
+          </span>
+          <span class="status-pill pill-pass">Quy tắc chuẩn hóa Bước 5/11</span>
+        </div>
+        <div class="grid-2" style="margin-top: 10px;">
+          <div style="background: #090d16; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; align-items: center;">
+            <svg width="240" height="150" viewBox="0 0 240 150">
+              <!-- Background distant sky/road -->
+              <rect x="0" y="0" width="240" height="150" fill="#1e293b" rx="6"/>
+              <!-- Distant Pole -->
+              <line x1="120" y1="50" x2="120" y2="135" stroke="#64748b" stroke-width="3" />
+              <!-- Top Sign: Small Red circle -->
+              <circle cx="120" cy="55" r="10" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>
+              <text x="120" y="58" fill="#fff" font-size="7" font-weight="bold" text-anchor="middle">50</text>
+              <!-- Bottom Sign: Small White rectangle -->
+              <rect x="110" y="68" width="20" height="10" fill="#ffffff" stroke="#334155" stroke-width="1"/>
+              <text x="120" y="75" fill="#000" font-size="5" font-weight="bold" text-anchor="middle">200m</text>
+              <!-- Box 1 for Top Sign -->
+              <rect x="108" y="43" width="24" height="24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-dasharray="3,1"/>
+              <text x="75" y="56" fill="#22c55e" font-size="9" font-weight="bold">Box 1 (Đỏ)</text>
+              <!-- Box 2 for Bottom Sign -->
+              <rect x="108" y="67" width="24" height="12" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="3,1"/>
+              <text x="72" y="76" fill="#38bdf8" font-size="9" font-weight="bold">Box 2 (Trắng)</text>
+              <line x1="134" y1="55" x2="155" y2="55" stroke="#22c55e" stroke-width="1"/>
+              <text x="158" y="58" fill="#22c55e" font-size="9">prohibitory</text>
+              <line x1="134" y1="73" x2="155" y2="73" stroke="#38bdf8" stroke-width="1"/>
+              <text x="158" y="76" fill="#38bdf8" font-size="9">other_info</text>
+            </svg>
+            <span style="color: #22c55e; font-size: 0.85rem; font-weight: 700; margin-top: 8px;">✅ ĐÚNG: Tách 2 box riêng biệt tiếp giáp nhau</span>
+          </div>
+          <div style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;">
+            <p><strong style="color: #fff;">Hiện tượng quan sát:</strong> Ở cự ly xa (&gt; 50m), cụm biển hiển thị nhỏ chỉ khoảng 14px đến 25px tổng chiều cao, gồm 1 đốm đỏ (biển cấm/cảnh báo) và 1 đốm trắng/xanh (biển phụ hoặc hiệu lệnh).</p>
+            <p><strong style="color: var(--accent-red);">Lỗi nghiêm trọng cần tránh:</strong></p>
+            <ul style="padding-left: 20px;">
+              <li>❌ <em>Không gộp chung</em> 2 dải màu thành 1 box to (sai tỷ lệ bbox và hỏng attribute classifier).</li>
+              <li>❌ <em>Không bỏ quên</em> biển màu trắng phía dưới (chỉ vẽ đốm đỏ ở trên là lỗi False Negative bỏ sót biển phụ).</li>
+            </ul>
+            <p><strong style="color: var(--accent-blue);">Thao tác:</strong> Zoom 100% pixel gốc, đặt Box 1 ôm dải đỏ, Box 2 ôm dải trắng; ranh giới 2 box tiếp giáp khít nhau.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Section 2: Taxonomy -->
@@ -980,19 +1026,199 @@
       </div>
     </section>
 
-    <!-- Section 5: Real GTSDB Case Studies -->
+    <!-- Section 5: Real CVAT Annotated Case Studies -->
     <section id="cases">
-      <h2 class="section-title">🖼️ 6. Case Study Thực Tế (Dữ liệu GTSDB của nhóm)</h2>
-      <p class="section-desc">Mẫu gán nhãn thực tế trích xuất từ tập ảnh GTSDB $1360 \times 800$ trong repo:</p>
+      <h2 class="section-title">🖼️ 6. Bộ Sưu Tập Ảnh Mẫu Gán Nhãn Thực Tế (CVAT Annotated Gallery)</h2>
+      <p class="section-desc">
+        Các tình huống mẫu thực tế đã được đội ngũ QA và Gold Owner kiểm duyệt, trích xuất từ thư mục <code class="code-val">images/guideline-images/</code> và <code class="code-val">data/gtsdb/</code>. Bấm vào từng tab để xem ảnh gốc đã gắn box mẫu và bài học kỹ thuật:
+      </p>
 
       <div class="case-tab-header">
-        <button class="case-tab-btn active" onclick="switchCaseTab('gts01')">📍 GTS01: Cột 2 Biển Xếp Dọc</button>
-        <button class="case-tab-btn" onclick="switchCaseTab('gts03')">📍 GTS03: Biển Nguy Hiểm & Đèn Giao Thông</button>
-        <button class="case-tab-btn" onclick="switchCaseTab('gts07')">📍 GTS07: Công Trường Nhỏ/Xa</button>
+        <button class="case-tab-btn active" onclick="switchCaseTab('occu')">🌿 occu.png: Che Khuất Cây Cối</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('sang')">☀️ sang.png: Nắng Chói & Cụm Biển</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('toi')">🌙 toi.png: Ngược Sáng / Thiếu Sáng</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('hard')">❄️ hard.png: Đô Thị Phức Tạp</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('gts01')">📍 GTS01: Cột 2 Biển</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('gts03')">📍 GTS03: Biển & Đèn</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('gts07')">📍 GTS07: Công Trường</button>
+      </div>
+
+      <!-- Tab Content OCCU -->
+      <div id="case_occu" class="case-content active">
+        <div>
+          <div class="case-img-box">
+            <img src="../images/guideline-images/occu.png" alt="occu.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80';">
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+            Ảnh mẫu: <code class="code-val">images/guideline-images/occu.png</code> &middot; 3 Bounding Box màu xanh dương
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: var(--accent-emerald);">🌿 Case 1: Xử lý Che Khuất Nặng (Heavy Occlusion)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+            Đoạn đường đô thị có dải phân cách trồng cây xanh rậm rạp. Chú ý 3 biển báo đã được gán nhãn:
+          </p>
+          <table class="table-custom">
+            <thead>
+              <tr><th>Vị trí box</th><th>Quy cách vẽ</th><th>Thuộc tính gán</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Box 1 (Phải):</strong> Biển quay đầu chữ U</td>
+                <td>Ôm sát 4 mép viền xanh vuông vắn, không lấy cọc sọc đỏ trắng.</td>
+                <td><code class="code-val">mandatory</code> &middot; `facing_ego` &middot; `none` &middot; `legible`</td>
+              </tr>
+              <tr>
+                <td><strong>Box 2 (Giữa):</strong> Biển cấm dừng đỗ tròn đỏ-xanh</td>
+                <td><strong>CA MẪU MỰC:</strong> Cành lá che mất > 50% diện tích ở giữa. <em>Bắt buộc vẽ 1 box bao trọn toàn bộ hình tròn vật lý</em> (box chấp nhận chứa cành lá ở giữa). Không lẹm mép, không tách 2 box!</td>
+                <td><code class="code-val">prohibitory</code> &middot; `facing_ego` &middot; <strong style="color:var(--accent-red);">occlusion=heavy</strong> &middot; `legible`</td>
+              </tr>
+              <tr>
+                <td><strong>Box 3 (Trái):</strong> Biển người đi bộ</td>
+                <td>Biển vuông xanh cắm bên lề trái ở cự ly xa hơn.</td>
+                <td><code class="code-val">other_info</code> &middot; `facing_ego` &middot; `none` &middot; `legible`</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="alert alert-info" style="margin-top: 14px;">
+            <div class="alert-icon">💡</div>
+            <div style="font-size: 0.85rem;">
+              <strong>Quy tắc vàng:</strong> Giữ nguyên hình khối chuẩn của mặt biển; tuyệt đối không cắt lẹm box vào trong chỉ để tránh tán cây!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content SANG -->
+      <div id="case_sang" class="case-content">
+        <div>
+          <div class="case-img-box">
+            <img src="../images/guideline-images/sang.png" alt="sang.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80';">
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+            Ảnh mẫu: <code class="code-val">images/guideline-images/sang.png</code> &middot; Nắng chói và cụm biển xếp chồng
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: var(--accent-amber);">☀️ Case 2: Cụm Biển Xếp Chồng Nhiều Màu & Nắng Chói Lóa</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+            Ngã ba bìa rừng có ánh nắng chiếu rọi cực mạnh (High Dynamic Range / Glare). Quan sát các cụm biển:
+          </p>
+          <table class="table-custom">
+            <thead>
+              <tr><th>Cụm biển</th><th>Thao tác gán nhãn chuẩn</th><th>Thuộc tính</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Cụm phải:</strong> STOP + Biển chỉ dẫn chữ nhật</td>
+                <td><strong>Tách 2 box riêng biệt tiếp giáp nhau:</strong> Box trên ôm biển STOP bát giác đỏ; Box dưới ôm biển chữ nhật xanh viền vàng.</td>
+                <td>Trên: <code class="code-val">prohibitory</code><br>Dưới: <code class="code-val">other_info</code></td>
+              </tr>
+              <tr>
+                <td><strong>Cụm trái:</strong> STOP + Biển hiệu lệnh tròn xanh</td>
+                <td><strong>Tách 2 box riêng biệt:</strong> Box trên biển STOP bát giác; Box dưới biển hiệu lệnh tròn xanh mũi tên trắng.</td>
+                <td>Trên: <code class="code-val">prohibitory</code><br>Dưới: <code class="code-val">mandatory</code></td>
+              </tr>
+              <tr>
+                <td><strong>Hậu cảnh:</strong> Biển chỉ dẫn ở xa</td>
+                <td>Biển chữ nhật xanh chỉ hướng đường giữa ngã ba.</td>
+                <td><code class="code-val">other_info</code> &middot; `facing_ego` &middot; `unreadable`</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="alert alert-warning" style="margin-top: 14px;">
+            <div class="alert-icon">⚠️</div>
+            <div style="font-size: 0.85rem;">
+              <strong>Tuyệt đối không gộp:</strong> Cụm biển xếp chồng khác màu/khác nhóm luôn luôn phải tách thành từng box riêng! Dưới nắng chói, chỉ bám mép phản quang, không lấy quầng sáng lóa.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content TOI -->
+      <div id="case_toi" class="case-content">
+        <div>
+          <div class="case-img-box">
+            <img src="../images/guideline-images/toi.png" alt="toi.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80';">
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+            Ảnh mẫu: <code class="code-val">images/guideline-images/toi.png</code> &middot; Chiều tà ngược sáng / Thiếu sáng
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: var(--accent-purple);">🌙 Case 3: Điều Kiện Ngược Sáng / Hoàng Hôn Thiếu Sáng</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+            Khung cảnh đường cong nông thôn ngược sáng chiều muộn, cảnh vật ven đường chìm trong bóng tối.
+          </p>
+          <table class="table-custom">
+            <thead>
+              <tr><th>Đối tượng</th><th>Quy cách vẽ chuẩn</th><th>Thuộc tính</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Box 1 (Phải):</strong> Biển tam giác gắn cột điện gỗ</td>
+                <td>Box hình chữ nhật ôm sát 3 đỉnh của tam giác viền đỏ cảnh báo trượt tuyết. <strong>Tuyệt đối không kéo box theo thân cột điện gỗ!</strong></td>
+                <td><code class="code-val">warning</code> &middot; `facing_ego` &middot; `none` &middot; `legible`</td>
+              </tr>
+              <tr>
+                <td><strong>Box 2 (Trái - Xa):</strong> Biển nhỏ gắn tường nhà</td>
+                <td>Góc tường ngôi nhà phía xa bên trái. Zoom lên thấy viền rõ và $L \ge 12\text{ px}$ &rarr; Bắt buộc vẽ box!</td>
+                <td><code class="code-val">other_info</code> &middot; `facing_ego` &middot; `unreadable`</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="alert alert-info" style="margin-top: 14px;">
+            <div class="alert-icon">💡</div>
+            <div style="font-size: 0.85rem;">
+              <strong>Lưu ý:</strong> Trong ảnh tối, hãy kiên trì quét các cột điện và góc tường ven đường; không được bỏ sót các biển nhỏ ở xa đạt ngưỡng $12\text{ px}$.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content HARD -->
+      <div id="case_hard" class="case-content">
+        <div>
+          <div class="case-img-box">
+            <img src="../images/guideline-images/hard.png" alt="hard.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80';">
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+            Ảnh mẫu: <code class="code-val">images/guideline-images/hard.png</code> &middot; Đô thị mùa đông phức tạp
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: var(--accent-blue);">❄️ Case 4: Đô Thị Mùa Đông & Cành Cây Rụng Lá Chằng Chịt</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+            Khu phố dân cư đô thị mùa đông với cành cây khô đan xen phức tạp vào nền nhà cửa:
+          </p>
+          <table class="table-custom">
+            <thead>
+              <tr><th>Đối tượng</th><th>Quy cách vẽ chuẩn</th><th>Thuộc tính</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Box 1 (Phải):</strong> Biển cảnh báo cạnh thân cây</td>
+                <td>Biển tam giác viền đỏ nằm trong khung bảo vệ vuông màu xanh gắn cạnh thân cây cổ thụ. Box ôm sát toàn bộ mặt hiển thị nhìn thấy.</td>
+                <td><code class="code-val">warning</code> &middot; `facing_ego` &middot; `none` &middot; `legible`</td>
+              </tr>
+              <tr>
+                <td><strong>Box 2 (Trái - Xa):</strong> Biển nhỏ ở lề phố đối diện</td>
+                <td>Biển nhỏ trước trạm dừng/nhà cửa bên trái. Đạt kích thước $L \ge 12\text{ px}$.</td>
+                <td><code class="code-val">other_info</code> &middot; `facing_ego` &middot; `unreadable`</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="alert alert-info" style="margin-top: 14px;">
+            <div class="alert-icon">💡</div>
+            <div style="font-size: 0.85rem;">
+              <strong>Kỹ năng:</strong> Phân biệt rõ đâu là cành cây khô đè lên mặt biển và đâu là viền ngoài của biển; không vẽ nhầm vào bóng râm hay biển số nhà.
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Tab Content GTS01 -->
-      <div id="case_gts01" class="case-content active">
+      <div id="case_gts01" class="case-content">
         <div>
           <div class="case-img-box">
             <img src="../data/gtsdb/GTS01.png" alt="GTS01" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80';">
