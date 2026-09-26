@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<!-- saved from url=(0059)https://smile-authentic-breaking-realtor.trycloudflare.com/ -->
+<html lang="vi" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 9 Lab — Road Elements Guideline Design Challenge</title>
+  <link rel="stylesheet" href="./Day 9 Lab — Road Elements Guideline Design Challenge_files/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-badge">
+          <span>Day 9 Lab</span>
+        </div>
+        <span class="brand-sub">Road Elements</span>
+      </div>
+
+      <div class="sidebar-progress">
+        <div class="progress-info">
+          <span>Tiến độ thực hành</span>
+          <span class="progress-percent" id="progress-percent-txt">0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="progress-bar-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav"><div class="nav-section-title">Phần I: Khung lý thuyết &amp; giới thiệu</div><div class="step-item active">
+      <div class="step-index-badge">1</div>
+      <div class="step-item-content">
+        <span class="step-item-title">1. Bối cảnh &amp; bản chất lab</span>
+        <div class="step-item-meta">
+          <span>Giới thiệu chung</span>
+          
+        </div>
+      </div>
+    </div><div class="step-item">
+      <div class="step-index-badge">2</div>
+      <div class="step-item-content">
+        <span class="step-item-title">2. Lộ trình 240' &amp; 6 gates</span>
+        <div class="step-item-meta">
+          <span>Toàn buổi · 240 phút</span>
+          <span class="gate-tag">G1–G6</span>
+        </div>
+      </div>
+    </div><div class="step-item">
+      <div class="step-index-badge">3</div>
+      <div class="step-item-content">
+        <span class="step-item-title">3. Môi trường &amp; bảng lệnh</span>
+        <div class="step-item-meta">
+          <span>Trước phút 0</span>
+          
+        </div>
+      </div>
+    </div><div class="nav-section-title">Phần II: Thực hành từng bước</div><div class="step-item">
+      <div class="step-index-badge">4</div>
+      <div class="step-item-content">
+        <span class="step-item-title">4. Chọn bài toán &amp; khóa contract</span>
+        <div class="step-item-meta">
+          <span>Phút 0–35</span>
+          <span class="gate-tag">G1</span>
+        </div>
+      </div>
+    </div><div class="step-item">
+      <div class="step-index-badge">5</div>
+      <div class="step-item-content">
+        <span class="step-item-title">5. Viết guideline v1 &amp; ontology</span>
+        <div class="step-item-meta">
+          <span>Phút 35–80</span>
+          
+        </div>
+      </div>
+    </div><div class="step-item">
+      <div class="step-index-badge">6</div>
+      <div class="step-item-content">
+        <span class="step-item-title">6. CVAT setup &amp; sample pack</span>
+        <div class="step-item-meta">
+          <span>Phút 80–110</span>
+          <span class="gate-tag">G2</span>
+        </div>
+      </div>
+    </div><div class="step-item">
+      <div class="step-index-badge">7</div>
+      <div class="step-item-content">
+        <span class="step-item-title">7. Calibration nội bộ</span>
+        <div class="step-item-meta">
+          <span>Phút 120–140</span>
+          <span class="gate-tag">G3</span>
+        </div>
+      </div>
+    </div><div class="step-item">
+      <div class="step-index-badge">8</div>
+      <div class="step-item-content">
+        <span class="step-item-title">8. Kế hoạch QA &amp; khóa gold</span>
+        <div class="step-item-meta">
+          <span>Phút 140–160</span>
+          <span class="gate-tag">G4</span>
+        </div>
+      </div>
+    </div><div class="step-item">
+      <div class="step-index-badge">9</div>
+      <div class="step-item-content">
+        <span class="step-item-title">9. Blind handoff test</span>
+        <div class="step-item-meta">
+          <span>Phút 160–185</span>
+          <span class="gate-tag">G5</span>
+        </div>
+      </div>
+    </div><div class="step-item">
+      <div class="step-index-badge">10</div>
+      <div class="step-item-content">
+        <span class="step-item-title">10. Chấm điểm, đo GTS &amp; chẩn đoán lỗi</span>
+        <div class="step-item-meta">
+          <span>Phút 185–205</span>
+          
+        </div>
+      </div>
+    </div><div class="step-item">
+      <div class="step-index-badge">11</div>
+      <div class="step-item-content">
+        <span class="step-item-title">11. Hoàn thiện &amp; nộp bài</span>
+        <div class="step-item-meta">
+          <span>Phút 205–240</span>
+          <span class="gate-tag">G6</span>
+        </div>
+      </div>
+    </div></nav>
+
+      <div class="sidebar-footer">
+        <span>CVAT v2.74.1 Local</span>
+        <span>240 phút</span>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-area">
+      <!-- Top App Bar -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Mở menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+
+          <div class="current-step-indicator">
+            <span class="step-num-pill" id="step-current-number">Bước 1 / 11</span>
+            <span class="step-timeline-pill" id="step-timeline-badge">Giới thiệu chung</span>
+          </div>
+        </div>
+
+        <div class="top-bar-right">
+          <!-- OS Selector Pill -->
+          <div class="os-selector">
+            <button class="os-btn active" data-os="win" onclick="setOS('win')">
+              Windows
+            </button>
+            <button class="os-btn" data-os="posix" onclick="setOS('posix')">
+              macOS / Linux
+            </button>
+          </div>
+
+          <!-- Quick Help / Troubleshooting -->
+          <button class="quick-help-btn" onclick="openHelpModal('troubleshoot')" title="Sổ tay kỹ thuật &amp; tra cứu lỗi (GUIDE.md)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </button>
+
+          <!-- Theme Toggle -->
+          <button class="theme-btn" onclick="toggleTheme()" title="Đổi giao diện sáng / tối">
+            <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Step Content Viewport -->
+      <article class="content-wrapper" id="step-viewport">
+    <div class="step-header">
+      <div class="step-meta-row">
+        <span class="step-num-pill">Giới thiệu chung</span>
+        
+      </div>
+      <h1 class="step-title">Bước 1 · Bối cảnh kỹ thuật &amp; triết lý bài lab</h1>
+      <p class="step-desc">Hiểu đúng mục tiêu bài lab: Xây dựng một annotation system chuyển giao được thay vì thi vẽ hình đẹp.</p>
+    </div>
+    <div class="step-body-content">
+      
+      <div class="article-section">
+        <h2 class="section-h2">
+          1. Bối cảnh kỹ thuật: Bài toán road elements trong xe tự hành
+        </h2>
+        <p>
+          Trong các hệ thống lái tự động (Autonomous Driving) và hỗ trợ lái nâng cao (ADAS), mô hình thị giác máy tính phải nhận diện chuẩn xác các thực thể mặt đường: vạch kẻ làn, vùng di chuyển được (drivable area), biển báo, và đèn giao thông.
+        </p>
+        <p>
+          Thực tế kỹ thuật chứng minh: <strong>Một mô hình dù tối tân đến đâu cũng sẽ thất bại nếu dữ liệu huấn luyện có nhãn mâu thuẫn hoặc đặc tả kỹ thuật (guideline) mơ hồ.</strong> Khi gặp thời tiết xấu, bóng cây đổ, vạch mờ hay nút giao phức tạp, nếu không có quy chuẩn rõ ràng, mỗi annotator sẽ tự gán nhãn theo cảm tính cá nhân, tạo ra nhiễu hệ thống (systemic noise) làm tê liệt mô hình downstream.
+        </p>
+
+        <div class="callout callout-info">
+          <div class="callout-body">
+            <span class="callout-title">Chuyển dịch tư duy kỹ sư</span>
+            Bài lab này không chấm ai vẽ hình đẹp nhất trên CVAT. Mục tiêu của bạn là chuyển dịch từ vai trò <em>người vẽ nhãn cảm tính</em> sang <strong>Kỹ sư thiết kế quy chuẩn dữ liệu (Data Specifier / Annotation Architect)</strong> — người có khả năng đóng gói một bài toán phức tạp thành một hệ thống vận hành độc lập.
+          </div>
+        </div>
+      </div>
+
+      <div class="article-section">
+        <h2 class="section-h2">
+          2. Định nghĩa hoàn thành (Definition of Done)
+        </h2>
+        <p>
+          Bài lab chỉ được coi là hoàn thành khi: <strong>Một nhóm khác (peer team) sử dụng bộ tài liệu guideline và CVAT task của nhóm bạn, thao tác hoàn toàn độc lập, và tạo ra kết quả gán nhãn trùng khớp với kỳ vọng bạn đã khóa (freeze) từ trước.</strong>
+        </p>
+        <p>
+          Nếu người khác không thể làm theo guideline của bạn khi không có bạn đứng bên cạnh giải thích miệng, hệ thống quy chuẩn của bạn coi như chưa đạt yêu cầu bàn giao.
+        </p>
+      </div>
+
+      <div class="article-section">
+        <h2 class="section-h2">
+          3. Ma trận phân nhiệm 4 vai trò (ai làm gì)
+        </h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 18%;">Vai trò</th>
+                <th style="width: 41%;">Được làm &amp; trách nhiệm</th>
+                <th style="width: 41%;">Tuyệt đối không làm</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Nhóm bạn</strong></td>
+                <td>Research, chọn scope, thiết kế ontology/guideline, setup CVAT, tạo edge case, calibrate nội bộ, QA, test nhóm khác.</td>
+                <td>Hỏi giảng viên "đáp án label đúng là gì" hoặc giải thích rule bằng miệng cho nhóm peer trong blind window.</td>
+              </tr>
+              <tr>
+                <td><strong>Nhóm peer</strong></td>
+                <td>Dùng guideline/task như annotator mới, label blind sample theo đúng câu chữ, góp ý usability.</td>
+                <td>Xem gold trước khi test; nhờ owner "giảng lại" guideline trong blind window hoặc tự đoán ý owner.</td>
+              </tr>
+              <tr>
+                <td><strong>Lab Coach</strong></td>
+                <td>Giữ timeline 240 phút, hỗ trợ CVAT/login/import/export/git, ghép cặp, xác nhận gold đã freeze.</td>
+                <td>Sửa guideline, quyết định domain semantics thay nhóm, phán quyết label nào là đúng.</td>
+              </tr>
+              <tr>
+                <td><strong>Giảng viên</strong></td>
+                <td>Briefing, duyệt topic (Gate G1), chấm cuối (Gate G6).</td>
+                <td>Đưa starter solution, giải edge case thay nhóm.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-body">
+            <span class="callout-title">Quy tắc ứng xử khi thảo luận kỹ thuật</span>
+            Khi bạn hỏi giảng viên hoặc Coach "Vẽ như thế này đã đúng chưa?", câu trả lời sẽ luôn là câu hỏi ngược: <em>"Quy tắc đã viết trong guideline của nhóm bạn là gì? Bằng chứng thị giác trên ảnh là gì? Nếu ảnh không đủ bằng chứng, guideline có cung cấp cơ chế chuyển tiếp (escalation path) không?"</em>
+          </div>
+        </div>
+      </div>
+    
+    </div>
+  </article>
+
+      <!-- Bottom Sticky Stepper Navigation -->
+      <footer class="bottom-nav">
+        <button class="nav-btn nav-btn-prev" id="btn-prev" onclick="prevStep()" disabled="">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>Bước trước</span>
+        </button>
+
+        <label class="step-complete-toggle">
+          <input type="checkbox" id="chk-mark-complete" onchange="toggleStepComplete()">
+          <span>Đánh dấu hoàn thành bước này</span>
+        </label>
+
+        <button class="nav-btn nav-btn-next" id="btn-next" onclick="nextStep()">
+      <span>Bước tiếp theo</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Quick Help & CVAT Handbook Modal Dialog -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeHelpModal()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-title">Sổ tay kỹ thuật &amp; thao tác CVAT</div>
+          <span class="modal-subtitle">Trích xuất quy chuẩn từ GUIDE.md &amp; hướng dẫn xử lý sự cố</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeHelpModal()" aria-label="Đóng sổ tay">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Tab Navigation inside Modal -->
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" id="tab-btn-cvat" onclick="switchModalTab('cvat')">
+          Thao tác CVAT (GUIDE.md)
+        </button>
+        <button class="modal-tab-btn" id="tab-btn-troubleshoot" onclick="switchModalTab('troubleshoot')">
+          Xử lý sự cố kỹ thuật
+        </button>
+      </div>
+
+      <div class="modal-body" id="modal-body-container">
+      <div class="modal-tab-pane active" id="modal-pane-cvat">
+        
+  <div class="modal-quick-nav">
+    <a href="https://smile-authentic-breaking-realtor.trycloudflare.com/#cvat-sec-1">1. Bật CVAT</a>
+    <a href="https://smile-authentic-breaking-realtor.trycloudflare.com/#cvat-sec-2">2. Tạo Task &amp; Guideline</a>
+    <a href="https://smile-authentic-breaking-realtor.trycloudflare.com/#cvat-sec-3">3. Phím tắt &amp; kỹ thuật vẽ</a>
+    <a href="https://smile-authentic-breaking-realtor.trycloudflare.com/#cvat-sec-4">4. Export nhãn</a>
+    <a href="https://smile-authentic-breaking-realtor.trycloudflare.com/#cvat-sec-5">5. Peer Tester</a>
+    <a href="https://smile-authentic-breaking-realtor.trycloudflare.com/#cvat-sec-6">6. Xem export của peer</a>
+  </div>
+
+  <div class="modal-section" id="cvat-sec-1">
+    <h3 class="section-h3">1. Bật CVAT đã cài đặt</h3>
+    <p>Lab dùng lại CVAT local bạn đã cài ở Day 2 (thư mục <code>cvat-day2</code>, bản v2.74.1 hoặc v2.76.0). <strong>Không cài CVAT mới.</strong></p>
+    <ol>
+      <li>Mở Docker Desktop, chờ Docker Engine chạy xong.</li>
+      <li>Mở terminal, vào thư mục CVAT và khởi chạy:
+        <div class="code-card" style="margin: 8px 0;">
+          <div class="code-header"><span class="code-lang">Bật container CVAT</span><button class="copy-btn" onclick="copySnippet(this)">Sao chép</button></div>
+          <pre><code>docker compose start</code></pre>
+        </div>
+      </li>
+      <li>Quay về thư mục <code>guideline-challenge/</code>, kiểm tra trạng thái kết nối:
+        <div class="code-card" style="margin: 8px 0;">
+          <div class="code-header"><span class="code-lang">Kiểm tra trạng thái CVAT</span><button class="copy-btn" onclick="copySnippet(this)">Sao chép</button></div>
+          <pre><code class="cmd-snippet" data-win="python lab9.py cvat" data-posix="make cvat-status">python lab9.py cvat</code></pre>
+        </div>
+      </li>
+      <li>Mở trình duyệt truy cập <code>http://localhost:8080</code> và đăng nhập tài khoản bạn đã tạo từ Day 2.</li>
+    </ol>
+    <div class="callout callout-warning">
+      <div class="callout-body">
+        <span class="callout-title">Lưu ý quản lý dữ liệu Docker</span>
+        Khi kết thúc buổi lab, tắt container bằng <code>docker compose stop</code>. Tuyệt đối KHÔNG chạy <code>docker compose down -v</code> vì cờ <code>-v</code> sẽ xóa toàn bộ volume database chứa task và nhãn đã vẽ. Nhớ lưu bài thường xuyên bằng <strong>Ctrl+S</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-section" id="cvat-sec-2">
+    <h3 class="section-h3">2. Tạo task calibration &amp; dán guideline (Mục 2 GUIDE.md)</h3>
+    <h4 style="font-size: 0.95rem; font-weight: 700; margin: 12px 0 6px; color: var(--text-primary);">2.1 Chuẩn bị Labels JSON</h4>
+    <p>CVAT nhận danh sách nhãn ở định dạng JSON trong tab <strong>Raw</strong>. Bảng ontology là nguồn chuẩn duy nhất, file JSON chỉ là bản dịch kỹ thuật. Chú ý kỹ thuật chống silent defaults bằng cách đưa <code>"__undefined__"</code> lên đầu danh sách values và làm default.</p>
+    <div class="code-card">
+      <div class="code-header"><span class="code-lang">Kiểm tra hợp lệ JSON trước khi dùng</span><button class="copy-btn" onclick="copySnippet(this)">Sao chép</button></div>
+      <pre><code>python -m json.tool project/03_cvat_labels.json</code></pre>
+    </div>
+
+    <h4 style="font-size: 0.95rem; font-weight: 700; margin: 14px 0 6px; color: var(--text-primary);">2.2 Thao tác tạo Task</h4>
+    <ol>
+      <li>Chạy lệnh gom ảnh: <code>python lab9.py pack calibration</code> (ảnh gom vào <code>build/calibration/</code>).</li>
+      <li>Trong CVAT: vào trang <strong>Tasks</strong> → click nút <strong>+</strong> → chọn <strong>Create a new task</strong>.</li>
+      <li><strong>Name:</strong> Đặt theo quy chuẩn: <code>&lt;tên_nhóm&gt;-calib-&lt;tên_bạn&gt;</code> (ví dụ: <code>nhom1-calib-an</code>).</li>
+      <li><strong>Labels:</strong> Click tab <strong>Raw</strong>, xóa toàn bộ nội dung có sẵn, dán nội dung <code>project/03_cvat_labels.json</code> vào rồi click <strong>Save</strong>. Chuyển sang tab <strong>Constructor</strong> kiểm tra lại các nhãn và thuộc tính đã hiển thị đúng.</li>
+      <li><strong>Select files:</strong> Chọn <strong>My computer</strong> → chọn <strong>toàn bộ</strong> file ảnh trong thư mục <code>build/calibration/</code>.</li>
+      <li>Mở <strong>Advanced configuration</strong>, giữ nguyên <strong>Sorting method</strong> mặc định (<em>lexicographical</em>) để giữ thứ tự ảnh theo tên file.</li>
+      <li>Click <strong>Submit &amp; Open</strong>. Trong trang chi tiết task, click dòng <strong>Job #...</strong> để mở màn hình gắn nhãn.</li>
+    </ol>
+
+    <h4 style="font-size: 0.95rem; font-weight: 700; margin: 14px 0 6px; color: var(--text-primary);">2.3 Dán guideline vào Guide của task</h4>
+    <ol>
+      <li>Ở trang chi tiết task, dưới mục <strong>Task description</strong>, click <strong>Edit</strong>.</li>
+      <li>Dán toàn bộ nội dung file <code>project/02_guideline.md</code> vào ô Markdown, sau đó click <strong>Submit</strong>.</li>
+      <li>Trong màn hình gắn nhãn, nút <strong>Guide</strong> ở góc trên bên phải cho phép annotator xem lại quy chuẩn bất kỳ lúc nào.</li>
+    </ol>
+  </div>
+
+  <div class="modal-section" id="cvat-sec-3">
+    <h3 class="section-h3">3. Bảng phím tắt &amp; kỹ thuật vẽ trên CVAT (Mục 3 GUIDE.md)</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 28%;">Thao tác</th>
+            <th style="width: 72%;">Phím tắt / cách thực hiện trên giao diện</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Vẽ Rectangle</strong></td>
+            <td>Chọn công cụ Rectangle → chọn Label → click góc trên trái rồi click góc dưới phải.</td>
+          </tr>
+          <tr>
+            <td><strong>Vẽ Polygon</strong></td>
+            <td>Chọn Polygon → click từng điểm ranh giới (≥ 3 điểm) → bấm <strong>N</strong> hoặc nút <strong>Done</strong> trên thanh công cụ để hoàn thành.</td>
+          </tr>
+          <tr>
+            <td><strong>Lặp lại công cụ</strong></td>
+            <td>Bấm phím <strong>N</strong> để vẽ tiếp vật thể cùng loại vừa dùng.</td>
+          </tr>
+          <tr>
+            <td><strong>Sửa hình / Xóa</strong></td>
+            <td>Click chọn vật thể để kéo cạnh/điểm. Bấm <strong>Del</strong> để xóa vật thể. Hoàn tác bằng <strong>Ctrl+Z</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Setup Tag (Cả ảnh)</strong></td>
+            <td>Chọn công cụ <strong>Setup tag</strong> bên trái → chọn label kiểu tag → click <strong>Tag</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Chuyển ảnh nhanh</strong></td>
+            <td>Phím <strong>F</strong> (ảnh tiếp theo), phím <strong>D</strong> (ảnh trước đó). Nhảy nhiều ảnh: <strong>V</strong> / <strong>C</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Gán nhanh thuộc tính</strong></td>
+            <td>Đổi chế độ ở góc trên phải từ <strong>Standard</strong> sang <strong>Attribute annotation</strong>. Màn hình phóng to từng vật thể: dùng <strong>↑ / ↓</strong> đổi thuộc tính, phím số chọn giá trị, <strong>Tab</strong> đổi vật thể.</td>
+          </tr>
+          <tr>
+            <td><strong>Temporal Track (Video)</strong></td>
+            <td>Ở frame đầu chọn <strong>Track</strong> thay vì Shape. Khi chuyển frame (<strong>F</strong>), CVAT tự động nội suy vị trí; nếu lệch thì kéo lại. Bấm <strong>K</strong> để bật/tắt keyframe. <strong>Khi vật thể biến mất/bị che hẳn:</strong> chọn track và bấm <strong>O</strong> (outside).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-section" id="cvat-sec-4">
+    <h3 class="section-h3">4. Hướng dẫn export nhãn chuẩn (Mục 4 GUIDE.md)</h3>
+    <ol>
+      <li>Nhấn <strong>Ctrl+S</strong> để chắc chắn toàn bộ nhãn đã được lưu lên server.</li>
+      <li>Trong màn hình Job: click <strong>Menu</strong> (góc trên trái) → chọn <strong>Export job dataset</strong> (hoặc ngoài trang Task: <strong>Actions</strong> → <strong>Export task dataset</strong>).</li>
+      <li>Tại mục <strong>Export format</strong>: Chọn <strong>CVAT for images 1.1</strong> (nếu bài toán có video track: chọn <strong>CVAT for video 1.1</strong>).</li>
+      <li><strong>TẮT tùy chọn "Save images"</strong> (bỏ chọn checkbox này để gói zip chỉ chứa file XML nhãn nhẹ và chuẩn format chấm điểm).</li>
+      <li>Tải file zip về, đổi tên theo tên thành viên (ví dụ <code>an.zip</code>, <code>binh.zip</code>), sau đó chép vào thư mục <code>project/06_calibration_exports/</code> để chạy lệnh đo bất đồng.</li>
+    </ol>
+  </div>
+
+  <div class="modal-section" id="cvat-sec-5">
+    <h3 class="section-h3">5. Quy trình làm peer tester (Mục 5 GUIDE.md)</h3>
+    <ol>
+      <li>Nhận file <code>blind-pack.zip</code> từ nhóm đối ứng, giải nén và đọc kỹ file <code>PEER_README.md</code>.</li>
+      <li>Tạo task mới trên CVAT máy bạn: đặt tên <code>peer-&lt;tên_nhóm_owner&gt;</code>, tab Raw dán file <code>cvat_labels.json</code> trong gói nhận được, mục Select files chọn toàn bộ ảnh trong thư mục <code>images/</code>.</li>
+      <li>Label theo guideline trong 15 phút. Không đoán ý owner. Chỗ nào phải hỏi hoặc không hiểu: ghi lại nguyên văn câu hỏi và mốc giờ để owner ghi vào <code>clarification_log.csv</code>.</li>
+      <li>Export dataset theo định dạng <strong>CVAT for images 1.1</strong> (tắt Save images), đổi tên file thành <code>&lt;tên_nhóm_bạn&gt;-blind.zip</code> và gửi lại cho nhóm owner kèm câu trả lời cho 5 câu hỏi feedback.</li>
+    </ol>
+  </div>
+
+  <div class="modal-section" id="cvat-sec-6">
+    <h3 class="section-h3">6. Xem &amp; đối chiếu export của peer (Mục 6 GUIDE.md)</h3>
+    <p>Đối với các quyết định hình học (geometry decisions) hoặc khi cột tóm tắt <code>peer_evidence</code> chưa đủ chi tiết, bạn cần mở trực tiếp nét vẽ của peer trên CVAT để đối chiếu visual:</p>
+    <ol>
+      <li>Chạy lệnh gom ảnh blind: <code>python lab9.py pack blind</code> (hoặc <code>make pack SPLIT=blind</code>).</li>
+      <li>Tạo task kiểm tra trên CVAT: đặt tên <code>review-&lt;tên_nhóm_peer&gt;</code> với <strong>đúng</strong> file <code>project/03_cvat_labels.json</code> đã freeze và toàn bộ ảnh trong <code>build/blind/</code>.</li>
+      <li>Ở trang task vừa tạo: click <strong>Actions</strong> → chọn <strong>Upload annotations</strong>:
+        <ul style="margin-top: 6px;">
+          <li><strong>Import format:</strong> Chọn <strong>CVAT 1.1</strong> (định dạng này nhận cả export for images lẫn for video).</li>
+          <li><strong>Import mode:</strong> Giữ mặc định là <strong>Replace</strong>.</li>
+          <li>Kéo thả file export của peer (trong thư mục <code>project/07_blind_handoff/peer_output/</code>) vào vùng tải file → click <strong>OK</strong>.</li>
+        </ul>
+      </li>
+      <li>Mở job gán nhãn, đối chiếu trực quan từng bounding box và attribute của peer vẽ so với quyết định Gold của nhóm bạn, sau đó điền kết quả vào file <code>transfer_score.csv</code>.</li>
+    </ol>
+  </div>
+
+      </div>
+      <div class="modal-tab-pane" id="modal-pane-troubleshoot">
+        
+  <div class="modal-section">
+    <h3 class="section-h3">1. CVAT chưa chạy ở http://localhost:8080</h3>
+    <p><strong>Nguyên nhân:</strong> Docker Desktop chưa bật hoặc các container CVAT đang ở trạng thái dừng.</p>
+    <p><strong>Cách khắc phục:</strong> Mở Docker Desktop, vào thư mục chứa CVAT (ví dụ <code>cvat-day2</code>), chạy lệnh:</p>
+    <div class="code-card">
+      <div class="code-header"><span class="code-lang">Khởi động lại CVAT</span><button class="copy-btn" onclick="copySnippet(this)">Sao chép</button></div>
+      <pre><code>docker compose start
+# Nếu báo container chưa tồn tại:
+docker compose up -d</code></pre>
+    </div>
+  </div>
+
+  <div class="modal-section">
+    <h3 class="section-h3">2. Lỗi 'make: command not found' trên Windows</h3>
+    <p><strong>Cách khắc phục:</strong> Hệ điều hành Windows mặc định không có công cụ make. Hãy chuyển sang dùng lệnh Python tương ứng: <code>python lab9.py &lt;tên_lệnh&gt;</code> (hoặc <code>py lab9.py ...</code>).</p>
+  </div>
+
+  <div class="modal-section">
+    <h3 class="section-h3">3. Lỗi xung đột tag 'gold-freeze' trong Git</h3>
+    <p><strong>Nguyên nhân:</strong> Một thành viên trong nhóm đã chạy freeze và push tag mới, nhưng máy của bạn chưa cập nhật đè tag git.</p>
+    <p><strong>Cách khắc phục:</strong> Chạy lệnh kéo tag bắt buộc:</p>
+    <div class="code-card">
+      <div class="code-header"><span class="code-lang">Đồng bộ tag bắt buộc</span><button class="copy-btn" onclick="copySnippet(this)">Sao chép</button></div>
+      <pre><code>git pull &amp;&amp; git fetch --tags --force</code></pre>
+    </div>
+  </div>
+
+  <div class="modal-section">
+    <h3 class="section-h3">4. Lỗi 'Clone này đã có tag gold-freeze nhưng thiếu project/FREEZE.txt'</h3>
+    <p><strong>Nguyên nhân:</strong> Bạn cùng nhóm đã freeze; quy chuẩn lab quy định mỗi nhóm chỉ <strong>DUY NHẤT một người</strong> chạy lệnh freeze.</p>
+    <p><strong>Cách khắc phục:</strong> Chạy <code>git pull</code> để kéo file về. Nếu lỡ tay xóa mất: <code>git restore --source=gold-freeze -- project/FREEZE.txt</code>. Nếu nhóm thật sự cần freeze lại (và chưa nhận export từ peer): chạy <code>python lab9.py freeze --refreeze</code> (hoặc <code>make freeze REFREEZE=1</code>).</p>
+  </div>
+
+  <div class="modal-section">
+    <h3 class="section-h3">5. Lỗi 'Khác bản đã commit ở tag gold-freeze'</h3>
+    <p><strong>Nguyên nhân:</strong> Sau khi nhóm đã freeze, có người đã vô tình sửa vào file gold decisions hoặc sample pack, làm sai lệch mã băm SHA256.</p>
+    <p><strong>Cách khắc phục:</strong> Hoàn tác các sửa đổi ngoài ý muốn để đưa file về trạng thái chuẩn đã khóa: <code>git checkout gold-freeze -- &lt;đường_dẫn_file&gt;</code>.</p>
+  </div>
+
+  <div class="modal-section">
+    <h3 class="section-h3">6. Quên mật khẩu đăng nhập CVAT</h3>
+    <p><strong>Cách khắc phục:</strong> Trong thư mục CVAT trên terminal, tạo ngay một tài khoản superuser mới:</p>
+    <div class="code-card">
+      <div class="code-header"><span class="code-lang">Tạo tài khoản quản trị mới</span><button class="copy-btn" onclick="copySnippet(this)">Sao chép</button></div>
+      <pre><code>docker exec -it cvat_server bash -ic 'python3 ~/manage.py createsuperuser'</code></pre>
+    </div>
+  </div>
+
+  <div class="modal-section">
+    <h3 class="section-h3">7. Lỗi 'UnicodeEncodeError: charmap codec' trên Windows PowerShell</h3>
+    <p><strong>Nguyên nhân:</strong> Bảng mã mặc định của console Windows là CP1252, không thể in các ký tự tiếng Việt có dấu từ script Python.</p>
+    <p><strong>Cách khắc phục:</strong> Thiết lập biến môi trường UTF-8 trong PowerShell trước khi chạy lệnh:</p>
+    <div class="code-card">
+      <div class="code-header"><span class="code-lang">Kích hoạt UTF-8 trên PowerShell</span><button class="copy-btn" onclick="copySnippet(this)">Sao chép</button></div>
+      <pre><code>$env:PYTHONUTF8 = "1"
+# Hoặc truyền cờ -X utf8 trực tiếp:
+python -X utf8 lab9.py &lt;lệnh&gt;</code></pre>
+    </div>
+  </div>
+
+  <div class="modal-section">
+    <h3 class="section-h3">8. Lỗi 'Export không có &lt;image&gt;, &lt;track&gt; hay &lt;tag&gt; nào'</h3>
+    <p><strong>Nguyên nhân:</strong> Thao tác export chọn nhầm định dạng hoặc job chưa có annotation nào được lưu lại.</p>
+    <p><strong>Cách khắc phục:</strong> Vào lại task, bấm Ctrl+S để lưu, sau đó export lại chính xác với định dạng <strong>CVAT for images 1.1</strong> (nhớ tắt checkbox Save images).</p>
+  </div>
+
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <script src="./Day 9 Lab — Road Elements Guideline Design Challenge_files/app.js"></script>
+
+
+</body></html>
