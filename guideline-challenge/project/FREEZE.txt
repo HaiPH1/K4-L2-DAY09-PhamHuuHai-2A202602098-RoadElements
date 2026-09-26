@@ -1,4 +1,4 @@
-frozen_at=2026-09-26T13:38:16Z
+frozen_at=2026-09-26T13:38:49Z
 guideline_version=3
 sha256_gold_decisions=d895433afa9723f87affd8ac4f61971d54edf22792c8eb9880cb9fee62b45b04
 sha256_sample_pack=d86701c8c432f6f45db0faa20ae4080b68514b90d38778bed5d5a40d0d618887
@@ -7,4 +7,4 @@ sha256_cvat_labels=3c89a4a4d679ad1a1c1a28d5459334c389f544e6850774434cfeb3767c104
 decisions=16
 critical=3
 blind_samples=5
-refreeze_count=1
+refreeze_count=2
